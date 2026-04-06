@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "humm",
+    "slug": "humm",
+    "version": "1.0.0",
+    "scheme": "humm",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#131118",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#131118"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.humm.app"
+    },
+    "android": {
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#131118"
+      },
+      "package": "com.humm.app",
+      "softwareKeyboardLayoutMode": "resize"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "humm uses your photos for nominations and reasons."
+        }
+      ],
+      "expo-notifications"
+    ]
+  }
+}
