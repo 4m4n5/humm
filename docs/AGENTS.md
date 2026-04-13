@@ -11,9 +11,9 @@ This file is the **entry point** for anyone (human or agent) working on the repo
 Goals:
 
 - Reduce decision paralysis (food, activity, movie, other — all as Quick Spin lists; no separate movie-picker flow).
-- Support a **twice-yearly** relationship “award ceremony”: **nominations + full ceremony cycle** (nominating → deliberation → voting/overlap + resolution → reveal → archive + new cycle). **Nomination photos** still deferred.
+- Support a **twice-yearly** relationship “award ceremony”: **nominations + full ceremony cycle** — product **nominate · align · cheer**; Firestore **`nominating` → `deliberating` → `voting` → `complete`** (see [CEREMONY_TERMINOLOGY.md](./CEREMONY_TERMINOLOGY.md)). **Nomination photos** still deferred.
 - **Gamification** — per-user **XP/level** + **badges** on profile, soft **stats** band (saves, seasons, spin streak). Badge evaluators batch **`mergeBadges`** per user where possible to limit Firestore writes. **Weekly challenge** pool is three symmetric goals (`constants/challenges.ts`). Couple **streaks** + **weekly challenge** on `couples/*` mostly under the hood (still grant XP). Code: `lib/firestore/gamification.ts`, `lib/gamificationTriggers.ts`, `lib/gamificationBadges.ts`, `lib/firestore/coupleGamification.ts`, `components/gamification/GamificationToastHost.tsx`. **`paparazzi`** not auto-awarded until photos exist.
-- **Because of you** — write reasons for your partner; **draw three random** reasons about you (text only for now).
+- **Reasons** — write reasons you love your partner; **draw three random** reasons about you (text only for now).
 
 Tone: warm, playful, musical metaphor (humming together). Prefer **lowercase** labels in navigation and many headings unless a proper noun needs caps.
 
@@ -38,10 +38,10 @@ Tone: warm, playful, musical metaphor (humming together). Prefer **lowercase** l
 app/
   _layout.tsx           # Auth gate: sign-in → link partner → tabs
   (auth)/               # sign-in, sign-up, link-partner
-  (tabs)/               # home, decide/*, awards, because, profile
+  (tabs)/               # home, decide/*, awards, reasons, profile
 components/shared/      # Button, Input, Card, ScreenTitle, ScreenHeader
 components/battle/      # BracketProgress, CoinFlip (battle mode)
-constants/              # categories, levels, badges, hummVoice (awards copy), theme (hex)
+constants/              # categories, levels, badges, hummVoice (awards + reasons copy), theme (hex)
 lib/
   firebase.ts           # App, Auth, Firestore init
   stores/               # authStore, decisionStore, nominationsStore, reasonStore, battleStore
@@ -51,9 +51,10 @@ lib/
   ceremonyReminders.ts  # Local notification schedule/cancel for award window
 types/index.ts          # Shared TypeScript models
 docs/
-  AGENTS.md             # This file
-  APPS_AND_FEATURES.md  # Living brainstorm with the owners
-  DESIGN.md             # UI / UX direction and refinement ideas
+  AGENTS.md                 # This file
+  APPS_AND_FEATURES.md      # Living brainstorm with the owners
+  CEREMONY_TERMINOLOGY.md   # Awards: product names vs Firestore status / legacy APIs
+  DESIGN.md                 # UI / UX direction and refinement ideas
 ```
 
 ---
@@ -61,7 +62,7 @@ docs/
 ## Environment
 
 - Copy `.env.example` → `.env` (gitignored). All Firebase keys must be prefixed with `EXPO_PUBLIC_` for Expo.
-- **Firestore:** Composite indexes live in [`firestore.indexes.json`](../firestore.indexes.json) — deploy with `firebase deploy --only firestore:indexes` when queries change. **`battles`** collection must be allowed in security rules for the couple’s two user IDs (same scoping pattern as `decisions` / `ceremonies`). **`nominations`** uses `coupleId` + `ceremonyId` (see `lib/firestore/nominations.ts`). **`decisions`** uses `coupleId` + `mode` for battle badge counts (`grantBattleCompletionRewards`); also `coupleId` + `category` for Foodie / Night In counts. **`reasons`:** `coupleId` + `authorId` for reason badges. **`ceremonies`:** `coupleId` + `status` for completed-season counts. **`couples`:** allow writes to optional `streaks` and `weeklyChallenge` for the two partner UIDs (same as other couple fields). There is no `firestore.rules` file in-repo — rules live in Firebase Console or your deploy pipeline; keep them aligned with these fields. **`react-native-reanimated`:** keep the Babel plugin last in `babel.config.js` (Expo / navigator stack). Awards **reveal** uses RN `Animated` only so Expo Go won’t crash on Reanimated worklets at import time.
+- **Firestore:** Composite indexes live in [`firestore.indexes.json`](../firestore.indexes.json) — deploy with `firebase deploy --only firestore:indexes` when queries change. **`battles`** collection must be allowed in security rules for the couple’s two user IDs (same scoping pattern as `decisions` / `ceremonies`). **`nominations`** uses `coupleId` + `ceremonyId` (see `lib/firestore/nominations.ts`). **`decisions`** uses `coupleId` + `mode` for battle badge counts (`grantBattleCompletionRewards`); also `coupleId` + `category` for Foodie / Night In counts. **`reasons`:** `coupleId` + `authorId` for reason badges. **`ceremonies`:** `coupleId` + `status` for completed-season counts. **`couples`:** allow writes to optional `streaks` and `weeklyChallenge` for the two partner UIDs (same as other couple fields). There is no `firestore.rules` file in-repo — rules live in Firebase Console or your deploy pipeline; keep them aligned with these fields. **`react-native-reanimated`:** keep the Babel plugin last in `babel.config.js` (Expo / navigator stack). Awards **cheer** walkthrough (`reveal.tsx`) uses RN `Animated` only so Expo Go won’t crash on Reanimated worklets at import time.
 
 ---
 
@@ -85,11 +86,11 @@ docs/
 | **Decide**: Quick Spin, categories, options in Firestore, history | Done |
 | **Decide**: Battle Mode (real-time bracket) | Done — hub `battle.tsx`, lobby / vote / result screens, `lib/firestore/battles.ts` + `lib/battleLogic.ts`, `components/battle/*` |
 | **Awards**: nominations (text), browse by category, active ceremony (**calendar H1/H2** window via `getCalendarHalfYearBounds`), **season calendar** + optional local reminders | Done (v1 + calendar) |
-| **Awards**: deliberation, overlap, resolution, reveal, past archive, cycle advance (`lib/firestore/ceremonies.ts`, `lib/awardsLogic.ts`, `app/(tabs)/awards/*`) | Done (v2 flow; text only; haptics on key steps) |
-| **Gamification**: XP (`grantXp`), deliberation/battle/ceremony grants, Quick Spin / nomination / reason / resolution XP, streaks + weekly challenge on couple doc (mostly under hood), badge evaluators (`lib/gamificationBadges.ts`), celebrations host; **profile** leads with **XP + badges**, plus a softer **“together lately”** stats band (`ProfileSoftStats`, `getDecisionCountForCouple`) | Done |
+| **Awards**: alignment (private picks, overlap, resolve), cheer walkthrough, past archive, cycle advance (`lib/firestore/ceremonies.ts`, `lib/awardsLogic.ts`, `app/(tabs)/awards/*`) | Done (v2 flow; text only; haptics on key steps) |
+| **Gamification**: XP (`grantXp`), alignment-submit / battle / ceremony grants (some API ids still say `deliberation_*` — see [CEREMONY_TERMINOLOGY.md](./CEREMONY_TERMINOLOGY.md)), Quick Spin / nomination / reason / resolution XP, streaks + weekly challenge on couple doc (mostly under hood), badge evaluators (`lib/gamificationBadges.ts`), celebrations host; **profile** leads with **XP + badges**, plus a softer **“together lately”** stats band (`ProfileSoftStats`, `getDecisionCountForCouple`) | Done |
 | **Awards**: nomination photos | Not started |
-| **Because**: write + draw 3 random (text) | Done (v1) |
-| **Because**: optional media on reasons | Not started |
+| **Reasons**: write + draw 3 random (text) | Done (v1) |
+| **Reasons**: optional media on reasons | Not started |
 | Push notifications, Cloud Functions | Not started |
 | Firebase Storage (photos) | Deferred (Blaze plan) |
 
@@ -100,7 +101,9 @@ docs/
 ## Where to look next
 
 - **Deep product + data model + costs + phases**: [`../BLUEPRINT.md`](../BLUEPRINT.md)
+- **Award ceremony naming (product vs code)**: [`./CEREMONY_TERMINOLOGY.md`](./CEREMONY_TERMINOLOGY.md)
 - **Setup on a machine**: [`../SETUP.md`](../SETUP.md)
+- **Play / App Store release (paid app, EAS, policies)**: [`./STORE_LAUNCH.md`](./STORE_LAUNCH.md)
 - **Ideas backlog / brainstorm**: [`APPS_AND_FEATURES.md`](./APPS_AND_FEATURES.md)
 
-When in doubt, prefer updating `docs/APPS_AND_FEATURES.md` or this file over scattering notes in random markdown files.
+When in doubt, prefer updating `docs/APPS_AND_FEATURES.md` or this file over scattering notes in random markdown files. For **award ceremony naming** (nominate / align / cheer vs `deliberating` in Firestore), update **`docs/CEREMONY_TERMINOLOGY.md`** and keep `constants/hummVoice.ts` in sync.

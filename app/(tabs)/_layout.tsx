@@ -1,0 +1,143 @@
+import React, { useEffect, useMemo } from 'react';
+import { StyleSheet, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAuthStore } from '@/lib/stores/authStore';
+import { useDecisionStore } from '@/lib/stores/decisionStore';
+import { useNominationsStore } from '@/lib/stores/nominationsStore';
+import { useReasonStore } from '@/lib/stores/reasonStore';
+import { useBattleStore } from '@/lib/stores/battleStore';
+import { theme } from '@/constants/theme';
+import {
+  TAB_BAR_PADDING_BOTTOM_BASE,
+  TAB_BAR_PADDING_TOP,
+  tabBarTotalHeight,
+} from '@/constants/tabBar';
+import { GamificationToastHost } from '@/components/gamification/GamificationToastHost';
+import { ensureWeeklyChallengeRotated } from '@/lib/firestore/coupleGamification';
+
+const tabHaptic = () => {
+  void Haptics.selectionAsync();
+};
+
+export default function TabsLayout() {
+  const { profile } = useAuthStore();
+  const insets = useSafeAreaInsets();
+
+  const tabBarStyle = useMemo(
+    () => ({
+      backgroundColor: theme.surface,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: `${theme.border}99`,
+      paddingTop: TAB_BAR_PADDING_TOP,
+      paddingBottom: TAB_BAR_PADDING_BOTTOM_BASE + insets.bottom,
+      height: tabBarTotalHeight(insets.bottom),
+    }),
+    [insets.bottom],
+  );
+
+  useEffect(() => {
+    if (!profile?.coupleId) return;
+    const u1 = useDecisionStore.getState().init(profile.coupleId);
+    const u2 = useNominationsStore.getState().init(profile.coupleId, profile.uid);
+    const u3 = useReasonStore.getState().init(profile.coupleId);
+    const u4 = useBattleStore.getState().init(profile.coupleId);
+    return () => {
+      u1();
+      u2();
+      u3();
+      u4();
+    };
+  }, [profile?.coupleId, profile?.uid]);
+
+  useEffect(() => {
+    if (!profile?.coupleId) return;
+    void ensureWeeklyChallengeRotated(profile.coupleId);
+  }, [profile?.coupleId]);
+
+  return (
+    <View style={styles.root}>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle,
+        tabBarActiveTintColor: theme.primary,
+        tabBarInactiveTintColor: theme.dim,
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontWeight: '500',
+          letterSpacing: 1.15,
+          textTransform: 'lowercase',
+          marginTop: 2,
+        },
+        tabBarShowLabel: true,
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        listeners={{ tabPress: tabHaptic }}
+        options={{
+          title: 'home',
+          tabBarAccessibilityLabel: 'home tab',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home-outline" size={size - 1} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="decide"
+        listeners={{ tabPress: tabHaptic }}
+        options={{
+          title: 'decide',
+          tabBarAccessibilityLabel: 'decide tab, quick spin and battle',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="sparkles-outline" size={size - 1} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="awards"
+        listeners={{ tabPress: tabHaptic }}
+        options={{
+          title: 'awards',
+          tabBarAccessibilityLabel: 'awards and nominations tab',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="trophy-outline" size={size - 1} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="reasons"
+        listeners={{ tabPress: tabHaptic }}
+        options={{
+          title: 'reasons',
+          tabBarAccessibilityLabel: 'reasons tab',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="heart-outline" size={size - 1} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        listeners={{ tabPress: tabHaptic }}
+        options={{
+          title: 'you',
+          tabBarAccessibilityLabel: 'profile tab',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={size - 1} color={color} />
+          ),
+        }}
+      />
+    </Tabs>
+    <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
+      <GamificationToastHost />
+    </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+});

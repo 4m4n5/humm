@@ -100,13 +100,25 @@ The repo includes **`eas.json`** with a **`preview`** profile that outputs an **
    npm run eas:init
    ```
 
-3. **Firebase env vars on EAS** — release builds do not read your local `.env`. In the [Expo dashboard](https://expo.dev) → your project → **Environment variables**, add the same keys as `.env.example` (`EXPO_PUBLIC_FIREBASE_*`). Apply them to the **preview** (and **production**) build profiles, or use:
+3. **Firebase env vars on EAS** — release builds do not read your laptop’s `.env` unless those values are **uploaded to Expo** for the right **environment** (`preview` for shareable APKs).
+
+   **Easiest (recommended):** from the `humm` folder, with a filled **`.env`** (same keys as `.env.example`):
 
    ```bash
-   npx eas-cli secret:create --name EXPO_PUBLIC_FIREBASE_API_KEY --value "..." --type string
+   npm run eas:env:push:preview
    ```
 
-   Repeat for each `EXPO_PUBLIC_FIREBASE_*` variable.
+   That runs `eas env:push preview --path .env` and creates/updates variables on the project for the **`preview`** environment (what `eas.json` uses for the APK profile).
+
+   **List what’s set (sanity check):**
+
+   ```bash
+   npm run eas:env:list
+   ```
+
+   **Or use the website:** [expo.dev](https://expo.dev) → sign in → **Projects** → **humm** → **Environment variables** (in the left sidebar). Add each name from `.env.example` manually and assign them to **Preview** (and **Production** later if you use that profile). Names must match exactly, including the `EXPO_PUBLIC_` prefix.
+
+   **Important:** If variables only exist under **Production** but you build with **`preview`**, the APK will not see them — use **`preview`** for `npm run build:android:apk`.
 
 ### Build the APK
 

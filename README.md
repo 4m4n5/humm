@@ -18,7 +18,9 @@ A **private** cross-platform app for two — built for partners, not the App Sto
 | **[docs/APPS_AND_FEATURES.md](./docs/APPS_AND_FEATURES.md)** | Living brainstorm: current build, next up, idea parking lot |
 | **[SETUP.md](./SETUP.md)** | Machine setup, Firebase, Expo Go, env vars |
 | **[BLUEPRINT.md](./BLUEPRINT.md)** | Full spec: data models, flows, costs, phased roadmap |
+| **[docs/CEREMONY_TERMINOLOGY.md](./docs/CEREMONY_TERMINOLOGY.md)** | Awards: **nominate · align · cheer** vs Firestore `deliberating` / legacy code names |
 | **[docs/DESIGN.md](./docs/DESIGN.md)** | UI/UX direction and refinement ideas |
+| **[docs/STORE_LAUNCH.md](./docs/STORE_LAUNCH.md)** | Play Store & App Store launch (EAS, AAB/IPA, pricing ~$1.99, privacy, checklists) |
 
 ---
 
@@ -29,10 +31,10 @@ A **private** cross-platform app for two — built for partners, not the App Sto
 - **Battle mode** — realtime bracket: shared pool, synced votes, revote + coin tie-break, saves to history
 
 ### Bi-annual awards
-Seven categories: nominations, full ceremony flow (deliberation → reveal), text only for now (photos later).
+Seven categories: nominations, full ceremony flow (**nominate → align → cheer**; see [terminology](./docs/CEREMONY_TERMINOLOGY.md)), text only for now (photos later).
 
-### Because of you
-Write reasons for your partner; **draw three random** reasons they’ve written about you. Text only for now (media later).
+### Reasons
+Write reasons you love your partner; **draw three random** reasons they’ve written about you. Text only for now (media later).
 
 ### Gamification
 XP and level shell on profile; badges and challenges **planned**.
@@ -43,8 +45,8 @@ XP and level shell on profile; badges and challenges **planned**.
 
 - [x] Blueprint + agent docs
 - [x] Phase 1 (partial): Auth, couple link, decide (quick spin, history), home, profile shell
-- [x] Phase 2 (v1): **Because** — write reasons + draw 3 about you · **Awards** — ceremonies + nominations (text only)
-- [x] Phase 2 (v2): Awards ceremony flow (deliberation, overlap, resolve, reveal, past) — photos / Storage still open
+- [x] Phase 2 (v1): **Reasons** — write for them + draw 3 about you · **Awards** — ceremonies + nominations (text only)
+- [x] Phase 2 (v2): Awards ceremony flow (alignment: private picks, overlap, resolve, cheer walkthrough, past) — photos / Storage still open
 - [ ] Phase 3: Gamification depth
 - [ ] Phase 4: Notifications + release builds
 

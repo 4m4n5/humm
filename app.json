@@ -24,7 +24,10 @@
         "backgroundColor": "#131118"
       },
       "package": "com.humm.app",
-      "softwareKeyboardLayoutMode": "resize"
+      "softwareKeyboardLayoutMode": "resize",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -40,6 +43,12 @@
         }
       ],
       "expo-notifications"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "30c5357d-ddd0-490b-a158-fd22c872392e"
+      }
+    }
   }
 }
