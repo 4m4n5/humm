@@ -1,46 +1,72 @@
 # App Store listing — Hum - rituals (`com.humtum.app`)
 
-Copy-paste pack for **App Store Connect** step 5 (metadata, privacy, review). **Apple’s official screenshot sizes** change; always verify against [Screenshot specifications](https://developer.apple.com/help/app-store-connect/reference/screenshot-specifications/) before upload.
+Single reference for **App Store Connect** metadata, URLs, privacy, review, and assets. **Apple changes limits and required screenshot slots** — always verify against [App Store Connect Help](https://developer.apple.com/help/app-store-connect/) and [Screenshot specifications](https://developer.apple.com/help/app-store-connect/reference/screenshot-specifications/) before submit.
 
-**Not legal advice:** Have a lawyer review the privacy policy and terms before you charge money.
+**Not legal advice:** Have a lawyer review privacy policy and paid-app terms before you charge money.
 
----
+**Operator (listed on hosted pages):** Aman Shrivastava · **Support email:** `aman.srivastava999@gmail.com` · **Policy/support pages last updated:** April 25, 2026 (`docs/store/`).
 
-## 1. Core identity (App Information)
-
-| Field | Value | Notes |
-|--------|--------|--------|
-| **Name** (30 chars max) | `Hum - rituals` | 14 characters — OK. |
-| **Subtitle** (30 chars max) | `Private rituals for two` | 24 characters — OK. |
-| **Bundle ID** | `com.humtum.app` | Must match Xcode / EAS / `app.json`. |
-
-### Alternate subtitles (pick one, all ≤30)
-
-- `Private rituals for two` *(recommended)*  
-- `Decisions, love, small wins`  
-- `For you and your person`  
+**Binary source of truth:** [`app.json`](../app.json) — name, version, iOS bundle ID, build number, orientation, dark UI, plugins (Firebase client, `expo-image-picker`, `expo-notifications`).
 
 ---
 
-## 2. Promotional text (≤170 characters, editable often without full review)
+## 0. At-a-glance (copy into Connect)
+
+| Connect / Apple field | Value |
+|----------------------|--------|
+| **App name** (≤30) | `Hum - rituals` |
+| **Subtitle** (≤30) | `Private rituals for two` |
+| **Bundle ID** | `com.humtum.app` (must match Apple Developer identifier + EAS/Xcode) |
+| **SKU** (internal, unique) | e.g. `humtum-ios-001` |
+| **Primary language** | English (U.S.) |
+| **Marketing version** (user-visible) | `1.0.0` (from `expo.version`) |
+| **Build** (`CFBundleVersion`) | `1` — must increase every upload (see EAS / Xcode) |
+| **Privacy Policy URL** | `https://4m4n5.github.io/humm/store/privacy.html` |
+| **Support URL** | `https://4m4n5.github.io/humm/store/support.html` |
+| **Marketing URL** (optional) | `https://4m4n5.github.io/humm/store/index.html` |
+| **Copyright** | `© 2026 Aman Shrivastava` |
+| **Category (primary)** | **Lifestyle** (recommended: couple rituals, not a public social network) |
+| **Category (secondary)** | **Entertainment** or **Social Networking** only if you are comfortable with that framing; **Lifestyle** alone is OK. |
+| **License agreement** | Apple’s standard EULA unless you supply a custom one |
+
+**GitHub Pages:** Repo is `github.com:4m4n5/humm`. Pages must be enabled with source **`/docs`** so the paths above return **200** over **https**. If your username or repo name differs, replace `4m4n5` / `humm` in URLs. Private repo: confirm [GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits).
+
+**Pricing:** Paid one-time (e.g. **~$3.99 USD**) — set **Price schedule** in Connect; complete **Paid Applications Agreement**, tax, and banking first.
+
+---
+
+## 1. Where this doc maps in App Store Connect
+
+| Connect area | What to fill |
+|--------------|----------------|
+| **App Information** | Localizable name, subtitle, category, content rights, age rating workflow |
+| **Pricing and Availability** | Price tier, countries |
+| **App Privacy** | Data types, tracking, purposes (Section 10) |
+| **Prepare for Submission** (per platform) | Screenshots, description, keywords, promotional text, What’s New, support/marketing URLs, build, routing app coverage file if needed |
+| **App Review Information** | Sign-in required, demo accounts, notes (Section 12), contact phone (optional) |
+| **Version release** | Manual vs automatic after approval |
+
+---
+
+## 2. Promotional text (≤170 characters, editable without full review)
+
+**Primary (169 chars):**
 
 ```
 Little rituals for two: weighted spins, live battles, shared awards seasons, and reasons to love each other—invite-only, just you and your person.
 ```
-*(169 characters)*
 
-Shorter option:
+**Shorter (112 chars):**
 
 ```
 Invite your person. Spin decisions, run a live battle, pass an awards season, trade reasons—private by design.
 ```
-*(112 characters)*
 
 ---
 
-## 3. Description (App Store; up to ~4000 characters)
+## 3. Description (full store text, ≤4000 characters)
 
-Use this as your **full description** (you can trim the last paragraph if you want shorter):
+Paste as **Description**; trim trailing paragraph if you want a shorter listing.
 
 ```
 Hum - rituals is a calm, private space for you and your partner—not a social network.
@@ -64,25 +90,33 @@ Requires a free Firebase-backed account. An internet connection is needed for sy
 
 ---
 
-## 4. Keywords (100 characters total, comma-separated, no spaces)
+## 4. Keywords (100 characters, comma-separated, no spaces after commas)
 
-Apple: **no** competitor names, no “Apple” terms abuse; single words or short phrases separated by commas.
-
-**Suggested string (99 characters):**
+**Suggested (99 chars):**
 
 ```
 couple,partner,love,relationship,private,decisions,spin,battle,awards,reasons,ritual,date,together
 ```
 
-**Alternate (98 characters):**
+**Alternate (98 chars):**
 
 ```
 couple,relationship,partner,private,spin,decide,battle,awards,reasons,love,rituals,two,home
 ```
 
+Do not stuff competitor names or abuse Apple trademarks.
+
 ---
 
-## 5. What’s New (version 1.0.0 first release)
+## 5. Alternate subtitles (all ≤30 characters)
+
+- `Private rituals for two` *(recommended)*  
+- `Decisions, love, small wins`  
+- `For you and your person`  
+
+---
+
+## 6. What’s New (version 1.0.0 — first release)
 
 ```
 First App Store release: decide together (quick spin + battle), awards seasons with nominate → align → cheer, reasons write & draw, profile XP and badges, partner linking with invite codes.
@@ -90,162 +124,93 @@ First App Store release: decide together (quick spin + battle), awards seasons w
 
 ---
 
-## 6. URLs you must host (GitHub Pages is enough)
+## 7. Product facts for honest metadata (from shipped build)
 
-Static pages for this repo live under **`docs/store/`** (see **[`docs/store/README.md`](./store/README.md)** for enabling GitHub Pages from the **`/docs`** folder).
+Use these so **description**, **screenshots**, and **App Privacy** stay aligned with the binary ([`APPS_AND_FEATURES.md`](./APPS_AND_FEATURES.md), [`app.json`](../app.json)):
 
-After Pages is on, your URLs will look like:
-
-| Field | Example (replace `USER` / `REPO`) |
-|--------|-----------------------------------|
-| **Support URL** | `https://USER.github.io/REPO/store/support.html` |
-| **Privacy Policy URL** | `https://USER.github.io/REPO/store/privacy.html` |
-| **Marketing URL** (optional) | `https://USER.github.io/REPO/store/index.html` |
-
-Repo **`docs/store/`** pages already list **Aman Shrivastava**, **aman.srivastava999@gmail.com**, and last updated **April 25, 2026** — use those GitHub Pages URLs in Connect. Edit the HTML when anything changes.
-
-**GitHub Pages** is sufficient for Apple/Google as long as the URLs are **https** and return **200**. For **private** repos, confirm [current GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits); a **public** repo + Pages is the usual free path.
-
----
-
-## 7. Screenshots — Apple does **not** accept synthetic marketing-only art for the primary set
-
-Screenshots must **reflect the actual app UI** (same general chrome, fonts, flows). You generate them locally:
-
-### 7.1 Official size reference
-
-Always check: **[Screenshot specifications — App Store Connect](https://developer.apple.com/help/app-store-connect/reference/screenshot-specifications/)**
-
-As of drafting, teams commonly export **at least one** of these **portrait** sets (Connect shows which slots are mandatory for your deployment target):
-
-| Role | Typical portrait size (px) | How to get it |
-|------|------------------------------|----------------|
-| **Primary “largest iPhone” slot** | e.g. **1290 × 2796** (among accepted sizes for the 6.7" / 6.9" class) | **Xcode Simulator** → *iPhone 15 Pro Max* (or another model whose screenshot export matches an accepted size), run release build or dev client, **⌘S** saves to Desktop. |
-| **Second class** if Connect asks | e.g. **1284 × 2778** (6.5" class) | Simulator *iPhone 14 Plus* / sizes listed in Apple’s table, or scale carefully from master. |
-
-If Connect only asks for **one** display family for your app, still upload **3–8** strong shots for conversion.
-
-### 7.2 Recommended shot list (same order on the store)
-
-Capture **dark mode**, **status bar visible**, **no personal emails** visible (use demo accounts).
-
-1. **Home** — four tiles + profile row (shows breadth).  
-2. **Quick spin** — category + wheel / pre-spin (exciting moment).  
-3. **Quick spin result** or **history** — shows outcome / saved memory.  
-4. **Decide → Battle** — lobby or bracket (shows “live together”).  
-5. **Awards hub** — season card + phase strip + categories (core differentiator).  
-6. **Nominate / category** — story list or empty state + “add nomination”.  
-7. **Reasons** — hero (“draw three”) or write screen.  
-8. **You / profile** — XP + cred strip + badges (trust + depth).  
-9. **Ceremony calendar** or **align** — shows season seriousness (optional).  
-10. **Link partner** or **sign in** — only if it looks premium; otherwise skip.
-
-**Tips:** Turn on **Display Zoom → Default** on device; hide notification banners; use same **build** you submit for review.
+| Topic | Fact |
+|--------|------|
+| **Accounts** | Email/password via **Firebase Auth**; partner link via **invite code**. |
+| **Sync** | **Firestore**; internet required. |
+| **Orientation / device** | **Portrait**; iOS **`supportsTablet`: false** — phone-only iOS experience; no iPad-optimized UI. |
+| **Appearance** | **`userInterfaceStyle`: dark** — capture screenshots in dark mode. |
+| **Decide** | Quick spin (categories, weights, veto, history); **Battle** (realtime pool + bracket, tie revote, coin). |
+| **Awards** | Seasons (e.g. H1/H2 calendar context); nominate → **align** → **cheer**; past seasons. Internal Firestore statuses may still say `deliberating` — user-facing copy is “align” ([`CEREMONY_TERMINOLOGY.md`](./CEREMONY_TERMINOLOGY.md)). |
+| **Reasons** | Write text for partner; draw up to three random lines about you. |
+| **Profile** | XP, level, badges, together-style stats strip. |
+| **Notifications** | **`expo-notifications`**: optional **local** ceremony / alignment reminders from awards calendar; declare if you store **push tokens** for remote delivery. |
+| **Photos** | **`expo-image-picker`** with permission string: *“Hum uses your photos for nominations and reasons.”* Declare **Photo Library** when the build requests it; purpose: **App functionality**. |
+| **Ads / tracking** | No ad SDKs in repo; **App Tracking Transparency** typically **No** unless you add cross-app tracking. |
+| **In-app purchases** | None in current product model if the app is **paid upfront** only—don’t enable IAP metadata you don’t use. |
 
 ---
 
-## 8. App Preview (optional video)
+## 8. Screenshots (real UI only)
+
+Apple expects screenshots that **match the app’s general UI** (chrome, typography, flows). See **[Screenshot specifications](https://developer.apple.com/help/app-store-connect/reference/screenshot-specifications/)** for **required sizes** for your deployment target.
+
+### 8.1 How to capture
+
+- **Xcode Simulator** (e.g. device class that maps to **6.7" / 6.9"** accepted portrait sizes such as **1290 × 2796** — verify Apple’s current table), **⌘S** to Desktop, then crop/export if needed.  
+- Repo marketing captures live under **`docs/store/images/`** (`screen-01.png` …) as a **reference order** for your store set—**re-export** at Connect-required pixel dimensions before upload.  
+- **Dark mode**, **readable status bar**, **no real personal emails** on screen (demo accounts).
+
+### 8.2 Suggested story order (3–8 strong shots)
+
+1. **Home** — four tiles + profile row.  
+2. **Quick spin** — category + wheel / pre-spin.  
+3. **Quick spin result** or **decision history**.  
+4. **Battle** — lobby or live bracket.  
+5. **Awards hub** — season + phase strip + categories.  
+6. **Nominate** — story list or add nomination.  
+7. **Reasons** — write or “draw three”.  
+8. **You / profile** — XP + badges.  
+9. **Ceremony calendar** or **align** (optional).  
+10. **Link partner** (optional, only if it looks polished).
+
+**Tips:** Display Zoom **Default**; dismiss notifications; same **build** you submit for review.
+
+---
+
+## 9. App Preview (optional)
 
 - **15–30 s**, same device class as screenshots.  
-- Show: home → quick spin → result → awards hub → one reason card.  
-- No copyrighted music unless licensed.
+- Flow: home → quick spin → result → awards hub → reason line.  
+- No unlicensed music.
 
 ---
 
-## 9. Privacy policy (host at your **Privacy Policy URL**)
+## 10. App Privacy questionnaire (nutrition labels)
 
-Replace `YOUR_EMAIL`, `YOUR_SUPPORT_URL`, and jurisdiction text as needed.
-
-```markdown
-# Privacy Policy — Hum - rituals
-
-**Last updated:** [DATE]
-
-Hum - rituals (“we”, “the app”) is operated by [YOUR LEGAL NAME OR COMPANY]. This policy describes how we handle information when you use the mobile app.
-
-## Who the app is for
-
-The app is intended for **two adults** who choose to link their accounts. It is not directed at children under 13.
-
-## Information we collect
-
-**Account and profile**
-- Email address and password (for sign-in), or credentials from any future sign-in methods we add.
-- Display name and in-app profile data you provide.
-- Invite codes used to link two accounts.
-
-**Content you create**
-- Text and other content you enter in features such as **Decisions**, **Awards** (nominations and ceremony data), and **Reasons**.
-- Optional **photos** if you use features that request photo library access.
-
-**Technical and operational**
-- **Device tokens** for push notifications if you grant permission (stored with your profile for delivery through Apple/Google infrastructure).
-- **Diagnostic and security** data as collected by our infrastructure providers (e.g. authentication events, IP address, device type) to operate and secure the service.
-
-## How we use information
-
-- To provide sync between you and your partner, run ceremonies, show history, and improve reliability and security.
-- To send **local** or **remote** notifications if you opt in (e.g. reminders related to in-app events).
-
-We do **not** sell your personal information. We do **not** run a public social graph inside this app.
-
-## Where data is processed
-
-We use **Google Firebase** (Authentication, Firestore database, and related Google Cloud services) to host backend data. Data may be processed in the United States and other countries where Google operates. See Google’s privacy documentation for more on their subprocessors.
-
-## Retention and deletion
-
-We retain your data while your account exists and as needed to operate the service. You may request deletion of your account and associated personal data by contacting us at **YOUR_EMAIL**. Some information may remain in backups for a limited period.
-
-## Security
-
-We use industry-standard transport encryption (HTTPS) for client communication with Firebase. You are responsible for keeping your password confidential.
-
-## Changes
-
-We may update this policy from time to time. We will post the new policy at the same URL and update the “Last updated” date.
-
-## Contact
-
-**YOUR_EMAIL**  
-**YOUR_SUPPORT_URL**
-```
-
----
-
-## 10. App Privacy questionnaire (App Store Connect → App privacy)
-
-Answer **truthfully** for **your** build. Below is a **typical** mapping for this codebase (Firebase Auth + Firestore + optional Expo push token + image picker + local notifications). **Adjust** if you add analytics, crash reporters, or ads.
+Answer **for the build you upload**. Typical mapping for **Firebase Auth + Firestore + optional push token + image picker + local notifications**:
 
 | Data type | Collected? | Linked to user? | Used for | Third-party sharing |
 |-----------|------------|-----------------|----------|---------------------|
-| **Contact info** (email) | Yes | Yes | App functionality, account management | Firebase (processor) |
-| **User content** (reasons, nominations, decisions, profile fields) | Yes | Yes | App functionality | Firebase |
-| **Identifiers** (user ID, device push token if enabled) | Yes | Yes | App functionality, notifications | Firebase / Apple push infrastructure |
-| **Usage data** | Only if you add analytics later | — | — | — |
-| **Diagnostics** | If Firebase/Google collects minimal diagnostics | Often yes at infra level | Security / operations | Google |
+| **Email address** | Yes | Yes | Account, app functionality | Google (Firebase) |
+| **Name / profile** | If you collect display names | Yes | App functionality | Firebase |
+| **User content** (decisions, awards text, reasons, ceremony data) | Yes | Yes | App functionality | Firebase |
+| **Identifiers** (Firebase UID; device push token if stored) | Yes | Yes | Account, notifications | Firebase / APNs |
+| **Photos** | Only if user picks images | Yes | App functionality | Stored/processed per your implementation (often Firebase / on-device only) |
+| **Usage / diagnostics** | Only if you add analytics/crash SDKs | — | — | — |
 
-**Tracking:** Usually **No**, you do not enable App Tracking Transparency for cross-app tracking in this stack.
+**Tracking:** **No** unless you enable cross-app tracking.  
+**Photos:** Match **NSPhotoLibraryUsageDescription** / purpose string to actual flows.
 
-**Photos:** Declare if **Photo Library** access is requested (`expo-image-picker`); purpose: **App functionality** (attach images to nominations/reasons when you ship that path).
-
----
-
-## 11. Age rating (questionnaire)
-
-Typical honest answers for this app:
-
-- **Cartoon / realistic violence:** None or infrequent (unless your battle copy uses strong metaphors—keep literal violence **No**).  
-- **Profanity / mature themes:** None or infrequent (user-generated text could contain anything—if UGC is freeform, disclose **Infrequent** or **Frequent** for “mature/suggestive themes” per Apple’s definitions; many couple apps pick **12+** or **17+** if UGC is unrestricted—**consult Apple’s definitions**).  
-- **Gambling:** No.  
-- **Controlled substances:** No.  
-- **Horror:** No.  
-
-If users can type **anything** in reasons/nominations, Apple may expect a **higher** rating or **moderation**—be conservative.
+After any SDK or backend change, **re-run** the privacy questionnaire and update the hosted privacy policy.
 
 ---
 
-## 12. Review notes (paste into App Store Connect)
+## 11. Age rating (content description)
+
+- **Violence / horror / gambling / substances:** generally **None** for shipped UI.  
+- **User-generated content:** Reasons and nominations are **freeform text** — Apple may expect disclosure of **infrequent** or **frequent** mature themes depending on definitions; be **conservative**.  
+- Many couple apps land **12+** or higher when UGC is unrestricted; **read Apple’s current definitions** question-by-question.
+
+---
+
+## 12. App Review Information — notes (paste into Connect)
+
+Replace bracketed credentials with **working disposable** Firebase users in **production** rules.
 
 ```
 COUPLE-ONLY PRODUCT
@@ -261,39 +226,86 @@ Password: [PARTNER_PASSWORD]
 Linking: Sign in as user A → profile shows invite code → sign out → sign in as user B → link-partner → enter code.
 
 FEATURES TO TRY
-Home → Quick spin (pick category, spin, save). Awards → browse categories / add nomination text. Reasons → write one line, then draw three. Decide → Battle requires both devices or two accounts in two simulators.
+Home → Quick spin (category, weights, spin, save). Awards → categories / add nomination text. Reasons → write one line, then draw three. Battle → needs two signed-in clients (two simulators or two devices) for realtime bracket.
 
 PUSH NOTIFICATIONS
-Optional. If prompted, Allow is helpful but not required for core flows. Local ceremony reminders may be scheduled from the awards calendar screen.
+Optional. Allow helps if you test ceremony nudges. Local reminders can be scheduled from the awards calendar.
 
 PHOTOS
-Photo permission appears when using flows that attach images, if enabled in your build.
+Permission appears when attaching images in supported flows (image picker).
 
-NETWORK
-Requires network for Firebase sync.
+NETWORK & ACCOUNT
+Requires network for Firebase sync. Email/password sign-in.
+
+CONTACT
+aman.srivastava999@gmail.com
 ```
 
-Replace bracketed credentials with **real disposable** test accounts in your Firebase project.
+**Contact email (Connect field):** `aman.srivastava999@gmail.com`  
+**Phone:** optional.
 
 ---
 
-## 13. Copyright / trade name
+## 13. Encryption / export compliance
 
-```
-© [YEAR] [YOUR LEGAL NAME OR COMPANY]. All rights reserved.
-```
+Expo/React Native apps using **HTTPS** (e.g. Firebase) typically answer Apple’s **standard encryption** questions as **using encryption exempt from filing** — answer **truthfully** in Connect per [Apple’s export compliance docs](https://developer.apple.com/documentation/security/complying-with-encryption-export-regulations). If you add non-exempt cryptography, re-evaluate.
 
 ---
 
-## 14. Checklist before you click Submit
+## 14. Hosted privacy policy (already live under `docs/store/`)
 
-- [ ] **Screenshots** uploaded for every **required** display size Connect shows for your binary.  
-- [ ] **Support** + **Privacy** URLs live over **https**.  
-- [ ] **App Privacy** answers match Firebase + push + photos + UGC.  
-- [ ] **Paid Applications** agreement + **banking** + **tax** complete (for paid app).  
-- [ ] **Demo accounts** work on production Firebase rules.  
-- [ ] **Build** in Connect matches **marketing version** and **build number** from `app.json` / EAS.
+Your public policy is **`privacy.html`** at the **Privacy Policy URL** above. Keep it in sync with Connect’s **App Privacy** answers.
+
+For **redundancy / lawyer drafts**, a Markdown template was previously kept in this file; prefer editing the **HTML** source of truth: [`docs/store/privacy.html`](./store/privacy.html). If you maintain a separate Markdown policy, ensure **same** collection/use/retention/Firebase/Google/contact details.
 
 ---
 
-*Generated for Hum - rituals (`com.humtum.app`). Update dates, emails, URLs, and privacy details before submission.*
+## 15. Content rights & third-party content
+
+- **Apple content rights:** You own or have rights to **app binary and assets**; for **UGC**, users submit content—disclose moderation approach if asked.  
+- **No** Apple Music / third-party music in default flows unless licensed.
+
+---
+
+## 16. Game Center, Sign in with Apple, other
+
+- **Game Center:** No (unless you add it).  
+- **Sign in with Apple:** Only required when you offer certain third-party logins; **email/password only** is a common pattern—confirm current Apple rules when you add more providers.
+
+---
+
+## 17. Checklist before Submit
+
+- [ ] **Screenshots** for every **required** iPhone size Connect shows for this binary.  
+- [ ] **Support** + **Privacy** URLs return **https 200** (no login wall).  
+- [ ] **App Privacy** matches Firebase + push + photos + UGC.  
+- [ ] **Paid Applications** agreement, **banking**, **tax** (if paid).  
+- [ ] **Demo accounts** work on **production** Firebase + Firestore rules.  
+- [ ] **Marketing version** and **build number** match uploaded IPA and [`app.json`](../app.json) / EAS.  
+- [ ] **Age rating** questionnaire matches freeform text features.  
+- [ ] **What’s New** and **Description** match shipped features.  
+- [ ] **Export compliance** answered.
+
+---
+
+## 18. After 1.0.0
+
+- Bump **`expo.version`** for user-visible version; increment **`ios.buildNumber`** (and Android `versionCode`) per store rules.  
+- Update **What’s New**, screenshots only when UI meaningfully changes.  
+- Revisit **App Privacy** whenever you add analytics, crash reporting, ads, or new data types.
+
+---
+
+## 19. Related repo docs
+
+| Doc | Use |
+|-----|-----|
+| [`STORE_LAUNCH.md`](./STORE_LAUNCH.md) | Play + Apple costs, EAS builds, broader checklist |
+| [`store/README.md`](./store/README.md) | Enabling GitHub Pages from `/docs` |
+| [`APPS_AND_FEATURES.md`](./APPS_AND_FEATURES.md) | Shipped features for accurate copy |
+| [`AWARDS_SEASON_RULES.md`](./AWARDS_SEASON_RULES.md) | Awards season behavior detail |
+| [`CEREMONY_TERMINOLOGY.md`](./CEREMONY_TERMINOLOGY.md) | User-facing “align” vs internal status names |
+
+---
+
+*Hum - rituals · `com.humtum.app` · Expo slug `humtum` · Listing pack updated April 11, 2026.*
