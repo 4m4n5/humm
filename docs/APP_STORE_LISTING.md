@@ -6,7 +6,7 @@ Single reference for **App Store Connect** metadata, URLs, privacy, review, and 
 
 **Operator (listed on hosted pages):** Aman Shrivastava · **Support email:** `aman.srivastava999@gmail.com` · **Policy/support pages last updated:** April 25, 2026 (`docs/store/`).
 
-**Binary source of truth:** `[app.json](../app.json)` — name, version, iOS bundle ID, build number, orientation, dark UI, plugins (Firebase client, `expo-image-picker`, `expo-notifications`).
+**Binary source of truth:** [`app.json`](../app.json) — name, version, iOS bundle ID, build number, orientation, dark UI, plugins (Firebase client, `expo-image-picker`, `expo-notifications`).
 
 ---
 
@@ -31,7 +31,7 @@ Single reference for **App Store Connect** metadata, URLs, privacy, review, and 
 | **License agreement**                | Apple’s standard EULA unless you supply a custom one                                                                 |
 
 
-**GitHub Pages:** Repo is `github.com:4m4n5/humm`. Pages must be enabled with source `**/docs`** so the paths above return **200** over **https**. If your username or repo name differs, replace `4m4n5` / `humm` in URLs. Private repo: confirm [GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits).
+**GitHub Pages:** Repo is `github.com:4m4n5/humm`. Pages must be enabled with source **`/docs`** so the paths above return **200** over **https**. If your username or repo name differs, replace `4m4n5` / `humm` in URLs. Private repo: confirm [GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits).
 
 **Pricing:** Paid one-time (e.g. **~$3.99 USD**) — set **Price schedule** in Connect; complete **Paid Applications Agreement**, tax, and banking first.
 
