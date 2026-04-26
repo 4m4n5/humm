@@ -20,7 +20,9 @@
     "eas:env:list": "npx eas-cli env:list preview",
     "build:android:apk": "npx eas-cli build -p android --profile preview",
     "build:android:play": "npx eas-cli build -p android --profile production",
-    "verify:store-pages": "playwright test tests/store-pages.spec.ts"
+    "verify:store-pages": "playwright test tests/store-pages.spec.ts",
+    "demo:create": "node scripts/create-demo-accounts.mjs --confirm CREATE-DEMO",
+    "demo:create:force": "node scripts/create-demo-accounts.mjs --confirm CREATE-DEMO --force"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

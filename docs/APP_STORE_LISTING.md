@@ -130,21 +130,21 @@ First App Store release: decide together (quick spin + battle), awards seasons w
 
 ## 7. Product facts for honest metadata (from shipped build)
 
-Use these so **description**, **screenshots**, and **App Privacy** stay aligned with the binary (`[APPS_AND_FEATURES.md](./APPS_AND_FEATURES.md)`, `[app.json](../app.json)`):
+Use these so **description**, **screenshots**, and **App Privacy** stay aligned with the binary ([`APPS_AND_FEATURES.md`](./APPS_AND_FEATURES.md), [`app.json`](../app.json)):
 
 
 | Topic                    | Fact                                                                                                                                                                                                                                    |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Accounts**             | Email/password via **Firebase Auth**; partner link via **invite code**.                                                                                                                                                                 |
 | **Sync**                 | **Firestore**; internet required.                                                                                                                                                                                                       |
-| **Orientation / device** | **Portrait**; iOS `**supportsTablet`: false** — phone-only iOS experience; no iPad-optimized UI.                                                                                                                                        |
-| **Appearance**           | `**userInterfaceStyle`: dark** — capture screenshots in dark mode.                                                                                                                                                                      |
+| **Orientation / device** | **Portrait**; iOS `supportsTablet: false` — phone-only iOS experience; no iPad-optimized UI.                                                                                                                                           |
+| **Appearance**           | `userInterfaceStyle: dark` in `app.json` — capture screenshots in dark mode.                                                                                                                                                             |
 | **Decide**               | Quick spin (categories, weights, veto, history); **Battle** (realtime pool + bracket, tie revote, coin).                                                                                                                                |
 | **Awards**               | Seasons (e.g. H1/H2 calendar context); nominate → **align** → **cheer**; past seasons. Internal Firestore statuses may still say `deliberating` — user-facing copy is “align” (`[CEREMONY_TERMINOLOGY.md](./CEREMONY_TERMINOLOGY.md)`). |
 | **Reasons**              | Write text for partner; draw up to three random lines about you.                                                                                                                                                                        |
 | **Profile**              | XP, level, badges, together-style stats strip.                                                                                                                                                                                          |
-| **Notifications**        | `**expo-notifications`**: optional **local** ceremony / alignment reminders from awards calendar; declare if you store **push tokens** for remote delivery.                                                                             |
-| **Photos**               | `**expo-image-picker`** with permission string: *“Hum uses your photos for nominations and reasons.”* Declare **Photo Library** when the build requests it; purpose: **App functionality**.                                             |
+| **Notifications**        | `expo-notifications`: optional **local** ceremony / alignment reminders from awards calendar; declare if you store **push tokens** for remote delivery.                                                                               |
+| **Photos**               | `expo-image-picker` with permission string: *“Hum uses your photos for nominations and reasons.”* Declare **Photo Library** when the build requests it; purpose: **App functionality**.                                                |
 | **Ads / tracking**       | No ad SDKs in repo; **App Tracking Transparency** typically **No** unless you add cross-app tracking.                                                                                                                                   |
 | **In-app purchases**     | None in current product model if the app is **paid upfront** only—don’t enable IAP metadata you don’t use.                                                                                                                              |
 
@@ -158,7 +158,7 @@ Apple expects screenshots that **match the app’s general UI** (chrome, typogra
 ### 8.1 How to capture
 
 - **Xcode Simulator** (e.g. device class that maps to **6.7" / 6.9"** accepted portrait sizes such as **1290 × 2796** — verify Apple’s current table), **⌘S** to Desktop, then crop/export if needed.  
-- Repo marketing captures live under `**docs/store/images/*`* (`screen-01.png` …) as a **reference order** for your store set—**re-export** at Connect-required pixel dimensions before upload.  
+- Repo marketing captures live under `docs/store/images/` (`screen-01.png` …) as a **reference order** for your store set—**re-export** at Connect-required pixel dimensions before upload.  
 - **Dark mode**, **readable status bar**, **no real personal emails** on screen (demo accounts).
 
 ### 8.2 Suggested story order (3–8 strong shots)
@@ -218,20 +218,17 @@ After any SDK or backend change, **re-run** the privacy questionnaire and update
 
 ## 12. App Review Information — notes (paste into Connect)
 
-Replace bracketed credentials with **working disposable** Firebase users in **production** rules.
+Create the pair in Firebase with **`npm run demo:create`** (see `scripts/create-demo-accounts.mjs`) or use your own test users. These two are **already linked** as a couple with sample decisions, reasons, and awards nominations.
 
 ```
 COUPLE-ONLY PRODUCT
 Hum - rituals is invite-only for two linked accounts. There is no public feed or discovery.
 
-DEMO FOR REVIEW
-Email: [REVIEWER_EMAIL]
-Password: [REVIEWER_PASSWORD]
+DEMO FOR REVIEW (pre-linked couple — same password on both)
+Primary account:  demo@hum.app  /  humtumapp@demo
+Partner account: partner.demo@hum.app  /  humtumapp@demo
 
-Optional second account (partner flow):
-Email: [PARTNER_EMAIL]
-Password: [PARTNER_PASSWORD]
-Linking: Sign in as user A → profile shows invite code → sign out → sign in as user B → link-partner → enter code.
+Use the partner sign-in on a second simulator or device for Decide → Battle (realtime). Everything else works signed in as the primary account only.
 
 FEATURES TO TRY
 Home → Quick spin (category, weights, spin, save). Awards → categories / add nomination text. Reasons → write one line, then draw three. Battle → needs two signed-in clients (two simulators or two devices) for realtime bracket.
@@ -262,7 +259,7 @@ Expo/React Native apps using **HTTPS** (e.g. Firebase) typically answer Apple’
 
 ## 14. Hosted privacy policy (already live under `docs/store/`)
 
-Your public policy is `**privacy.html`** at the **Privacy Policy URL** above. Keep it in sync with Connect’s **App Privacy** answers.
+Your live policy is served at the **Privacy Policy URL** above (source: [`docs/store/privacy.html`](./store/privacy.html)). Keep it in sync with Connect’s **App Privacy** answers.
 
 For **redundancy / lawyer drafts**, a Markdown template was previously kept in this file; prefer editing the **HTML** source of truth: `[docs/store/privacy.html](./store/privacy.html)`. If you maintain a separate Markdown policy, ensure **same** collection/use/retention/Firebase/Google/contact details.
 
@@ -298,7 +295,7 @@ For **redundancy / lawyer drafts**, a Markdown template was previously kept in t
 
 ## 18. After 1.0.0
 
-- Bump `**expo.version`** for user-visible version; increment `**ios.buildNumber**` (and Android `versionCode`) per store rules.  
+- Bump `expo.version` in `app.json` for user-visible version; increment `ios.buildNumber` (and Android `versionCode`) per store rules.  
 - Update **What’s New**, screenshots only when UI meaningfully changes.  
 - Revisit **App Privacy** whenever you add analytics, crash reporting, ads, or new data types.
 
@@ -314,6 +311,7 @@ For **redundancy / lawyer drafts**, a Markdown template was previously kept in t
 | `[APPS_AND_FEATURES.md](./APPS_AND_FEATURES.md)`       | Shipped features for accurate copy                |
 | `[AWARDS_SEASON_RULES.md](./AWARDS_SEASON_RULES.md)`   | Awards season behavior detail                     |
 | `[CEREMONY_TERMINOLOGY.md](./CEREMONY_TERMINOLOGY.md)` | User-facing “align” vs internal status names      |
+| `[scripts/create-demo-accounts.mjs](../scripts/create-demo-accounts.mjs)` | Seed App Store review demo users (`npm run demo:create`) |
 
 
 ---
