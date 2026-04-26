@@ -34,6 +34,12 @@ https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPO_NAME/store/privacy.html
 
 Use **`…/store/support.html`** and **`…/store/privacy.html`** (full `https://` strings) in **App Store Connect** and **Play Console**.
 
+For this repository (**`4m4n5/humm`**), after Pages is enabled, the URLs will be:
+
+- `https://4m4n5.github.io/humm/store/support.html`
+- `https://4m4n5.github.io/humm/store/privacy.html`
+- `https://4m4n5.github.io/humm/store/index.html` *(optional hub)*
+
 **Optional:** Use **`…/store/`** (trailing slash) only if you add a default document behavior you prefer; raw `support.html` / `privacy.html` links are clearest.
 
 ## `docs/.nojekyll`
