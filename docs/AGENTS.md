@@ -6,7 +6,7 @@ This file is the **entry point** for anyone (human or agent) working on the repo
 
 ## What this app is
 
-**Hum - rituals** (`com.humtum.app`, Expo slug `humtum`) is a **private app for two people** (the owners and their partner). In-app navigation copy stays **lowercase** where this doc says so; auth hero uses the full store name.
+**Hum - rituals** (`com.humtum.app`, Expo slug `humm`) is a **private app for two people** (the owners and their partner). In-app navigation copy stays **lowercase** where this doc says so; auth hero uses the full store name.
 
 Goals:
 

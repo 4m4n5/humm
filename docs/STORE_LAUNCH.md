@@ -266,4 +266,4 @@ Link the **privacy policy URL** in **both** consoles and inside the app if store
 
 ---
 
-*Last drafted for Hum - rituals (`com.humtum.app`, Expo slug `humtum`, Expo SDK 54, Firebase, EAS). Re-check store consoles and Expo docs when you actually submit.*
+*Last drafted for Hum - rituals (`com.humtum.app`, Expo slug `humm`, Expo SDK 54, Firebase, EAS). Re-check store consoles and Expo docs when you actually submit.*

@@ -6,30 +6,32 @@ Single reference for **App Store Connect** metadata, URLs, privacy, review, and 
 
 **Operator (listed on hosted pages):** Aman Shrivastava · **Support email:** `aman.srivastava999@gmail.com` · **Policy/support pages last updated:** April 25, 2026 (`docs/store/`).
 
-**Binary source of truth:** [`app.json`](../app.json) — name, version, iOS bundle ID, build number, orientation, dark UI, plugins (Firebase client, `expo-image-picker`, `expo-notifications`).
+**Binary source of truth:** `[app.json](../app.json)` — name, version, iOS bundle ID, build number, orientation, dark UI, plugins (Firebase client, `expo-image-picker`, `expo-notifications`).
 
 ---
 
 ## 0. At-a-glance (copy into Connect)
 
-| Connect / Apple field | Value |
-|----------------------|--------|
-| **App name** (≤30) | `Hum - rituals` |
-| **Subtitle** (≤30) | `Private rituals for two` |
-| **Bundle ID** | `com.humtum.app` (must match Apple Developer identifier + EAS/Xcode) |
-| **SKU** (internal, unique) | e.g. `humtum-ios-001` |
-| **Primary language** | English (U.S.) |
-| **Marketing version** (user-visible) | `1.0.0` (from `expo.version`) |
-| **Build** (`CFBundleVersion`) | `1` — must increase every upload (see EAS / Xcode) |
-| **Privacy Policy URL** | `https://4m4n5.github.io/humm/store/privacy.html` |
-| **Support URL** | `https://4m4n5.github.io/humm/store/support.html` |
-| **Marketing URL** (optional) | `https://4m4n5.github.io/humm/store/index.html` |
-| **Copyright** | `© 2026 Aman Shrivastava` |
-| **Category (primary)** | **Lifestyle** (recommended: couple rituals, not a public social network) |
-| **Category (secondary)** | **Entertainment** or **Social Networking** only if you are comfortable with that framing; **Lifestyle** alone is OK. |
-| **License agreement** | Apple’s standard EULA unless you supply a custom one |
 
-**GitHub Pages:** Repo is `github.com:4m4n5/humm`. Pages must be enabled with source **`/docs`** so the paths above return **200** over **https**. If your username or repo name differs, replace `4m4n5` / `humm` in URLs. Private repo: confirm [GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits).
+| Connect / Apple field                | Value                                                                                                                |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| **App name** (≤30)                   | `Hum - rituals`                                                                                                      |
+| **Subtitle** (≤30)                   | `Private rituals for two`                                                                                            |
+| **Bundle ID**                        | `com.humtum.app` (must match Apple Developer identifier + EAS/Xcode)                                                 |
+| **SKU** (internal, unique)           | e.g. `humtum-ios-001`                                                                                                |
+| **Primary language**                 | English (U.S.)                                                                                                       |
+| **Marketing version** (user-visible) | `1.0.0` (from `expo.version`)                                                                                        |
+| **Build** (`CFBundleVersion`)        | `1` — must increase every upload (see EAS / Xcode)                                                                   |
+| **Privacy Policy URL**               | `https://4m4n5.github.io/humm/store/privacy.html`                                                                    |
+| **Support URL**                      | `https://4m4n5.github.io/humm/store/support.html`                                                                    |
+| **Marketing URL** (optional)         | `https://4m4n5.github.io/humm/store/index.html`                                                                      |
+| **Copyright**                        | `© 2026 Aman Shrivastava`                                                                                            |
+| **Category (primary)**               | **Lifestyle** (recommended: couple rituals, not a public social network)                                             |
+| **Category (secondary)**             | **Entertainment** or **Social Networking** only if you are comfortable with that framing; **Lifestyle** alone is OK. |
+| **License agreement**                | Apple’s standard EULA unless you supply a custom one                                                                 |
+
+
+**GitHub Pages:** Repo is `github.com:4m4n5/humm`. Pages must be enabled with source `**/docs`** so the paths above return **200** over **https**. If your username or repo name differs, replace `4m4n5` / `humm` in URLs. Private repo: confirm [GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits).
 
 **Pricing:** Paid one-time (e.g. **~$3.99 USD**) — set **Price schedule** in Connect; complete **Paid Applications Agreement**, tax, and banking first.
 
@@ -37,14 +39,16 @@ Single reference for **App Store Connect** metadata, URLs, privacy, review, and 
 
 ## 1. Where this doc maps in App Store Connect
 
-| Connect area | What to fill |
-|--------------|----------------|
-| **App Information** | Localizable name, subtitle, category, content rights, age rating workflow |
-| **Pricing and Availability** | Price tier, countries |
-| **App Privacy** | Data types, tracking, purposes (Section 10) |
+
+| Connect area                              | What to fill                                                                                                                         |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **App Information**                       | Localizable name, subtitle, category, content rights, age rating workflow                                                            |
+| **Pricing and Availability**              | Price tier, countries                                                                                                                |
+| **App Privacy**                           | Data types, tracking, purposes (Section 10)                                                                                          |
 | **Prepare for Submission** (per platform) | Screenshots, description, keywords, promotional text, What’s New, support/marketing URLs, build, routing app coverage file if needed |
-| **App Review Information** | Sign-in required, demo accounts, notes (Section 12), contact phone (optional) |
-| **Version release** | Manual vs automatic after approval |
+| **App Review Information**                | Sign-in required, demo accounts, notes (Section 12), contact phone (optional)                                                        |
+| **Version release**                       | Manual vs automatic after approval                                                                                                   |
+
 
 ---
 
@@ -112,7 +116,7 @@ Do not stuff competitor names or abuse Apple trademarks.
 
 - `Private rituals for two` *(recommended)*  
 - `Decisions, love, small wins`  
-- `For you and your person`  
+- `For you and your person`
 
 ---
 
@@ -126,22 +130,24 @@ First App Store release: decide together (quick spin + battle), awards seasons w
 
 ## 7. Product facts for honest metadata (from shipped build)
 
-Use these so **description**, **screenshots**, and **App Privacy** stay aligned with the binary ([`APPS_AND_FEATURES.md`](./APPS_AND_FEATURES.md), [`app.json`](../app.json)):
+Use these so **description**, **screenshots**, and **App Privacy** stay aligned with the binary (`[APPS_AND_FEATURES.md](./APPS_AND_FEATURES.md)`, `[app.json](../app.json)`):
 
-| Topic | Fact |
-|--------|------|
-| **Accounts** | Email/password via **Firebase Auth**; partner link via **invite code**. |
-| **Sync** | **Firestore**; internet required. |
-| **Orientation / device** | **Portrait**; iOS **`supportsTablet`: false** — phone-only iOS experience; no iPad-optimized UI. |
-| **Appearance** | **`userInterfaceStyle`: dark** — capture screenshots in dark mode. |
-| **Decide** | Quick spin (categories, weights, veto, history); **Battle** (realtime pool + bracket, tie revote, coin). |
-| **Awards** | Seasons (e.g. H1/H2 calendar context); nominate → **align** → **cheer**; past seasons. Internal Firestore statuses may still say `deliberating` — user-facing copy is “align” ([`CEREMONY_TERMINOLOGY.md`](./CEREMONY_TERMINOLOGY.md)). |
-| **Reasons** | Write text for partner; draw up to three random lines about you. |
-| **Profile** | XP, level, badges, together-style stats strip. |
-| **Notifications** | **`expo-notifications`**: optional **local** ceremony / alignment reminders from awards calendar; declare if you store **push tokens** for remote delivery. |
-| **Photos** | **`expo-image-picker`** with permission string: *“Hum uses your photos for nominations and reasons.”* Declare **Photo Library** when the build requests it; purpose: **App functionality**. |
-| **Ads / tracking** | No ad SDKs in repo; **App Tracking Transparency** typically **No** unless you add cross-app tracking. |
-| **In-app purchases** | None in current product model if the app is **paid upfront** only—don’t enable IAP metadata you don’t use. |
+
+| Topic                    | Fact                                                                                                                                                                                                                                    |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Accounts**             | Email/password via **Firebase Auth**; partner link via **invite code**.                                                                                                                                                                 |
+| **Sync**                 | **Firestore**; internet required.                                                                                                                                                                                                       |
+| **Orientation / device** | **Portrait**; iOS `**supportsTablet`: false** — phone-only iOS experience; no iPad-optimized UI.                                                                                                                                        |
+| **Appearance**           | `**userInterfaceStyle`: dark** — capture screenshots in dark mode.                                                                                                                                                                      |
+| **Decide**               | Quick spin (categories, weights, veto, history); **Battle** (realtime pool + bracket, tie revote, coin).                                                                                                                                |
+| **Awards**               | Seasons (e.g. H1/H2 calendar context); nominate → **align** → **cheer**; past seasons. Internal Firestore statuses may still say `deliberating` — user-facing copy is “align” (`[CEREMONY_TERMINOLOGY.md](./CEREMONY_TERMINOLOGY.md)`). |
+| **Reasons**              | Write text for partner; draw up to three random lines about you.                                                                                                                                                                        |
+| **Profile**              | XP, level, badges, together-style stats strip.                                                                                                                                                                                          |
+| **Notifications**        | `**expo-notifications`**: optional **local** ceremony / alignment reminders from awards calendar; declare if you store **push tokens** for remote delivery.                                                                             |
+| **Photos**               | `**expo-image-picker`** with permission string: *“Hum uses your photos for nominations and reasons.”* Declare **Photo Library** when the build requests it; purpose: **App functionality**.                                             |
+| **Ads / tracking**       | No ad SDKs in repo; **App Tracking Transparency** typically **No** unless you add cross-app tracking.                                                                                                                                   |
+| **In-app purchases**     | None in current product model if the app is **paid upfront** only—don’t enable IAP metadata you don’t use.                                                                                                                              |
+
 
 ---
 
@@ -152,20 +158,20 @@ Apple expects screenshots that **match the app’s general UI** (chrome, typogra
 ### 8.1 How to capture
 
 - **Xcode Simulator** (e.g. device class that maps to **6.7" / 6.9"** accepted portrait sizes such as **1290 × 2796** — verify Apple’s current table), **⌘S** to Desktop, then crop/export if needed.  
-- Repo marketing captures live under **`docs/store/images/`** (`screen-01.png` …) as a **reference order** for your store set—**re-export** at Connect-required pixel dimensions before upload.  
+- Repo marketing captures live under `**docs/store/images/*`* (`screen-01.png` …) as a **reference order** for your store set—**re-export** at Connect-required pixel dimensions before upload.  
 - **Dark mode**, **readable status bar**, **no real personal emails** on screen (demo accounts).
 
 ### 8.2 Suggested story order (3–8 strong shots)
 
-1. **Home** — four tiles + profile row.  
-2. **Quick spin** — category + wheel / pre-spin.  
-3. **Quick spin result** or **decision history**.  
-4. **Battle** — lobby or live bracket.  
-5. **Awards hub** — season + phase strip + categories.  
-6. **Nominate** — story list or add nomination.  
-7. **Reasons** — write or “draw three”.  
-8. **You / profile** — XP + badges.  
-9. **Ceremony calendar** or **align** (optional).  
+1. **Home** — four tiles + profile row.
+2. **Quick spin** — category + wheel / pre-spin.
+3. **Quick spin result** or **decision history**.
+4. **Battle** — lobby or live bracket.
+5. **Awards hub** — season + phase strip + categories.
+6. **Nominate** — story list or add nomination.
+7. **Reasons** — write or “draw three”.
+8. **You / profile** — XP + badges.
+9. **Ceremony calendar** or **align** (optional).
 10. **Link partner** (optional, only if it looks polished).
 
 **Tips:** Display Zoom **Default**; dismiss notifications; same **build** you submit for review.
@@ -184,14 +190,16 @@ Apple expects screenshots that **match the app’s general UI** (chrome, typogra
 
 Answer **for the build you upload**. Typical mapping for **Firebase Auth + Firestore + optional push token + image picker + local notifications**:
 
-| Data type | Collected? | Linked to user? | Used for | Third-party sharing |
-|-----------|------------|-----------------|----------|---------------------|
-| **Email address** | Yes | Yes | Account, app functionality | Google (Firebase) |
-| **Name / profile** | If you collect display names | Yes | App functionality | Firebase |
-| **User content** (decisions, awards text, reasons, ceremony data) | Yes | Yes | App functionality | Firebase |
-| **Identifiers** (Firebase UID; device push token if stored) | Yes | Yes | Account, notifications | Firebase / APNs |
-| **Photos** | Only if user picks images | Yes | App functionality | Stored/processed per your implementation (often Firebase / on-device only) |
-| **Usage / diagnostics** | Only if you add analytics/crash SDKs | — | — | — |
+
+| Data type                                                         | Collected?                           | Linked to user? | Used for                   | Third-party sharing                                                        |
+| ----------------------------------------------------------------- | ------------------------------------ | --------------- | -------------------------- | -------------------------------------------------------------------------- |
+| **Email address**                                                 | Yes                                  | Yes             | Account, app functionality | Google (Firebase)                                                          |
+| **Name / profile**                                                | If you collect display names         | Yes             | App functionality          | Firebase                                                                   |
+| **User content** (decisions, awards text, reasons, ceremony data) | Yes                                  | Yes             | App functionality          | Firebase                                                                   |
+| **Identifiers** (Firebase UID; device push token if stored)       | Yes                                  | Yes             | Account, notifications     | Firebase / APNs                                                            |
+| **Photos**                                                        | Only if user picks images            | Yes             | App functionality          | Stored/processed per your implementation (often Firebase / on-device only) |
+| **Usage / diagnostics**                                           | Only if you add analytics/crash SDKs | —               | —                          | —                                                                          |
+
 
 **Tracking:** **No** unless you enable cross-app tracking.  
 **Photos:** Match **NSPhotoLibraryUsageDescription** / purpose string to actual flows.
@@ -254,9 +262,9 @@ Expo/React Native apps using **HTTPS** (e.g. Firebase) typically answer Apple’
 
 ## 14. Hosted privacy policy (already live under `docs/store/`)
 
-Your public policy is **`privacy.html`** at the **Privacy Policy URL** above. Keep it in sync with Connect’s **App Privacy** answers.
+Your public policy is `**privacy.html`** at the **Privacy Policy URL** above. Keep it in sync with Connect’s **App Privacy** answers.
 
-For **redundancy / lawyer drafts**, a Markdown template was previously kept in this file; prefer editing the **HTML** source of truth: [`docs/store/privacy.html`](./store/privacy.html). If you maintain a separate Markdown policy, ensure **same** collection/use/retention/Firebase/Google/contact details.
+For **redundancy / lawyer drafts**, a Markdown template was previously kept in this file; prefer editing the **HTML** source of truth: `[docs/store/privacy.html](./store/privacy.html)`. If you maintain a separate Markdown policy, ensure **same** collection/use/retention/Firebase/Google/contact details.
 
 ---
 
@@ -276,21 +284,21 @@ For **redundancy / lawyer drafts**, a Markdown template was previously kept in t
 
 ## 17. Checklist before Submit
 
-- [ ] **Screenshots** for every **required** iPhone size Connect shows for this binary.  
-- [ ] **Support** + **Privacy** URLs return **https 200** (no login wall).  
-- [ ] **App Privacy** matches Firebase + push + photos + UGC.  
-- [ ] **Paid Applications** agreement, **banking**, **tax** (if paid).  
-- [ ] **Demo accounts** work on **production** Firebase + Firestore rules.  
-- [ ] **Marketing version** and **build number** match uploaded IPA and [`app.json`](../app.json) / EAS.  
-- [ ] **Age rating** questionnaire matches freeform text features.  
-- [ ] **What’s New** and **Description** match shipped features.  
-- [ ] **Export compliance** answered.
+- **Screenshots** for every **required** iPhone size Connect shows for this binary.  
+- **Support** + **Privacy** URLs return **https 200** (no login wall).  
+- **App Privacy** matches Firebase + push + photos + UGC.  
+- **Paid Applications** agreement, **banking**, **tax** (if paid).  
+- **Demo accounts** work on **production** Firebase + Firestore rules.  
+- **Marketing version** and **build number** match uploaded IPA and `[app.json](../app.json)` / EAS.  
+- **Age rating** questionnaire matches freeform text features.  
+- **What’s New** and **Description** match shipped features.  
+- **Export compliance** answered.
 
 ---
 
 ## 18. After 1.0.0
 
-- Bump **`expo.version`** for user-visible version; increment **`ios.buildNumber`** (and Android `versionCode`) per store rules.  
+- Bump `**expo.version`** for user-visible version; increment `**ios.buildNumber**` (and Android `versionCode`) per store rules.  
 - Update **What’s New**, screenshots only when UI meaningfully changes.  
 - Revisit **App Privacy** whenever you add analytics, crash reporting, ads, or new data types.
 
@@ -298,14 +306,16 @@ For **redundancy / lawyer drafts**, a Markdown template was previously kept in t
 
 ## 19. Related repo docs
 
-| Doc | Use |
-|-----|-----|
-| [`STORE_LAUNCH.md`](./STORE_LAUNCH.md) | Play + Apple costs, EAS builds, broader checklist |
-| [`store/README.md`](./store/README.md) | Enabling GitHub Pages from `/docs` |
-| [`APPS_AND_FEATURES.md`](./APPS_AND_FEATURES.md) | Shipped features for accurate copy |
-| [`AWARDS_SEASON_RULES.md`](./AWARDS_SEASON_RULES.md) | Awards season behavior detail |
-| [`CEREMONY_TERMINOLOGY.md`](./CEREMONY_TERMINOLOGY.md) | User-facing “align” vs internal status names |
+
+| Doc                                                    | Use                                               |
+| ------------------------------------------------------ | ------------------------------------------------- |
+| `[STORE_LAUNCH.md](./STORE_LAUNCH.md)`                 | Play + Apple costs, EAS builds, broader checklist |
+| `[store/README.md](./store/README.md)`                 | Enabling GitHub Pages from `/docs`                |
+| `[APPS_AND_FEATURES.md](./APPS_AND_FEATURES.md)`       | Shipped features for accurate copy                |
+| `[AWARDS_SEASON_RULES.md](./AWARDS_SEASON_RULES.md)`   | Awards season behavior detail                     |
+| `[CEREMONY_TERMINOLOGY.md](./CEREMONY_TERMINOLOGY.md)` | User-facing “align” vs internal status names      |
+
 
 ---
 
-*Hum - rituals · `com.humtum.app` · Expo slug `humtum` · Listing pack updated April 11, 2026.*
+*Hum - rituals · `com.humtum.app` · Expo slug `humm` · Listing pack updated April 11, 2026.*
