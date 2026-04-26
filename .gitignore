@@ -1,13 +1,14 @@
 node_modules/
 .expo/
+test-results/
+playwright-report/
 .DS_Store
 .cursor/
 dist/
 web-build/
 .env
-# Never commit Firebase service account keys
-misc/*firebase-adminsdk*.json
-misc/*-adminsdk-*.json
+# Local Firebase / plist exports — do not commit
+misc/
 **/serviceAccount*.json
 *.orig.*
 *.jks

@@ -1,7 +1,7 @@
-# humm — App Blueprint
+# Hum - rituals — App Blueprint
 
 > **Status:** Living spec — Phase 1 partially implemented in-app; this document remains the source of truth for data models, costs, and long-term roadmap.  
-> **App name:** `humm` *(like the sound you make when a song gets stuck in your head)*  
+> **App name (stores):** **Hum - rituals** · **Bundle / package:** `com.humtum.app` · **Expo slug:** `humtum` · **URL scheme:** `humtum://`  
 > **Audience:** Exactly two users — a private couple app  
 > **Platforms:** iOS · Android · Web (single codebase)
 
@@ -31,8 +31,9 @@
 
 | Field | Value |
 |---|---|
-| App Name | `humm` *(like the sound you make when a song gets stuck in your head)* |
-| Project folder | `humm` |
+| App Name (stores / home screen) | **Hum - rituals** |
+| Bundle ID (iOS) / applicationId (Android) | `com.humtum.app` |
+| Project folder (local) | often still `humm` on disk; npm package name is `humtum` |
 | Users | Exactly 2 (you + your wife) |
 | Nature | Private, invite-only, no public listing needed |
 | Primary Language | TypeScript |
@@ -581,7 +582,7 @@ Challenge generation: start with a curated set of ~30 challenges, rotate weekly 
 
 A private collection of reasons each partner has written about why they love the other. After you write one for them, you can draw three random reasons they’ve written about you — a pick-me-up on good days and bad ones.
 
-The feature name on screen: **"reasons"** — always lowercase, keeping the humm aesthetic.
+The feature name on screen: **"reasons"** — always lowercase, keeping the warm minimal aesthetic.
 
 ---
 
@@ -992,5 +993,5 @@ hum/
 ---
 
 *Blueprint version 1.0 — written April 2026*  
-*App name: humm — always lowercase, like the quiet melody between two people*  
+*Store listing: Hum - rituals · In-app copy stays mostly lowercase where noted.*  
 *Next step: Run `Phase 1` implementation starting with Expo project initialization*

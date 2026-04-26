@@ -1,4 +1,4 @@
-# humm — UI & UX notes
+# Hum - rituals — UI & UX notes
 
 **Purpose:** Direction for layout, motion, and polish — **not** a second theme system. Colors live in `tailwind.config.js` + `constants/theme.ts` (keep them in sync).
 
@@ -12,7 +12,7 @@
 |--------|-----------|
 | **Density** | **Balanced** — readable spacing; tighten only where lists repeat. |
 | **Motion** | **Subtle** — short `active` feedback, light haptics on meaningful actions; avoid long or decorative animations unless a moment deserves it (e.g. awards **cheer** walkthrough). |
-| **Brand** | **humm** lowercase in UI; warm, musical tone; rose/blush primary on dark surfaces. |
+| **Brand** | Store name **Hum - rituals**; most UI stays **lowercase**; warm, musical tone; rose/blush primary on dark surfaces. |
 
 ---
 

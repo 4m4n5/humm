@@ -27,7 +27,7 @@ export const useUiPreferencesStore = create<State>()(
         set({ ceremonyReminderScheduledForId }),
     }),
     {
-      name: 'humm-ui-prefs',
+      name: 'humtum-ui-prefs',
       storage: createJSONStorage(() => AsyncStorage),
     },
   ),

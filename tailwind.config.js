@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 /**
  * Design tokens use the `hum` prefix (e.g. bg-hum-bg).
- * App brand is "humm" — warm, romantic minimal palette.
+ * App brand: Hum ("Hum - rituals" on stores) — warm, romantic minimal palette.
  */
 module.exports = {
   content: [

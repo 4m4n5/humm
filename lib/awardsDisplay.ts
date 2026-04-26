@@ -32,7 +32,7 @@ export function authorShortLabel(
   partnerName = 'partner',
 ): string {
   if (!profile) return 'someone';
-  if (submittedBy === STARTER_NOMINATION_SUBMITTED_BY) return 'humm';
+  if (submittedBy === STARTER_NOMINATION_SUBMITTED_BY) return 'Hum';
   if (submittedBy === profile.uid) return 'you';
   if (profile.partnerId && submittedBy === profile.partnerId) return partnerName;
   if (couple) {

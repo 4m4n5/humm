@@ -1,4 +1,4 @@
-# humm
+# Hum - rituals
 
 > *Like the sound you make when a song gets stuck in your head — that quiet melody that just plays between two people.*
 

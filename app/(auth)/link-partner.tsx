@@ -25,7 +25,7 @@ export default function LinkPartner() {
     if (!profile?.inviteCode) return;
     try {
       await Share.share({
-        message: `join me on humm — my code: ${profile.inviteCode}`,
+        message: `join me on Hum — my code: ${profile.inviteCode}`,
       });
     } catch {
       if (Platform.OS === 'web' && navigator?.clipboard) {
@@ -64,12 +64,12 @@ export default function LinkPartner() {
             className="flex-1 gap-y-9 px-6 pb-10"
             style={{ paddingTop: AUTH_SCREEN_PADDING_TOP }}
           >
-            <View className="items-center gap-y-4">
+            <View className="items-center gap-y-3">
               <Text
-                className="text-[36px] font-extralight tracking-[0.35em] text-hum-primary"
-                maxFontSizeMultiplier={1.25}
+                className="text-center text-[30px] font-extralight leading-[36px] tracking-[-0.02em] text-hum-primary"
+                maxFontSizeMultiplier={1.2}
               >
-                humm
+                Hum - rituals
               </Text>
               <Text
                 className="text-center text-[20px] font-light text-hum-text"

@@ -1,6 +1,6 @@
 # Store launch guide — Google Play & Apple App Store
 
-This doc is a **practical checklist** for shipping **humm** as a **paid app (~$1.99 USD)** on both major stores. Fees, UI labels, and policies change—verify numbers and forms in each console before you submit.
+This doc is a **practical checklist** for shipping **Hum - rituals** (`com.humtum.app`) as a **paid app** (e.g. **~$3.99 USD**) on both major stores. Fees, UI labels, and policies change—verify numbers and forms in each console before you submit.
 
 **Related:** [SETUP.md](../SETUP.md) (local + EAS env), [eas.json](../eas.json) (build profiles), [.env.example](../.env.example) (Firebase keys).
 
@@ -21,10 +21,10 @@ You need **both** enrollments only if you want **both** stores.
 
 ## 2. What you’re selling: “paid app” vs other models
 
-- **Paid download (this doc assumes ~$1.99 one-time):** User pays once to install. Configure in **Play Console** (paid app / one-time price) and **App Store Connect** (paid app + **price tier** matching $1.99 in the US).
+- **Paid download (this doc assumes a one-time price, e.g. ~$3.99 USD):** User pays once to install. Configure in **Play Console** (paid app / one-time price) and **App Store Connect** (paid app + **price tier** matching your US price).
 - **Alternatives** you are *not* required to use: subscriptions, in-app purchases (IAP), free + unlock. Changing model later may need new binaries and review.
 
-**humm today:** no IAP code path in-repo for store billing—the app is “buy once, use Firebase backend.” Store handles the **purchase**; your app still uses **Firebase Auth** after install.
+**Hum today:** no IAP code path in-repo for store billing—the app is “buy once, use Firebase backend.” Store handles the **purchase**; your app still uses **Firebase Auth** after install.
 
 ---
 
@@ -115,7 +115,7 @@ Only if EAS recommends it for build timeouts—defaults often suffice.
 
 ### 4.1 App creation
 
-- Create app → **default language**, **title** (e.g. `humm`), **short description**, **full description**.
+- Create app → **default language**, **title** (must match listing, e.g. **Hum - rituals**), **short description**, **full description**.
 - **App category** (e.g. Lifestyle or Social—pick what fits; be honest).
 - **Contact email** (required), optional phone/website.
 
@@ -124,17 +124,17 @@ Only if EAS recommends it for build timeouts—defaults often suffice.
 - **App icon** — 512×512 PNG (Play); you can derive from [assets/icon.png](../assets/icon.png) if needed.
 - **Feature graphic** — 1024×500 (required for many listings).
 - **Phone screenshots** — at least **2**; more is better. Use **real device** or emulator frames; show auth, home, decide, awards, reasons, profile.
-- **Tablet** screenshots if you declare tablet support (humm [app.json](../app.json) has `supportsTablet: false` on iOS; align Android if you restrict phones only).
+- **Tablet** screenshots if you declare tablet support ([app.json](../app.json) has `supportsTablet: false` on iOS; align Android if you restrict phones only).
 
 ### 4.3 Privacy & policy
 
-- **Privacy policy URL** — **required** if the app accesses sensitive APIs or user data. humm uses **Firebase Auth**, **Firestore**, optional **push token** on user doc—disclose collection, use, retention, third parties (Google), user rights.
+- **Privacy policy URL** — **required** if the app accesses sensitive APIs or user data. Hum uses **Firebase Auth**, **Firestore**, optional **push token** on user doc—disclose collection, use, retention, third parties (Google), user rights.
 - **Data safety form** (Play) — answer questions that **match** your app and privacy policy: account data, messages/user content (reasons/nominations text), device or other IDs, etc. Update when you add analytics or ads.
 
 ### 4.4 Content & compliance
 
 - **Target audience / Families:** If you don’t target children, state that; complete **IARC** / content rating questionnaire truthfully.
-- **News apps, COVID, financial, health** declarations—only if applicable (likely **no** for humm).
+- **News apps, COVID, financial, health** declarations—only if applicable (likely **no** for Hum).
 - **Government / elections**—usually **no**.
 
 ### 4.5 App signing
@@ -162,13 +162,13 @@ Only if EAS recommends it for build timeouts—defaults often suffice.
 
 ### 5.1 App record
 
-- **New App** → **Bundle ID** must match Xcode/EAS (`com.humm.app` per [app.json](../app.json) — confirm in Apple Developer **Identifiers**).
-- **SKU** — arbitrary internal id (e.g. `humm-ios-001`).
+- **New App** → **Bundle ID** must match Xcode/EAS (`com.humtum.app` per [app.json](../app.json) — confirm in Apple Developer **Identifiers**).
+- **SKU** — arbitrary internal id (e.g. `humtum-ios-001`).
 - **Name**, **subtitle**, **keywords**, **description**, **promotional text** (optional), **support URL**, **marketing URL** (optional).
 
 ### 5.2 Pricing
 
-- **Pricing and Availability** → **Price schedule** → select tier equivalent to **$1.99** in primary region (US).
+- **Pricing and Availability** → **Price schedule** → select tier equivalent to your US price (e.g. **$3.99**).
 - **Availability** by country.
 
 ### 5.3 App Privacy (“nutrition labels”)
@@ -178,7 +178,7 @@ Declare **data types** collected/linked to the user, **tracking** (if any), **pu
 - Firebase Auth (account identifiers).
 - Firestore (user-generated content, profile fields).
 - Push token stored on user profile (if you use `registerExpoPushToken`).
-- **No** ad SDKs in current humm stack—don’t claim tracking you don’t do.
+- **No** ad SDKs in current Hum stack—don’t claim tracking you don’t do.
 
 ### 5.4 Screenshots & previews
 
@@ -217,11 +217,11 @@ Link the **privacy policy URL** in **both** consoles and inside the app if store
 
 ---
 
-## 7. humm-specific technical notes
+## 7. Hum-specific technical notes
 
 | Area | Store / review relevance |
 |------|---------------------------|
-| **Firebase** | Disclose Google as infrastructure; ensure **Firestore security rules** are production-tight—not test mode. |
+| **Firebase** | In Firebase Console → Project settings → Your apps, register **iOS** (`com.humtum.app`) and **Android** (`com.humtum.app`) if you changed bundle/package from an older id—reuse the same Web SDK keys in `.env` / EAS env, or add platform apps as Firebase documents. Disclose Google as infrastructure; ensure **Firestore security rules** are production-tight—not test mode. |
 | **Invite codes** | Explain in review notes: two-person linking; reviewers may need **two test accounts**. |
 | **Expo Notifications** | Local ceremony reminders; remote push later may need **FCM** setup and extra disclosure. |
 | **Photos (image picker)** | [app.json](../app.json) already has a `photosPermission` string; ensure it matches actual use (nominations/reasons when you ship photos). |
@@ -237,7 +237,7 @@ Link the **privacy policy URL** in **both** consoles and inside the app if store
 4. **`build:android:play`** → internal testing on Play.
 5. **iOS `eas build`** → **TestFlight** internal testing.
 6. Complete **Data safety** + **App privacy** forms to match policy.
-7. Screenshots + descriptions + pricing tier **$1.99**.
+7. Screenshots + descriptions + pricing tier (e.g. **$3.99**).
 8. **Submit** for review (Play production + App Store).
 9. After approval, **release** and monitor **crashes** (Play Vitals, Xcode Organizer / third-party crash tools if you add them later).
 
@@ -266,4 +266,4 @@ Link the **privacy policy URL** in **both** consoles and inside the app if store
 
 ---
 
-*Last drafted for humm’s current stack (Expo SDK 54, Firebase, EAS). Re-check store consoles and Expo docs when you actually submit.*
+*Last drafted for Hum - rituals (`com.humtum.app`, Expo slug `humtum`, Expo SDK 54, Firebase, EAS). Re-check store consoles and Expo docs when you actually submit.*

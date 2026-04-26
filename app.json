@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "humm",
-    "slug": "humm",
+    "name": "Hum - rituals",
+    "slug": "humtum",
     "version": "1.0.0",
-    "scheme": "humm",
+    "scheme": "humtum",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#131118",
@@ -15,7 +15,8 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.humm.app"
+      "bundleIdentifier": "com.humtum.app",
+      "buildNumber": "1"
     },
     "android": {
       "versionCode": 1,
@@ -23,7 +24,7 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#131118"
       },
-      "package": "com.humm.app",
+      "package": "com.humtum.app",
       "softwareKeyboardLayoutMode": "resize",
       "permissions": [
         "android.permission.RECORD_AUDIO"
@@ -39,7 +40,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "humm uses your photos for nominations and reasons."
+          "photosPermission": "Hum uses your photos for nominations and reasons."
         }
       ],
       "expo-notifications"

@@ -21,7 +21,7 @@ export function ensureNotificationHandler(): void {
   });
 }
 
-const PREFIX = 'humm-ceremony-';
+const PREFIX = 'humtum-ceremony-';
 
 export async function cancelAllCeremonyReminders(): Promise<void> {
   if (Platform.OS === 'web') return;
@@ -92,7 +92,7 @@ export async function scheduleCeremonySeasonReminders(ceremony: Ceremony): Promi
     await Notifications.scheduleNotificationAsync({
       identifier: t.id,
       content: {
-        title: 'humm · awards',
+        title: 'Hum · awards',
         body: t.body,
       },
       trigger: {

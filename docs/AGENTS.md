@@ -1,4 +1,4 @@
-# humm — context for AI agents & contributors
+# Hum - rituals — context for AI agents & contributors
 
 This file is the **entry point** for anyone (human or agent) working on the repo. Read it before changing code.
 
@@ -6,7 +6,7 @@ This file is the **entry point** for anyone (human or agent) working on the repo
 
 ## What this app is
 
-**humm** (always lowercase in UI copy) is a **private app for two people** (the owners and their partner). It is not a public consumer product.
+**Hum - rituals** (`com.humtum.app`, Expo slug `humtum`) is a **private app for two people** (the owners and their partner). In-app navigation copy stays **lowercase** where this doc says so; auth hero uses the full store name.
 
 Goals:
 

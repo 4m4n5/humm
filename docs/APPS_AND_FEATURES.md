@@ -1,4 +1,4 @@
-# humm — apps & features (living doc)
+# Hum - rituals — apps & features (living doc)
 
 **Purpose:** One place for **you + agents** to capture what exists, what’s next, and raw ideas. Keep it conversational; use checkboxes and short bullets.
 
@@ -9,7 +9,7 @@
 ## Product principles
 
 - Fun for two people — skip features that feel like admin work.
-- **humm** stays lowercase in the UI; warm, musical vibe.
+- **Hum** / feature labels stay mostly **lowercase** in the UI; warm, musical vibe.
 - Prefer simple flows over perfect systems.
 - Private couple app — no public discovery, no social graph.
 - **UI:** balanced density; **subtle** motion (haptics / light `active` states, not flashy) — see `[DESIGN.md](./DESIGN.md)`.

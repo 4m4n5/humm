@@ -29,6 +29,6 @@ export async function registerExpoPushToken(uid: string): Promise<void> {
 
     await updateUserProfile(uid, { fcmToken: token });
   } catch (e) {
-    console.warn('[humm] push token registration skipped:', e);
+    console.warn('[Hum] push token registration skipped:', e);
   }
 }

@@ -1,4 +1,4 @@
-# humm — setup guide
+# Hum - rituals — setup guide
 
 Use this to run the app on your machines. Technical overview for agents: [docs/AGENTS.md](./docs/AGENTS.md).
 
@@ -29,7 +29,7 @@ npx expo install <package-name>
 
 ## 2. Firebase project
 
-1. Open [Firebase Console](https://console.firebase.google.com) → **Add project** → name it (e.g. `humm`).
+1. Open [Firebase Console](https://console.firebase.google.com) → **Add project** → name it (e.g. `humtum` or your product name).
 2. **Authentication** → Get started → enable **Email/Password**.
 3. **Firestore** → Create database → start in **test mode** for development (lock down rules before any real data you care about).
 4. **Storage** (optional for Phase 1): enabling Storage may require the **Blaze** plan. The app does **not** initialize Storage in code yet; skip until you need photos.
@@ -102,7 +102,7 @@ The repo includes **`eas.json`** with a **`preview`** profile that outputs an **
 
 3. **Firebase env vars on EAS** — release builds do not read your laptop’s `.env` unless those values are **uploaded to Expo** for the right **environment** (`preview` for shareable APKs).
 
-   **Easiest (recommended):** from the `humm` folder, with a filled **`.env`** (same keys as `.env.example`):
+   **Easiest (recommended):** from the project folder, with a filled **`.env`** (same keys as `.env.example`):
 
    ```bash
    npm run eas:env:push:preview
@@ -116,7 +116,7 @@ The repo includes **`eas.json`** with a **`preview`** profile that outputs an **
    npm run eas:env:list
    ```
 
-   **Or use the website:** [expo.dev](https://expo.dev) → sign in → **Projects** → **humm** → **Environment variables** (in the left sidebar). Add each name from `.env.example` manually and assign them to **Preview** (and **Production** later if you use that profile). Names must match exactly, including the `EXPO_PUBLIC_` prefix.
+   **Or use the website:** [expo.dev](https://expo.dev) → sign in → **Projects** → **Hum - rituals** (slug `humtum`) → **Environment variables** (in the left sidebar). Add each name from `.env.example` manually and assign them to **Preview** (and **Production** later if you use that profile). Names must match exactly, including the `EXPO_PUBLIC_` prefix.
 
    **Important:** If variables only exist under **Production** but you build with **`preview`**, the APK will not see them — use **`preview`** for `npm run build:android:apk`.
 
@@ -141,7 +141,7 @@ Default icon: **`assets/icon.png`** (1024×1024). Replace it with your own PNG a
 
 ## Firestore indexes
 
-The repo includes `firestore.indexes.json` and `firebase.json`. The Firebase CLI is **not** installed globally; it’s a **dev dependency**, so run commands from the **`humm` project folder** (not a parent directory like `github`).
+The repo includes `firestore.indexes.json` and `firebase.json`. The Firebase CLI is **not** installed globally; it’s a **dev dependency**, so run commands from the **project folder** (not a parent directory like `github`).
 
 ```bash
 cd /path/to/humm

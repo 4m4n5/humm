@@ -53,12 +53,12 @@ export default function SignUp() {
             className="flex-1 justify-center gap-y-10 px-6 pb-10"
             style={{ paddingTop: AUTH_SCREEN_PADDING_TOP }}
           >
-            <View className="items-center gap-y-4">
+            <View className="items-center gap-y-3">
               <Text
-                className="text-[42px] font-extralight tracking-[0.38em] text-hum-primary"
-                maxFontSizeMultiplier={1.25}
+                className="text-center text-[40px] font-extralight leading-[44px] tracking-[-0.02em] text-hum-primary"
+                maxFontSizeMultiplier={1.2}
               >
-                humm
+                Hum - rituals
               </Text>
               <Text
                 className="text-center text-[14px] font-light tracking-wide text-hum-muted"
