@@ -102,7 +102,7 @@ After Pages is on, your URLs will look like:
 | **Privacy Policy URL** | `https://USER.github.io/REPO/store/privacy.html` |
 | **Marketing URL** (optional) | `https://USER.github.io/REPO/store/index.html` |
 
-Edit **`support.html`** and **`privacy.html`** to replace `REPLACE_ME@example.com`, `REPLACE_DATE`, and `REPLACE_LEGAL_NAME` before you submit.
+Repo **`docs/store/`** pages already list **Aman Shrivastava**, **aman.srivastava999@gmail.com**, and last updated **April 25, 2026** — use those GitHub Pages URLs in Connect. Edit the HTML when anything changes.
 
 **GitHub Pages** is sufficient for Apple/Google as long as the URLs are **https** and return **200**. For **private** repos, confirm [current GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits); a **public** repo + Pages is the usual free path.
 

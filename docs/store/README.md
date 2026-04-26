@@ -14,7 +14,7 @@ Static **HTML** for **App Store Connect** and **Google Play** URLs:
 
 **Before you rely on it:**
 
-- **Replace placeholders** in `support.html` and `privacy.html` (`REPLACE_ME@example.com`, `REPLACE_DATE`, `REPLACE_LEGAL_NAME`).
+- **Contact / policy** in `support.html` and `privacy.html` are set to **Aman Shrivastava**, **aman.srivastava999@gmail.com**, last updated **April 25, 2026** — edit when your details change.
 - **Private repos:** GitHub Pages on private repos may require a **paid** GitHub plan (policy changes over time—check [GitHub Pages docs](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits)). Easiest path: **public repo** or use **Cloudflare Pages** / **Netlify** with the same HTML.
 
 ## Enable GitHub Pages (project site from `/docs`)
