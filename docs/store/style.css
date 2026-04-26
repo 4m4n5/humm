@@ -87,25 +87,34 @@ dl.features dd {
 }
 .gallery {
   display: grid;
-  gap: 1.75rem;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
   margin-top: 0.5rem;
 }
-@media (min-width: 640px) {
+@media (min-width: 720px) {
   .gallery {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem 1.5rem;
   }
 }
 .gallery figure {
   margin: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .gallery img {
-  width: 100%;
-  max-width: 28rem;
-  margin: 0 auto;
   display: block;
-  border-radius: 1.1rem;
+  width: auto;
+  height: auto;
+  max-width: min(100%, 240px);
+  max-height: min(52vh, 520px);
+  object-fit: contain;
+  margin: 0 auto;
+  border-radius: 1rem;
   border: 1px solid rgba(46, 41, 56, 0.65);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
 }
 .gallery figcaption {
   text-align: center;
