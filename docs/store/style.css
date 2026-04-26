@@ -57,6 +57,70 @@ main {
   max-width: 40rem;
   margin: 0 auto;
 }
+main.wide {
+  max-width: 52rem;
+}
+.intro-lead {
+  font-size: 1.05rem;
+  color: var(--muted);
+  line-height: 1.65;
+  margin: 0 0 1rem;
+}
+dl.features {
+  margin: 0;
+}
+dl.features dt {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.92rem;
+  margin-top: 0.85rem;
+}
+dl.features dt:first-child {
+  margin-top: 0;
+}
+dl.features dd {
+  margin: 0.2rem 0 0 0;
+  padding: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.gallery {
+  display: grid;
+  gap: 1.75rem;
+  margin-top: 0.5rem;
+}
+@media (min-width: 640px) {
+  .gallery {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.gallery figure {
+  margin: 0;
+}
+.gallery img {
+  width: 100%;
+  max-width: 28rem;
+  margin: 0 auto;
+  display: block;
+  border-radius: 1.1rem;
+  border: 1px solid rgba(46, 41, 56, 0.65);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+.gallery figcaption {
+  text-align: center;
+  margin-top: 0.55rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+.note-soft {
+  font-size: 0.8rem;
+  color: var(--muted);
+  opacity: 0.92;
+  margin-top: 1rem;
+  line-height: 1.45;
+}
 .card {
   background: var(--card);
   border: 1px solid rgba(46, 41, 56, 0.5);

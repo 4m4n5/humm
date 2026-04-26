@@ -6,7 +6,7 @@ Static **HTML** for **App Store Connect** and **Google Play** URLs:
 |------|---------|
 | [support.html](./support.html) | **Support URL** — contact + FAQ |
 | [privacy.html](./privacy.html) | **Privacy Policy URL** |
-| [index.html](./index.html) | Short hub (optional marketing link) |
+| [index.html](./index.html) | Product overview + **screenshot gallery** (`images/screen-01.png` … `screen-11.png`) |
 
 ## Is GitHub Pages enough?
 
@@ -69,3 +69,7 @@ npm run verify:store-pages
 ```
 
 This serves `docs/store` locally and asserts the HTML/CSS load and key headings are present.
+
+## Screenshot assets
+
+PNG files live in **`docs/store/images/`** (`screen-01.png` … `screen-11.png`). They were copied from Desktop **Simulator Screenshot - iPhone 17 Pro Max** captures (Apr 25, 2026). To refresh: copy new PNGs over those paths, or rename and update `<img src>` in `index.html`.

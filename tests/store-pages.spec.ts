@@ -7,6 +7,7 @@ test.describe('GitHub Pages store bundle (docs/store)', () => {
     const nav = page.getByRole('navigation');
     await expect(nav.getByRole('link', { name: 'Support' })).toHaveAttribute('href', 'support.html');
     await expect(nav.getByRole('link', { name: 'Privacy' })).toHaveAttribute('href', 'privacy.html');
+    await expect(page.locator('.gallery img')).toHaveCount(11);
   });
 
   test('support page has FAQ and mailto', async ({ page }) => {
