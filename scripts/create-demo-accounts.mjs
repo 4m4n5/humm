@@ -10,8 +10,12 @@
  *   Email:    partner.demo@hum.app
  *   Password: humtumapp@demo
  *
- * Prerequisites:
- *   export GOOGLE_APPLICATION_CREDENTIALS="/path/to/serviceAccount.json"
+ * Prerequisites — Firebase **Admin** JSON (not the same as `.env` web keys):
+ *   Firebase Console → Project settings → **Service accounts** → **Generate new private key**
+ *   Save the file outside git (e.g. `~/keys/humm-adminsdk.json`).
+ *
+ *   Option A:  export GOOGLE_APPLICATION_CREDENTIALS="$HOME/keys/humm-adminsdk.json"
+ *   Option B:  npm run demo:create -- --credentials "$HOME/keys/humm-adminsdk.json"
  *
  * Usage:
  *   node scripts/create-demo-accounts.mjs --dry-run
@@ -21,7 +25,7 @@
  * --force removes Auth users demo@hum.app + partner.demo@hum.app (and their Firestore couple data) if present.
  */
 
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
@@ -72,13 +76,69 @@ function defaultAwardCategoryRows() {
 
 function parseArgs() {
   const args = process.argv.slice(2);
-  const out = { dryRun: false, force: false, confirm: null };
+  const out = { dryRun: false, force: false, confirm: null, credentials: null };
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--dry-run') out.dryRun = true;
     else if (args[i] === '--force') out.force = true;
     else if (args[i] === '--confirm' && args[i + 1]) out.confirm = args[++i];
+    else if (args[i] === '--credentials' && args[i + 1]) out.credentials = args[++i].trim();
   }
   return out;
+}
+
+/** Resolve path: CLI flag wins, then GOOGLE_APPLICATION_CREDENTIALS. */
+function resolveCredentialsPath(parsed) {
+  return (parsed.credentials || process.env.GOOGLE_APPLICATION_CREDENTIALS || '').trim();
+}
+
+function assertServiceAccountFile(credPath) {
+  if (!credPath) {
+    console.error(`
+Missing Firebase Admin service account JSON.
+
+  1) Firebase Console → Project settings → Service accounts → Generate new private key
+  2) Save the file (keep it out of git), then either:
+
+     export GOOGLE_APPLICATION_CREDENTIALS="$HOME/keys/your-project-adminsdk.json"
+     npm run demo:create
+
+     npm run demo:create -- --credentials "$HOME/keys/your-project-adminsdk.json"
+
+The path must be a real file — not the documentation placeholder "/path/to/serviceAccount.json".
+`);
+    process.exit(1);
+  }
+  if (!existsSync(credPath)) {
+    console.error(`Service account file not found:
+  ${credPath}
+
+If you still see "/path/to/..." you copied the example literally. Use the actual path to the JSON you downloaded from Firebase.
+`);
+    process.exit(1);
+  }
+  try {
+    if (!statSync(credPath).isFile()) {
+      console.error('Credentials path must be a file, not a directory:', credPath);
+      process.exit(1);
+    }
+  } catch (e) {
+    console.error('Cannot access credentials path:', credPath, e?.message || e);
+    process.exit(1);
+  }
+  try {
+    JSON.parse(readFileSync(credPath, 'utf8'));
+  } catch (e) {
+    console.error('Credentials file is not valid JSON:', credPath, e?.message || e);
+    process.exit(1);
+  }
+}
+
+function initFirebaseAdmin(credPath) {
+  if (admin.apps.length) return;
+  const serviceAccount = JSON.parse(readFileSync(credPath, 'utf8'));
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
 }
 
 async function deleteByQuery(db, query) {
@@ -146,17 +206,14 @@ function nomineeUid(tag, uidDemo, uidPartner) {
 }
 
 async function main() {
-  const { dryRun, force, confirm } = parseArgs();
-
-  if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-    console.error('Set GOOGLE_APPLICATION_CREDENTIALS to your service account JSON path.');
-    process.exit(1);
-  }
+  const parsed = parseArgs();
+  const { dryRun, force, confirm } = parsed;
 
   if (dryRun) {
     console.log('[dry-run] Would create / update demo couple:');
     console.log(`  ${DEMO_EMAIL} / ${DEMO_PASSWORD}`);
     console.log(`  ${PARTNER_EMAIL} / ${DEMO_PASSWORD}`);
+    console.log('\n(No Firebase credentials required for --dry-run.)');
     process.exit(0);
   }
 
@@ -165,9 +222,9 @@ async function main() {
     process.exit(1);
   }
 
-  if (!admin.apps.length) {
-    admin.initializeApp({ credential: admin.credential.applicationDefault() });
-  }
+  const credPath = resolveCredentialsPath(parsed);
+  assertServiceAccountFile(credPath);
+  initFirebaseAdmin(credPath);
   const db = admin.firestore();
   const auth = admin.auth();
 

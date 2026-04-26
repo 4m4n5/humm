@@ -218,7 +218,7 @@ After any SDK or backend change, **re-run** the privacy questionnaire and update
 
 ## 12. App Review Information — notes (paste into Connect)
 
-Create the pair in Firebase with **`npm run demo:create`** (see `scripts/create-demo-accounts.mjs`) or use your own test users. These two are **already linked** as a couple with sample decisions, reasons, and awards nominations.
+Create the pair in Firebase with **`npm run demo:create`** (see `scripts/create-demo-accounts.mjs`) after pointing **`GOOGLE_APPLICATION_CREDENTIALS`** at a downloaded **Service account** JSON key, or pass **`--credentials /path/to/key.json`** on the same command. These two are **already linked** as a couple with sample decisions, reasons, and awards nominations.
 
 ```
 COUPLE-ONLY PRODUCT
