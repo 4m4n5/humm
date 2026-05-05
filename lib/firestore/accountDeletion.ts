@@ -14,8 +14,22 @@ import { getUserProfile, userDoc } from '@/lib/firestore/users';
 import { coupleDoc } from '@/lib/firestore/couples';
 import { optionsDoc } from '@/lib/firestore/decisions';
 
-/** Same collections as `scripts/create-demo-accounts.mjs` → `wipeCoupleAndUsers`. */
-const COUPLE_SCOPED_COLLECTIONS = ['nominations', 'ceremonies', 'decisions', 'reasons', 'battles'] as const;
+/**
+ * Couple-scoped collections wiped on account deletion. Keep this in sync with
+ * `scripts/create-demo-accounts.mjs` → `wipeCoupleAndUsers` and with Firestore
+ * rules that gate `allow delete` for each collection. Apple App Review (5.1.1(v))
+ * requires that user data created during couple flows is removed on deletion.
+ */
+const COUPLE_SCOPED_COLLECTIONS = [
+  'nominations',
+  'ceremonies',
+  'decisions',
+  'reasons',
+  'battles',
+  'moodEntries',
+  'habits',
+  'habitCheckins',
+] as const;
 
 async function deleteDocumentsForCouple(collectionName: string, coupleId: string): Promise<void> {
   const colRef = collection(db, collectionName);

@@ -10,6 +10,7 @@ import { useNominationsStore } from '@/lib/stores/nominationsStore';
 import { useReasonStore } from '@/lib/stores/reasonStore';
 import { useBattleStore } from '@/lib/stores/battleStore';
 import { useHabitStore } from '@/lib/stores/habitStore';
+import { useMoodStore } from '@/lib/stores/moodStore';
 import { theme } from '@/constants/theme';
 import {
   TAB_BAR_PADDING_BOTTOM_BASE,
@@ -46,14 +47,19 @@ export default function TabsLayout() {
     const u3 = useReasonStore.getState().init(profile.coupleId);
     const u4 = useBattleStore.getState().init(profile.coupleId);
     const u5 = useHabitStore.getState().init(profile.coupleId);
+    // Mood needs both uids — only subscribe once the partner link exists.
+    const u6 = profile.partnerId
+      ? useMoodStore.getState().init(profile.coupleId, profile.uid, profile.partnerId)
+      : null;
     return () => {
       u1();
       u2();
       u3();
       u4();
       u5();
+      if (u6) u6();
     };
-  }, [profile?.coupleId, profile?.uid]);
+  }, [profile?.coupleId, profile?.uid, profile?.partnerId]);
 
   useEffect(() => {
     if (!profile?.coupleId) return;
@@ -93,19 +99,18 @@ export default function TabsLayout() {
       />
       <Tabs.Screen
         name="mood"
-        listeners={{ tabPress: tabHaptic }}
         options={{
-          title: 'mood',
-          tabBarAccessibilityLabel: 'mood tab',
-          tabBarIcon: ({ color, focused, size }) => (
-            <Ionicons
-              name="heart-half-outline"
-              size={size - 1}
-              color={focused ? theme.petal : color}
-            />
-          ),
+          // Hidden from the tab bar — entry happens from the home screen's
+          // mood card. Routes (`/mood`, `/mood/log`) remain accessible.
+          href: null,
         }}
       />
+      {/*
+        Canonical feature order across the app:
+        mood → decide → habits → reasons → awards.
+        Mood is hidden from the ribbon (entered from the home mood card),
+        so the visible sequence here is: decide → habits → reasons → awards.
+      */}
       <Tabs.Screen
         name="decide"
         listeners={{ tabPress: tabHaptic }}
@@ -114,28 +119,6 @@ export default function TabsLayout() {
           tabBarAccessibilityLabel: 'decide tab, quick spin and battle',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="sparkles-outline" size={size - 1} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="awards"
-        listeners={{ tabPress: tabHaptic }}
-        options={{
-          title: 'awards',
-          tabBarAccessibilityLabel: 'awards and nominations tab',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="trophy-outline" size={size - 1} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="reasons"
-        listeners={{ tabPress: tabHaptic }}
-        options={{
-          title: 'reasons',
-          tabBarAccessibilityLabel: 'reasons tab',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="heart-outline" size={size - 1} color={color} />
           ),
         }}
       />
@@ -151,6 +134,28 @@ export default function TabsLayout() {
               size={size - 1}
               color={focused ? theme.secondary : color}
             />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="reasons"
+        listeners={{ tabPress: tabHaptic }}
+        options={{
+          title: 'reasons',
+          tabBarAccessibilityLabel: 'reasons tab',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="heart-outline" size={size - 1} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="awards"
+        listeners={{ tabPress: tabHaptic }}
+        options={{
+          title: 'awards',
+          tabBarAccessibilityLabel: 'awards and nominations tab',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="trophy-outline" size={size - 1} color={color} />
           ),
         }}
       />

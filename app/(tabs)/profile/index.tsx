@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Alert, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { getLevelForXp } from '@/constants/levels';
 import { Card } from '@/components/shared/Card';
@@ -139,7 +140,10 @@ export default function Profile() {
                   }}
                   accessibilityRole="button"
                   accessibilityLabel="Edit display name"
+                  accessibilityHint="opens an inline editor"
                   activeOpacity={0.88}
+                  hitSlop={{ top: 6, bottom: 6, left: 4, right: 8 }}
+                  className="flex-row items-center gap-x-2"
                 >
                   <Text
                     className="text-[18px] font-medium tracking-tight text-hum-text"
@@ -147,12 +151,14 @@ export default function Profile() {
                   >
                     {profile?.displayName ?? 'your name'}
                   </Text>
-                  <Text className="text-[10px] text-hum-dim">tap to edit</Text>
+                  <Ionicons
+                    name="pencil-outline"
+                    size={12}
+                    color={theme.dim}
+                    style={{ opacity: 0.7 }}
+                  />
                 </TouchableOpacity>
               )}
-              <Text className="text-[13px] font-light text-hum-muted" maxFontSizeMultiplier={1.35}>
-                {level.name}
-              </Text>
             </View>
             <View className="items-end gap-y-0.5">
               <Text className="text-[20px] font-light text-hum-primary">{profile?.xp ?? 0}</Text>
@@ -162,15 +168,10 @@ export default function Profile() {
 
           {level.nextLevelXp && (
             <View className="gap-y-2">
-              <View className="flex-row justify-between">
-                <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
-                  level {level.level}
-                </Text>
-                <Text className="text-[11px] text-hum-muted">
-                  {`${profile?.xp ?? 0} / ${level.nextLevelXp}`}
-                </Text>
-              </View>
-              <View className="h-1 overflow-hidden rounded-full bg-hum-surface">
+              <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+                level {level.level}
+              </Text>
+              <View className="h-[6px] overflow-hidden rounded-full bg-hum-border/30">
                 <View
                   className="h-full rounded-full bg-hum-primary/80"
                   style={{ width: `${Math.min(xpProgress * 100, 100)}%` }}
@@ -197,7 +198,6 @@ export default function Profile() {
           <ProfileSoftStats
             profile={profile}
             couple={couple}
-            partnerShortName={(partnerProfile?.displayName ?? 'partner').split(' ')[0] || 'partner'}
             reasons={reasons}
             nominations={coupleNominations}
             reasonStreak={couple?.streaks?.reasonStreak ?? 0}
@@ -222,7 +222,7 @@ export default function Profile() {
           {profile?.partnerId ? (
             <View className="gap-y-3">
               <TouchableOpacity
-                className="rounded-[20px] border border-dashed border-hum-border/30 bg-hum-surface/20 py-3.5 active:opacity-88"
+                className="rounded-[20px] border border-dashed border-hum-border/18 bg-hum-surface/15 py-3.5 active:opacity-88"
                 onPress={() => setPartnerBadgesOpen((o) => !o)}
                 accessibilityRole="button"
                 accessibilityLabel={
@@ -256,7 +256,7 @@ export default function Profile() {
               </TouchableOpacity>
               {partnerBadgesOpen ? (
                 partnerProfileLoading && !partnerProfile ? (
-                  <View className="rounded-[24px] border border-dashed border-hum-border/30 bg-hum-card/60 px-6 py-8">
+                  <View className="rounded-[22px] border border-dashed border-hum-border/18 bg-hum-card/50 px-6 py-8">
                     <Text
                       className="text-center text-[13px] font-light text-hum-muted"
                       maxFontSizeMultiplier={1.35}
@@ -275,7 +275,7 @@ export default function Profile() {
             </View>
           ) : null}
           <TouchableOpacity
-            className="rounded-[20px] border border-dashed border-hum-border/30 bg-hum-surface/20 py-3.5 active:opacity-88"
+            className="rounded-[20px] border border-dashed border-hum-border/18 bg-hum-surface/15 py-3.5 active:opacity-88"
             onPress={() => router.push('/profile/badge-teasers')}
             accessibilityRole="button"
             accessibilityLabel="see a few badges you have not earned yet"
@@ -304,7 +304,7 @@ export default function Profile() {
         ) : null}
 
         <TouchableOpacity
-          className="items-center rounded-full border border-hum-border/30 py-3.5 active:opacity-88"
+          className="items-center rounded-full border border-hum-border/18 bg-hum-card/55 py-3.5 active:opacity-88"
           onPress={handleSignOut}
           activeOpacity={0.88}
           accessibilityRole="button"
@@ -314,13 +314,13 @@ export default function Profile() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="items-center rounded-full border border-red-500/35 py-3.5 active:opacity-88"
+          className="items-center rounded-full border border-red-900/30 bg-red-950/12 py-3.5 active:opacity-88"
           onPress={() => router.push('/profile/delete-account')}
           activeOpacity={0.88}
           accessibilityRole="button"
           accessibilityLabel="delete account"
         >
-          <Text className="text-[14px] font-medium tracking-wide text-red-400/90">delete account</Text>
+          <Text className="text-[14px] font-medium tracking-wide text-red-400/80">delete account</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

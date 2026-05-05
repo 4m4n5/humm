@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  ScrollView,
-  ActivityIndicator,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import type { MoodStickerOption } from '@/types';
 import { MOOD_QUADRANTS } from '@/constants/moodStickers';
 import { theme } from '@/constants/theme';
@@ -19,63 +11,80 @@ type Props = {
   onSelect: (sticker: MoodStickerOption) => void;
 };
 
-const ROW_STYLE: StyleProp<ViewStyle> = {
-  flexGrow: 0,
-  paddingRight: 24,
-  gap: 8,
-};
+function StickerPill({
+  sticker,
+  selected,
+  saving,
+  disabled,
+  onPress,
+}: {
+  sticker: MoodStickerOption;
+  selected: boolean;
+  saving: boolean;
+  disabled: boolean;
+  onPress: () => void;
+}) {
+  // The currently-set mood can never be reselected — duplicating it would
+  // pollute the timeline with a no-op entry. We keep the highlighted style
+  // so it still communicates "this is you right now", but it's not tappable
+  // and the dim "globally disabled" wash is suppressed (highlight wins).
+  const interactionLocked = disabled || selected;
+  const showGloballyDimmed = disabled && !saving && !selected;
 
-/** Picker — pills only (no boxed trays); quadrants are spacing + label, not nested cards. */
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      disabled={interactionLocked}
+      activeOpacity={0.88}
+      accessibilityRole="button"
+      accessibilityLabel={
+        selected ? `${sticker.label}, currently set` : `set mood to ${sticker.label}`
+      }
+      accessibilityState={{ selected, busy: saving, disabled: interactionLocked }}
+      className={`flex-row items-center gap-2 rounded-full border px-3.5 py-2.5 ${
+        selected
+          ? 'border-hum-secondary/45 bg-hum-secondary/18'
+          : 'border-hum-border/18 bg-hum-card'
+      } ${showGloballyDimmed ? 'opacity-40' : ''}`}
+    >
+      {saving ? (
+        <ActivityIndicator size="small" color={theme.secondary} />
+      ) : (
+        <Text className="text-[18px] leading-[20px]" allowFontScaling={false}>
+          {sticker.emoji}
+        </Text>
+      )}
+      <Text
+        className={`text-[13px] tracking-[-0.01em] ${
+          selected ? 'font-medium text-hum-text' : 'font-light text-hum-muted'
+        }`}
+        numberOfLines={1}
+        maxFontSizeMultiplier={1.25}
+      >
+        {sticker.label}
+      </Text>
+    </TouchableOpacity>
+  );
+}
+
 export function MoodGrid({ currentId, savingId, onSelect }: Props) {
   return (
-    <View className="gap-y-7">
+    <View className="gap-y-5">
       {MOOD_QUADRANTS.map((q) => (
-        <View key={q.quadrant} className="gap-y-2.5">
+        <View key={q.quadrant} className="gap-y-3">
           <SectionLabel title={q.label} />
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={ROW_STYLE}
-          >
-            {q.stickers.map((s) => {
-              const selected = s.id === currentId;
-              const saving = s.id === savingId;
-              const disabled = !!savingId;
-              return (
-                <Pressable
-                  key={s.id}
-                  onPress={() => onSelect(s)}
-                  disabled={disabled}
-                  accessibilityRole="button"
-                  accessibilityLabel={`set mood to ${s.label}`}
-                  accessibilityHint={q.blurb}
-                  accessibilityState={{ selected, busy: saving }}
-                  className={`flex-row items-center gap-x-2 rounded-full border px-4 py-2.5 active:opacity-88 ${
-                    selected
-                      ? 'border-hum-primary/45 bg-hum-primary/[0.12]'
-                      : 'border-hum-border/20 bg-hum-surface/25'
-                  } ${disabled && !saving ? 'opacity-35' : ''}`}
-                >
-                  {saving ? (
-                    <ActivityIndicator size="small" color={theme.primary} />
-                  ) : (
-                    <Text className="text-[24px] leading-none" allowFontScaling={false}>
-                      {s.emoji}
-                    </Text>
-                  )}
-                  <Text
-                    className={`max-w-[84px] text-[12px] font-medium leading-[15px] tracking-tight ${
-                      selected ? 'text-hum-text' : 'text-hum-muted'
-                    }`}
-                    numberOfLines={2}
-                    maxFontSizeMultiplier={1.25}
-                  >
-                    {s.label}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
+          <View className="flex-row flex-wrap gap-2">
+            {q.stickers.map((s) => (
+              <StickerPill
+                key={s.id}
+                sticker={s}
+                selected={s.id === currentId}
+                saving={s.id === savingId}
+                disabled={!!savingId}
+                onPress={() => onSelect(s)}
+              />
+            ))}
+          </View>
         </View>
       ))}
     </View>

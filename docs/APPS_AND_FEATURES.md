@@ -32,7 +32,8 @@
 - **Quick spin result haptics** — success haptic when the wheel lands; preference defaults on in `uiPreferencesStore` (persisted locally; no profile toggle)
 - **Mood** — `moodEntries` collection (doc id `${coupleId}_${uid}_${dayKey}`); intraday timeline with cap; **home** `MoodHomeRow` + **mood tab** hero/week strip/history; quadrant meta + horizontal pill picker in `MoodGrid`; **`subscribeToCoupleMoodFeed`** needs composite index + permissive **`allow list`** rules ([`FIRESTORE_MOOD_RULES.md`](./FIRESTORE_MOOD_RULES.md)); Cloud Function **`onMoodEntryWritten`** notifies partner (respects `notificationPreferences.mood`)
 - **Habits** — `habits` + `habitCheckins`; shared vs personal; daily/weekly cadences; couple streak fields (`dailyStreaks`, `jointDailyStreak`, etc.); merge **`firestore.habits.rules`**
-- **Push (server)** — Expo token on `users.fcmToken`; toggles in **profile → notification settings** (`notificationPreferences`); Firebase Functions in `functions/src/` (mood, reasons, nominations, battles, quickspin decisions, weekly challenge completion)
+- **Push (server)** — Expo token on `users.fcmToken`; per-feature toggles in **profile → notification settings** (`notificationPreferences`: `mood / habits / decide / reasons / awards / weeklyChallenge / reminders`); each Cloud Function passes an explicit `feature` field on the push payload that maps 1:1 to the toggle. Firebase Functions in `functions/src/`: mood, reasons, nominations, battles, quickspin decisions, **habit creation, habit check-ins, ceremony lifecycle (picks submitted / category locked / ceremony complete), couple linked welcome**, weekly challenge completion
+- **Daily reminders (server)** — `dailyReminderTick` runs every 30 minutes via Cloud Scheduler; user-configurable per-channel (mood / habits) with half-hour granularity in their IANA tz (`users/{uid}.dailyReminders`); skip-if-logged guard queries `moodEntries` / `habitCheckins` for the user's local `dayKey`
 
 ---
 

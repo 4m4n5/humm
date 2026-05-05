@@ -25,7 +25,7 @@ export const WEEKLY_CHALLENGE_POOL: ChallengePoolEntry[] = [
   },
   {
     id: 'mood',
-    description: 'you both log a mood on at least 3 days this week',
+    description: 'you both log a mood this week',
     kind: 'both_mood_three_days',
   },
   {

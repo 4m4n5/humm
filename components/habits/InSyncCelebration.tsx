@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { Animated, Easing, Text, View, useWindowDimensions } from 'react-native';
 import * as Haptics from 'expo-haptics';
 
-const PARTICLE_COUNT = 18;
+const PARTICLE_COUNT = 22;
 const EMOJIS = ['✨', '💛', '🤝', '🌟', '💜', '✦'];
 const DURATION = 2200;
 
@@ -18,9 +18,10 @@ function makeParticles(screenWidth: number): Particle[] {
   return Array.from({ length: PARTICLE_COUNT }).map(() => ({
     emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)]!,
     startX: Math.random() * (screenWidth - 32),
+    // Tighter sway than reasons → sparkles shoot upward, they don't tumble.
     drift: (Math.random() - 0.5) * 60,
-    delay: Math.random() * 400,
-    size: 14 + Math.random() * 12,
+    delay: Math.random() * 300,
+    size: 16 + Math.random() * 16,
   }));
 }
 
@@ -34,7 +35,7 @@ function FloatingParticle({ p }: { p: Particle }) {
       Animated.delay(p.delay),
       Animated.parallel([
         Animated.timing(translateY, {
-          toValue: -320,
+          toValue: -380,
           duration: DURATION,
           easing: Easing.out(Easing.quad),
           useNativeDriver: true,
@@ -48,13 +49,13 @@ function FloatingParticle({ p }: { p: Particle }) {
         Animated.sequence([
           Animated.timing(opacity, {
             toValue: 1,
-            duration: 280,
+            duration: 240,
             useNativeDriver: true,
           }),
-          Animated.delay(DURATION - 900),
+          Animated.delay(DURATION - 880),
           Animated.timing(opacity, {
             toValue: 0,
-            duration: 620,
+            duration: 640,
             useNativeDriver: true,
           }),
         ]),
@@ -86,21 +87,22 @@ function CenterBadge() {
 
   useEffect(() => {
     Animated.sequence([
-      Animated.delay(200),
+      Animated.delay(160),
       Animated.parallel([
+        // Snappier overshoot than the previous pass → the badge pops in.
         Animated.spring(scale, {
           toValue: 1,
-          friction: 4,
-          tension: 100,
+          friction: 3.5,
+          tension: 150,
           useNativeDriver: true,
         }),
         Animated.timing(opacity, {
           toValue: 1,
-          duration: 300,
+          duration: 260,
           useNativeDriver: true,
         }),
       ]),
-      Animated.delay(1400),
+      Animated.delay(1300),
       Animated.timing(opacity, {
         toValue: 0,
         duration: 500,
@@ -119,10 +121,15 @@ function CenterBadge() {
         opacity,
         transform: [{ scale }],
       }}
-      className="items-center gap-1 rounded-3xl bg-hum-card/95 px-7 py-4"
+      className="items-center gap-1.5 rounded-3xl border border-hum-secondary/40 bg-hum-card/95 px-7 py-4"
     >
-      <Text className="text-[32px]" allowFontScaling={false}>🎉</Text>
-      <Text className="text-[15px] font-medium text-hum-text">in sync!</Text>
+      <Text className="text-[40px]" allowFontScaling={false}>🎉</Text>
+      <Text
+        className="text-[15px] font-medium tracking-tight text-hum-text"
+        allowFontScaling={false}
+      >
+        in sync!
+      </Text>
     </Animated.View>
   );
 }

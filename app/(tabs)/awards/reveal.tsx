@@ -71,7 +71,7 @@ function RevealWinnerCard({
         opacity,
         transform: [{ translateY }, { scale }],
       }}
-      className="rounded-[22px] border border-hum-border/16 bg-hum-card px-6 py-9"
+      className="rounded-[22px] border border-hum-border/18 bg-hum-card px-6 py-9"
     >
       <Text className="text-center text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
         {categoryLine}

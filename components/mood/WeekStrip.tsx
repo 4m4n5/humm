@@ -3,14 +3,20 @@ import { View, Text } from 'react-native';
 import type { MoodEntry } from '@/types';
 import { localDayKey, offsetLocalDayKey } from '@/lib/dateKeys';
 import { cardShadow } from '@/constants/elevation';
-import { SectionLabel } from '@/components/habits/SectionLabel';
 
 type Props = {
   myEntries: MoodEntry[];
   partnerEntries: MoodEntry[];
+  myLabel: string;
+  partnerLabel: string;
 };
 
-const DAY_ABBREVS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+const SHORT_DAY = ['s', 'm', 't', 'w', 't', 'f', 's'];
+
+function dayLetterFromKey(dk: string): string {
+  const [y, m, d] = dk.split('-').map(Number);
+  return SHORT_DAY[new Date(y, m - 1, d).getDay()]!;
+}
 
 function last7DayKeys(): string[] {
   const today = localDayKey();
@@ -21,8 +27,41 @@ function last7DayKeys(): string[] {
   return keys;
 }
 
-/** Seven-day glance — circular dots (no square wells). */
-export function WeekStrip({ myEntries, partnerEntries }: Props) {
+function Cell({
+  emoji,
+  inSync,
+}: {
+  emoji: string | undefined;
+  inSync: boolean;
+}) {
+  const filled = !!emoji;
+  return (
+    <View className="flex-1 items-center">
+      <View
+        className={`h-[34px] w-[34px] items-center justify-center rounded-[11px] ${
+          filled
+            ? inSync
+              ? 'bg-hum-primary/22'
+              : 'bg-hum-bg/55'
+            : 'bg-hum-bg/30'
+        }`}
+      >
+        {filled ? (
+          <Text className="text-[16px]" allowFontScaling={false}>
+            {emoji}
+          </Text>
+        ) : (
+          <View
+            className="rounded-full bg-hum-dim/30"
+            style={{ height: 3, width: 3 }}
+          />
+        )}
+      </View>
+    </View>
+  );
+}
+
+export function WeekStrip({ myEntries, partnerEntries, myLabel, partnerLabel }: Props) {
   const dayKeys = useMemo(last7DayKeys, []);
   const myMap = useMemo(() => {
     const m = new Map<string, MoodEntry>();
@@ -37,57 +76,87 @@ export function WeekStrip({ myEntries, partnerEntries }: Props) {
 
   const todayKey = localDayKey();
 
-  const LetterRow = (
-    <View className="flex-row justify-between">
-      {dayKeys.map((dk, i) => {
-        const isToday = dk === todayKey;
-        return (
-          <View key={`l-${dk}`} className="flex-1 items-center">
-            <Text
-              className={`text-[9px] font-semibold ${isToday ? 'text-hum-primary' : 'text-hum-dim'}`}
-              maxFontSizeMultiplier={1.1}
-            >
-              {DAY_ABBREVS[i]}
-            </Text>
-          </View>
-        );
-      })}
-    </View>
-  );
-
-  const EmojiRow = (getter: (dk: string) => MoodEntry | undefined) => (
-    <View className="flex-row justify-between">
-      {dayKeys.map((dk) => {
-        const e = getter(dk);
-        const isToday = dk === todayKey;
-        return (
-          <View key={dk} className="flex-1 items-center">
-            <View
-              className={`h-9 w-9 items-center justify-center rounded-full ${
-                isToday ? 'border-2 border-hum-primary/30 bg-hum-primary/[0.08]' : 'bg-hum-surface/40'
-              }`}
-            >
-              <Text className="text-[13px]" allowFontScaling={false}>
-                {e?.current.emoji ?? '·'}
-              </Text>
-            </View>
-          </View>
-        );
-      })}
-    </View>
-  );
-
   return (
     <View
-      className="gap-y-3 rounded-[28px] border border-hum-border/18 bg-hum-card px-4 py-4"
+      className="overflow-hidden rounded-[22px] border border-hum-secondary/20 bg-hum-card px-4 py-4"
       style={cardShadow}
     >
-      <SectionLabel title="week" />
-      {LetterRow}
-      <View className="gap-y-2 pt-0.5">
-        {EmojiRow((dk) => myMap.get(dk))}
-        {EmojiRow((dk) => partnerMap.get(dk))}
+      <View className="gap-y-3.5">
+        {/* day letters */}
+        <View className="flex-row items-center gap-x-2.5">
+          <View className="w-12" />
+          <View className="flex-1 flex-row justify-between">
+            {dayKeys.map((dk) => {
+              const isToday = dk === todayKey;
+              return (
+                <View key={`l-${dk}`} className="flex-1 items-center">
+                  <Text
+                    className={`text-[10px] ${
+                      isToday
+                        ? 'font-semibold text-hum-secondary'
+                        : 'font-light text-hum-dim/60'
+                    }`}
+                    allowFontScaling={false}
+                  >
+                    {dayLetterFromKey(dk)}
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* mood rows — today is signaled solely by the illuminated letter above */}
+        <View className="gap-y-2">
+          <Row
+            label={myLabel}
+            dayKeys={dayKeys}
+            entries={myMap}
+            partnerEntries={partnerMap}
+          />
+          <Row
+            label={partnerLabel}
+            dayKeys={dayKeys}
+            entries={partnerMap}
+            partnerEntries={myMap}
+          />
+        </View>
       </View>
     </View>
   );
 }
+
+function Row({
+  label,
+  dayKeys,
+  entries,
+  partnerEntries,
+}: {
+  label: string;
+  dayKeys: string[];
+  entries: Map<string, MoodEntry>;
+  partnerEntries: Map<string, MoodEntry>;
+}) {
+  return (
+    <View className="flex-row items-center gap-x-2.5">
+      <Text
+        className="w-12 pl-1 text-[11px] font-light lowercase tracking-[-0.005em] text-hum-dim"
+        numberOfLines={1}
+      >
+        {label}
+      </Text>
+      <View className="flex-1 flex-row justify-between">
+        {dayKeys.map((dk) => {
+          const me = entries.get(dk);
+          const them = partnerEntries.get(dk);
+          const inSync =
+            !!me && !!them && me.current.stickerId === them.current.stickerId;
+          return (
+            <Cell key={dk} emoji={me?.current.emoji} inSync={inSync} />
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+

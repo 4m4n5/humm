@@ -26,7 +26,9 @@ import { localDayKey, localWeekKey } from '@/lib/dateKeys';
  * - **Server:** `functions/src/index.ts` notifies partner when `current.stickerId` changes.
  */
 
-const INTRADAY_CAP = 24;
+// Display contract: 1 anchor (latest) + 4 trail slots in MoodTodayHero.
+// Older entries silently roll off once a 6th check-in is added.
+const INTRADAY_CAP = 5;
 
 export const moodEntriesCol = () => collection(db, 'moodEntries');
 

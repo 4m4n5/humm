@@ -28,6 +28,8 @@ import {
 } from '@/constants/awardsBadgeTiers';
 import { REASONS_LINE_COUNT_BADGES, REASONS_STREAK_DAY_BADGES } from '@/constants/reasonsBadgeTiers';
 import { ALL_DECISIONS_COUPLE_TIERS, QUICKSPIN_COUPLE_TIERS } from '@/constants/decideBadgeTiers';
+import { DECIDE_STREAK_TIERS } from '@/constants/decideStreakBadges';
+import { WEEKLY_CHALLENGE_TIERS } from '@/constants/weeklyChallengeBadges';
 import { enabledAwardCategoryIds, mergeCoupleAwardCategoryDefaults } from '@/lib/awardCategoryConfig';
 import { deliberationDisagreementCount, categoriesWithNominations } from '@/lib/awardsLogic';
 import type { Ceremony, Couple, Nomination, Reason } from '@/types';

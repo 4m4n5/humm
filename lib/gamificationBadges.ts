@@ -22,7 +22,16 @@ import {
   REASONS_STREAK_DAY_BADGES,
 } from '@/constants/reasonsBadgeTiers';
 import { ALL_DECISIONS_COUPLE_TIERS, QUICKSPIN_COUPLE_TIERS } from '@/constants/decideBadgeTiers';
-import type { Ceremony, Nomination, Reason, UserProfile } from '@/types';
+import { DECIDE_STREAK_TIERS } from '@/constants/decideStreakBadges';
+import {
+  MOOD_DEVOTION_STREAK_TIERS,
+  MOOD_PULSE_TIERS,
+  MOOD_TWIN_DAY_TIERS,
+} from '@/constants/moodBadgeTiers';
+import { HABIT_CHECKIN_TIERS, HABIT_COLLECTOR_TIERS } from '@/constants/habitBadgeTiers';
+import { WEEKLY_CHALLENGE_TIERS } from '@/constants/weeklyChallengeBadges';
+import { coupleDoc } from '@/lib/firestore/couples';
+import type { Ceremony, Couple, Nomination, Reason, UserProfile } from '@/types';
 
 function winBadgeIdForCategory(cat: string): string {
   return `won_${cat}`;
@@ -136,6 +145,20 @@ export async function evaluateDecisionCoupleBadges(
   if (allDecisions >= 100) coupleBadgeIds.push('decisive');
   if (foodCount >= 50) coupleBadgeIds.push('foodie');
   if (movieCount >= 20) coupleBadgeIds.push('night_in');
+
+  // Decision streak tiers — read from couple doc so we don't double-bump on each decision.
+  try {
+    const cSnap = await getDoc(coupleDoc(coupleId));
+    if (cSnap.exists()) {
+      const c = cSnap.data() as Couple;
+      const streak = c.streaks?.decisionStreak ?? 0;
+      for (const t of DECIDE_STREAK_TIERS) {
+        if (streak >= t.days) coupleBadgeIds.push(t.id);
+      }
+    }
+  } catch (e) {
+    console.warn('[badges] decision streak badge eval failed:', e);
+  }
 
   if (coupleBadgeIds.length) {
     unlocked.push(...(await grantToBoth(uidA, uidB, [...new Set(coupleBadgeIds)])));
@@ -398,7 +421,28 @@ export async function evaluateHabitStreakBadges(
   }
   if (jointStreak >= 7) unlocked.push(...(await grantToBoth(uidA, uidB, ['habit_pair_week'])));
   if (jointStreak >= 30) unlocked.push(...(await grantToBoth(uidA, uidB, ['habit_pair_month'])));
+  if (jointStreak >= 90) unlocked.push(...(await grantToBoth(uidA, uidB, ['habit_pair_quarter'])));
   return [...new Set(unlocked)];
+}
+
+/**
+ * Per-user habit depth: total check-ins + active habit count.
+ * Personal-only progression so a user with mostly personal habits keeps unlocking badges.
+ */
+export async function evaluateHabitDepthBadges(
+  actingUid: string,
+  totalCheckins: number,
+  activeHabitCount: number,
+): Promise<string[]> {
+  const ids: string[] = [];
+  for (const t of HABIT_CHECKIN_TIERS) {
+    if (totalCheckins >= t.count) ids.push(t.id);
+  }
+  for (const t of HABIT_COLLECTOR_TIERS) {
+    if (activeHabitCount >= t.count) ids.push(t.id);
+  }
+  if (ids.length === 0) return [];
+  return mergeBadgesSafe(actingUid, ids);
 }
 
 /**
@@ -412,32 +456,65 @@ export async function evaluateNewMoodBadges(
   bothMatchToday: boolean,
   actingQuadrants: Set<string>,
   bothLoggedDayCount: number,
+  extras?: {
+    /** Total mood entries for the acting user. */
+    myTotalEntries: number;
+    /** Distinct days both partners had matching stickers. */
+    twinDayCount: number;
+    /** Couple bothLogged streak after this write. */
+    bothLoggedStreak: number;
+  },
 ): Promise<string[]> {
   const unlocked: string[] = [];
 
   const authorIds: string[] = [];
   if (isFirstEver) authorIds.push('mood_open');
   if (actingQuadrants.size >= 4) authorIds.push('mood_rainbow_self');
+  if (extras) {
+    for (const t of MOOD_PULSE_TIERS) {
+      if (extras.myTotalEntries >= t.count) authorIds.push(t.id);
+    }
+  }
   if (authorIds.length) {
     unlocked.push(...(await mergeBadges(actingUid, authorIds)));
   }
 
   if (!partnerUid) return [...new Set(unlocked)];
 
-  if (bothLoggedToday) {
-    unlocked.push(...(await grantToBoth(actingUid, partnerUid, ['mood_seen'])));
+  const coupleIds: string[] = [];
+  if (bothLoggedToday) coupleIds.push('mood_seen');
+  if (bothLoggedDayCount >= 3) coupleIds.push('mood_duet_3');
+  if (bothLoggedDayCount >= 25) coupleIds.push('mood_duet_25');
+  if (bothMatchToday) coupleIds.push('mood_twin_first');
+
+  if (extras) {
+    for (const t of MOOD_DEVOTION_STREAK_TIERS) {
+      if (extras.bothLoggedStreak >= t.days) coupleIds.push(t.id);
+    }
+    for (const t of MOOD_TWIN_DAY_TIERS) {
+      if (extras.twinDayCount >= t.count) coupleIds.push(t.id);
+    }
   }
-  if (bothLoggedDayCount >= 3) {
-    unlocked.push(...(await grantToBoth(actingUid, partnerUid, ['mood_duet_3'])));
-  }
-  if (bothLoggedDayCount >= 25) {
-    unlocked.push(...(await grantToBoth(actingUid, partnerUid, ['mood_duet_25'])));
-  }
-  if (bothMatchToday) {
-    unlocked.push(...(await grantToBoth(actingUid, partnerUid, ['mood_twin_first'])));
+
+  if (coupleIds.length) {
+    unlocked.push(...(await grantToBoth(actingUid, partnerUid, [...new Set(coupleIds)])));
   }
 
   return [...new Set(unlocked)];
+}
+
+/** Weekly challenge tier badges — granted to both partners on each new total. */
+export async function evaluateWeeklyChallengeBadges(
+  uidA: string,
+  uidB: string,
+  winsTotal: number,
+): Promise<string[]> {
+  const ids: string[] = [];
+  for (const t of WEEKLY_CHALLENGE_TIERS) {
+    if (winsTotal >= t.count) ids.push(t.id);
+  }
+  if (ids.length === 0) return [];
+  return grantToBoth(uidA, uidB, ids);
 }
 
 export async function evaluateFirstHabitBadge(actingUid: string, isFirstHabit: boolean): Promise<string[]> {

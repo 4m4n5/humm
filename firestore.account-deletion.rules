@@ -1,28 +1,46 @@
-// Fragment to MERGE into your existing `firestore.rules` (Firebase Console or deploy).
-// Required for in-app account deletion (Option A: client-side deletes).
+// ─────────────────────────────────────────────────────────────────────────────
+// Account-deletion rules fragment (App Store Guideline 5.1.1(v))
+// MERGE the clauses below into your live `firestore.rules` in Firebase Console.
 //
-// Adjust paths if your rules use different helpers. `isCoupleMember` reads the couple
-// document id from `resource.data.coupleId` on subordinate docs.
+// Without these clauses the in-app delete flow (`profile/delete-account.tsx` →
+// `lib/firestore/accountDeletion.ts`) will hit `permission-denied` and fail
+// halfway through, leaving orphan data behind. That breaks Apple compliance.
+//
+// The `isCoupleMember(coupleId)` helper assumes the existing rules already use
+// the same name. If yours is named differently, swap accordingly.
+// ─────────────────────────────────────────────────────────────────────────────
 
-// --- helpers (merge once) ---
+// Helper (define once at the top of the rules file):
 // function isCoupleMember(coupleId) {
 //   let c = get(/databases/$(database)/documents/couples/$(coupleId)).data;
 //   return request.auth != null
 //     && (c.user1Id == request.auth.uid || c.user2Id == request.auth.uid);
 // }
 
-// --- users/{userId} — add alongside your existing user rules ---
-// allow delete: if request.auth != null && request.auth.uid == userId;
+// ─── users ────────────────────────────────────────────────
+// match /users/{userId} {
+//   // self-delete
+//   allow delete: if request.auth != null && request.auth.uid == userId;
 //
-// Partner unlink when the other account deletes themselves (only null link fields):
-// allow update: if request.auth != null
-//   && request.auth.uid != userId
-//   && resource.data.partnerId == request.auth.uid
-//   && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['partnerId', 'coupleId'])
-//   && request.resource.data.partnerId == null
-//   && request.resource.data.coupleId == null;
+//   // partner unlink: when the OTHER account deletes itself, that account
+//   // must be allowed to null out partnerId + coupleId on this doc — and
+//   // ONLY those two fields, nothing else.
+//   allow update: if request.auth != null
+//     && request.auth.uid != userId
+//     && resource.data.partnerId == request.auth.uid
+//     && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['partnerId', 'coupleId'])
+//     && request.resource.data.partnerId == null
+//     && request.resource.data.coupleId == null;
+// }
 
-// --- couple-scoped collections: extend each match with delete ---
+// ─── couples ──────────────────────────────────────────────
+// match /couples/{coupleId} {
+//   allow delete: if request.auth != null
+//     && (resource.data.user1Id == request.auth.uid
+//      || resource.data.user2Id == request.auth.uid);
+// }
+
+// ─── couple-scoped collections — extend each existing match ─
 // match /nominations/{docId} {
 //   allow delete: if resource.data.coupleId != null && isCoupleMember(resource.data.coupleId);
 // }
@@ -38,14 +56,17 @@
 // match /battles/{docId} {
 //   allow delete: if resource.data.coupleId != null && isCoupleMember(resource.data.coupleId);
 // }
-
-// --- decisionOptions: doc id equals coupleId ---
-// match /decisionOptions/{coupleId} {
-//   allow delete: if isCoupleMember(coupleId);
+// match /moodEntries/{docId} {
+//   allow delete: if resource.data.coupleId != null && isCoupleMember(resource.data.coupleId);
+// }
+// match /habits/{docId} {
+//   allow delete: if resource.data.coupleId != null && isCoupleMember(resource.data.coupleId);
+// }
+// match /habitCheckins/{docId} {
+//   allow delete: if resource.data.coupleId != null && isCoupleMember(resource.data.coupleId);
 // }
 
-// --- couples ---
-// match /couples/{coupleId} {
-//   allow delete: if resource.data.user1Id == request.auth.uid
-//     || resource.data.user2Id == request.auth.uid;
+// ─── decisionOptions: doc id equals coupleId ─
+// match /decisionOptions/{coupleId} {
+//   allow delete: if isCoupleMember(coupleId);
 // }

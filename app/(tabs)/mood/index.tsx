@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { View, Text, ScrollView, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
@@ -9,16 +9,18 @@ import { useMoodStore } from '@/lib/stores/moodStore';
 import { usePartnerName } from '@/lib/usePartnerName';
 import { promptPushPermissionOnce } from '@/lib/pushPermission';
 import { ScreenTitle } from '@/components/shared/ScreenTitle';
+import { SectionLabel } from '@/components/habits/SectionLabel';
 import { MoodTodayHero } from '@/components/mood/MoodTodayHero';
 import { WeekStrip } from '@/components/mood/WeekStrip';
 import { IntradayTrail } from '@/components/mood/IntradayTrail';
 import { MoodMirrorMoment } from '@/components/mood/MoodMirrorMoment';
-import { SectionLabel } from '@/components/habits/SectionLabel';
 import { scrollContentStandard } from '@/constants/screenLayout';
-import { theme } from '@/constants/theme';
 import { cardShadow } from '@/constants/elevation';
+import { theme } from '@/constants/theme';
 import { localDayKey } from '@/lib/dateKeys';
 import type { MoodEntry } from '@/types';
+
+const EARLIER_INITIAL_LIMIT = 5;
 
 type MergedDayRow = {
   dayKey: string;
@@ -47,7 +49,9 @@ function formatDayLabel(dayKey: string): string {
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
   if (dt.toDateString() === yesterday.toDateString()) return 'yesterday';
-  return dt.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }).toLowerCase();
+  return dt
+    .toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })
+    .toLowerCase();
 }
 
 export default function MoodScreen() {
@@ -86,10 +90,17 @@ export default function MoodScreen() {
     [feedEntries, myUid],
   );
 
+  const todayKey = localDayKey();
   const mergedRows = useMemo(
-    () => mergeFeedRows(feedEntries, myUid),
-    [feedEntries, myUid],
+    () => mergeFeedRows(feedEntries, myUid).filter((r) => r.dayKey !== todayKey),
+    [feedEntries, myUid, todayKey],
   );
+
+  const [earlierExpanded, setEarlierExpanded] = useState(false);
+  const visibleEarlierRows = earlierExpanded
+    ? mergedRows
+    : mergedRows.slice(0, EARLIER_INITIAL_LIMIT);
+  const hiddenEarlierCount = mergedRows.length - visibleEarlierRows.length;
 
   if (!partnerLinked) {
     return (
@@ -99,21 +110,10 @@ export default function MoodScreen() {
           contentContainerStyle={scrollContentStandard}
           showsVerticalScrollIndicator={false}
         >
-          <ScreenTitle title="mood" subtitle="link partner from profile" />
-          <View
-            className="items-center gap-y-3 rounded-[28px] border border-hum-border/18 bg-hum-card px-6 py-8"
-            style={cardShadow}
-          >
-            <View className="h-14 w-14 items-center justify-center rounded-full bg-hum-petal/[0.10]">
-              <Ionicons name="heart-half-outline" size={24} color={theme.petal} />
-            </View>
-            <Text
-              className="text-center text-[14px] font-light leading-[21px] text-hum-muted"
-              maxFontSizeMultiplier={1.3}
-            >
-              mood unlocks when you're paired.
-            </Text>
-          </View>
+          <ScreenTitle
+            title="mood"
+            subtitle="link with your partner to share check-ins."
+          />
         </ScrollView>
       </SafeAreaView>
     );
@@ -128,37 +128,153 @@ export default function MoodScreen() {
         contentContainerStyle={scrollContentStandard}
         showsVerticalScrollIndicator={false}
       >
-        <ScreenTitle title="mood" subtitle="quick check-in" />
+        <ScreenTitle title="mood" subtitle="small check-ins, same rhythm" />
 
-        <MoodTodayHero
-          myEntry={myToday}
-          partnerEntry={partnerToday}
-          myLabel={myFirst}
-          partnerLabel={partnerFirst}
-          onPressMine={() => router.push('/mood/log')}
-        />
+        <View className="gap-y-2.5">
+          <SectionLabel title="today" />
+          <MoodTodayHero
+            myEntry={myToday}
+            partnerEntry={partnerToday}
+            myLabel={myFirst}
+            partnerLabel={partnerFirst}
+            onPressMine={() => router.push('/mood/log')}
+          />
+        </View>
 
-        <WeekStrip myEntries={myEntries} partnerEntries={partnerEntries} />
+        <View className="gap-y-2.5">
+          <SectionLabel title="this week" />
+          <WeekStrip
+            myEntries={myEntries}
+            partnerEntries={partnerEntries}
+            myLabel={myFirst}
+            partnerLabel={partnerFirst}
+          />
+        </View>
 
         {mergedRows.length > 0 ? (
           <View className="gap-y-2.5">
-            <SectionLabel title="history" />
-            {mergedRows.map((row) => (
-              <DayCard key={row.dayKey} row={row} myLabel={myFirst} partnerLabel={partnerFirst} />
+            <SectionLabel title="earlier" />
+            {visibleEarlierRows.map((row) => (
+              <DayCard
+                key={row.dayKey}
+                row={row}
+                myLabel={myFirst}
+                partnerLabel={partnerFirst}
+              />
             ))}
+            {mergedRows.length > EARLIER_INITIAL_LIMIT ? (
+              <ExpandToggle
+                expanded={earlierExpanded}
+                hiddenCount={hiddenEarlierCount}
+                onPress={() => setEarlierExpanded((e) => !e)}
+              />
+            ) : null}
           </View>
         ) : !loading ? (
-          <View
-            className="items-center rounded-[28px] border border-hum-border/18 bg-hum-card py-12"
-            style={cardShadow}
-          >
-            <Text className="text-[32px] opacity-40" allowFontScaling={false}>
+          <View className="items-center gap-y-2 py-8">
+            <Text className="text-[28px]" allowFontScaling={false}>
               💭
+            </Text>
+            <Text className="text-[14px] font-light text-hum-muted">
+              earlier check-ins show up here
             </Text>
           </View>
         ) : null}
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+/**
+ * Quiet pill-button to expand / collapse the earlier list. Borrows the
+ * `decide` history toggle's visual language (rounded pill, /30 border,
+ * /90 card, chevron) so it sits naturally inside the section.
+ */
+function ExpandToggle({
+  expanded,
+  hiddenCount,
+  onPress,
+}: {
+  expanded: boolean;
+  hiddenCount: number;
+  onPress: () => void;
+}) {
+  const label = expanded ? 'show less' : `show ${hiddenCount} more`;
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      className="mt-1 flex-row items-center justify-center gap-x-1.5 self-center rounded-full border border-hum-border/30 bg-hum-card/90 px-4 py-2 active:opacity-88"
+    >
+      <Text
+        className="text-[12px] font-light tabular-nums text-hum-muted"
+        maxFontSizeMultiplier={1.3}
+      >
+        {label}
+      </Text>
+      <Ionicons
+        name={expanded ? 'chevron-up' : 'chevron-down'}
+        size={13}
+        color={theme.dim}
+        style={{ opacity: 0.6 }}
+      />
+    </Pressable>
+  );
+}
+
+function MoodEntryRow({
+  entry,
+  label,
+}: {
+  entry: MoodEntry;
+  label: string;
+}) {
+  return (
+    <View className="flex-row items-center gap-x-3">
+      <View className="h-10 w-10 items-center justify-center rounded-xl bg-hum-bg/55">
+        <Text className="text-[20px]" allowFontScaling={false}>
+          {entry.current.emoji}
+        </Text>
+      </View>
+      <View className="min-w-0 flex-1 gap-y-0.5">
+        <View className="flex-row items-baseline gap-x-2">
+          <Text
+            className="text-[15px] font-medium leading-[20px] tracking-tight text-hum-text"
+            numberOfLines={1}
+          >
+            {entry.current.label}
+          </Text>
+          <Text
+            className="text-[11px] font-light lowercase text-hum-dim"
+            numberOfLines={1}
+          >
+            {label}
+          </Text>
+        </View>
+        <IntradayTrail timeline={entry.timeline} ownerLabel={label} compact />
+      </View>
+    </View>
+  );
+}
+
+/**
+ * Right-side spine: a quiet metadata column with the day label, vertically
+ * centred so it reads as a single tag for the whole card rather than attached
+ * to either mood row. The in-sync state is now communicated by the card's
+ * petal-tinted border alone — no inline text needed.
+ */
+function DaySpine({ dayLabel }: { dayLabel: string }) {
+  return (
+    <View className="items-end justify-center self-stretch pl-2">
+      <Text
+        className="text-[11px] font-light lowercase tracking-[-0.005em] tabular-nums text-hum-dim"
+        numberOfLines={1}
+        allowFontScaling={false}
+      >
+        {dayLabel}
+      </Text>
+    </View>
   );
 }
 
@@ -178,64 +294,18 @@ function DayCard({
 
   return (
     <View
-      className="gap-y-3 rounded-[28px] border border-hum-border/18 bg-hum-card px-4 py-4"
+      className={`overflow-hidden rounded-[22px] border bg-hum-card ${
+        inSync ? 'border-hum-primary/20' : 'border-hum-border/18'
+      }`}
       style={cardShadow}
     >
-      <View className="flex-row items-center justify-between">
-        <Text
-          className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
-          maxFontSizeMultiplier={1.15}
-        >
-          {formatDayLabel(row.dayKey)}
-        </Text>
-        {inSync ? (
-          <Ionicons name="link" size={14} color={theme.gold} accessibilityLabel="same mood" />
-        ) : null}
+      <View className="flex-row items-stretch px-4 py-3.5">
+        <View className="min-w-0 flex-1 gap-y-2.5">
+          {row.my && <MoodEntryRow entry={row.my} label={myLabel} />}
+          {row.partner && <MoodEntryRow entry={row.partner} label={partnerLabel} />}
+        </View>
+        <DaySpine dayLabel={formatDayLabel(row.dayKey)} />
       </View>
-
-      {row.my ? (
-        <View className="flex-row items-center gap-x-3">
-          <Text className="w-[52px] text-[11px] font-medium capitalize text-hum-dim" numberOfLines={1}>
-            {myLabel}
-          </Text>
-          <View className="h-10 w-10 items-center justify-center rounded-full bg-hum-surface/35">
-            <Text className="text-[22px]" allowFontScaling={false}>
-              {row.my.current.emoji}
-            </Text>
-          </View>
-          <View className="min-w-0 flex-1">
-            <Text
-              className="text-[13px] font-medium leading-[18px] tracking-tight text-hum-text"
-              numberOfLines={1}
-            >
-              {row.my.current.label}
-            </Text>
-            <IntradayTrail timeline={row.my.timeline} ownerLabel={myLabel} />
-          </View>
-        </View>
-      ) : null}
-
-      {row.partner ? (
-        <View className="flex-row items-center gap-x-3">
-          <Text className="w-[52px] text-[11px] font-medium capitalize text-hum-dim" numberOfLines={1}>
-            {partnerLabel}
-          </Text>
-          <View className="h-10 w-10 items-center justify-center rounded-full bg-hum-surface/35">
-            <Text className="text-[22px]" allowFontScaling={false}>
-              {row.partner.current.emoji}
-            </Text>
-          </View>
-          <View className="min-w-0 flex-1">
-            <Text
-              className="text-[13px] font-medium leading-[18px] tracking-tight text-hum-text"
-              numberOfLines={1}
-            >
-              {row.partner.current.label}
-            </Text>
-            <IntradayTrail timeline={row.partner.timeline} ownerLabel={partnerLabel} />
-          </View>
-        </View>
-      ) : null}
     </View>
   );
 }

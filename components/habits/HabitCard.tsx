@@ -57,23 +57,23 @@ function ParticipantPill({
       accessibilityRole={readOnly ? 'text' : 'checkbox'}
       accessibilityState={{ checked }}
       accessibilityLabel={`${label}${checked ? ' done' : ' not done'}`}
-      className={`flex-1 flex-row items-center gap-2 rounded-[18px] border px-2.5 py-2 ${
+      className={`flex-1 flex-row items-center gap-2.5 rounded-[16px] border px-3 py-2.5 ${
         checked
-          ? 'border-hum-secondary/40 bg-hum-secondary/12'
-          : 'border-hum-border/18 bg-hum-bg/40'
+          ? 'border-hum-secondary/35 bg-hum-secondary/10'
+          : 'border-hum-border/16 bg-hum-bg/30'
       }`}
     >
       <View
-        className={`h-7 w-7 items-center justify-center rounded-full ${
+        className={`h-[26px] w-[26px] items-center justify-center rounded-full ${
           checked
-            ? 'bg-hum-secondary/40'
-            : 'border border-hum-border/30 bg-hum-card/50'
+            ? 'bg-hum-secondary/45'
+            : 'border border-hum-border/25 bg-hum-card/50'
         }`}
       >
         {checked ? (
-          <Ionicons name="checkmark" size={14} color={theme.text} />
+          <Ionicons name="checkmark" size={13} color={theme.text} />
         ) : (
-          <Text className="text-[12px] font-semibold text-hum-muted">
+          <Text className="text-[11px] font-semibold text-hum-muted">
             {initialOf(label)}
           </Text>
         )}
@@ -265,7 +265,7 @@ export function HabitCard({
           </View>
 
           <View
-            className="flex-row gap-2 px-3 pb-3 pt-2.5"
+            className="flex-row gap-2 px-3 pb-3.5 pt-2"
             style={{ direction: 'ltr' }}
           >
             <ParticipantPill
@@ -315,13 +315,13 @@ export function HabitCard({
         <Ionicons name="ellipsis-horizontal" size={17} color={theme.dim} style={{ opacity: 0.45 }} />
       </TouchableOpacity>
       <View
-        className={`h-8 w-8 items-center justify-center rounded-full ${
+        className={`h-[30px] w-[30px] items-center justify-center rounded-full ${
           myChecked
-            ? 'bg-hum-secondary/40'
-            : 'border border-hum-border/30 bg-hum-bg/40'
+            ? 'bg-hum-secondary/45'
+            : 'border-[1.5px] border-hum-border/25 bg-hum-bg/35'
         }`}
       >
-        {myChecked ? <Ionicons name="checkmark" size={16} color={theme.text} /> : null}
+        {myChecked ? <Ionicons name="checkmark" size={15} color={theme.text} /> : null}
       </View>
     </Pressable>
   );

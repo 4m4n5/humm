@@ -28,7 +28,7 @@ function relativeDate(ts: Timestamp | null | undefined): string {
 
 function DecisionRow({ item }: { item: Decision }) {
   return (
-    <View className="gap-y-2 rounded-[20px] border border-hum-border/16 bg-hum-card/90 px-4 py-3.5">
+    <View className="gap-y-2 rounded-[20px] border border-hum-border/18 bg-hum-card px-4 py-3.5">
       <View className="flex-row items-center gap-x-3">
         <View className="h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-hum-surface/55">
           <Text className="text-[18px] leading-none">{categoryEmoji(item.category)}</Text>

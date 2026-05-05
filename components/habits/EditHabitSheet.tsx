@@ -24,6 +24,59 @@ type Props = {
   onClose: () => void;
 };
 
+function PillGroup<T extends string>({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: readonly { key: T; label: string }[];
+  value: T;
+  onChange: (v: T) => void;
+}) {
+  return (
+    <View className="gap-y-2.5">
+      <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">{label}</Text>
+      <View className="flex-row flex-wrap gap-2">
+        {options.map(({ key, label: l }) => {
+          const on = value === key;
+          return (
+            <TouchableOpacity
+              key={key}
+              onPress={() => onChange(key)}
+              className={`rounded-full border px-4 py-2.5 ${
+                on
+                  ? 'border-hum-primary/25 bg-hum-primary'
+                  : 'border-hum-border/16 bg-hum-card/60'
+              }`}
+              activeOpacity={0.88}
+            >
+              <Text
+                className={`text-[13px] font-medium tracking-wide ${
+                  on ? 'text-hum-ink' : 'text-hum-muted'
+                }`}
+              >
+                {l}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+
+const CADENCE_OPTIONS = [
+  { key: 'daily' as const, label: 'daily' },
+  { key: 'weekly' as const, label: 'weekly' },
+] as const;
+
+const SCOPE_OPTIONS = [
+  { key: 'shared' as const, label: 'together' },
+  { key: 'personal' as const, label: 'just you' },
+] as const;
+
 export function EditHabitSheet({ visible, habit, onClose }: Props) {
   const updateHabit = useHabitStore((s) => s.updateHabit);
   const archiveHabit = useHabitStore((s) => s.archiveHabit);
@@ -94,76 +147,19 @@ export function EditHabitSheet({ visible, habit, onClose }: Props) {
         className="flex-1 justify-end bg-black/50"
       >
         <Pressable className="flex-1" onPress={handleClose} accessibilityLabel="Dismiss" />
-        <View className="max-h-[88%] rounded-t-3xl border-t border-hum-border/40 bg-hum-bg px-5 pb-8 pt-4">
-          <Text className="text-[18px] font-semibold text-hum-text">edit habit</Text>
+        <View className="max-h-[88%] rounded-t-[28px] border-t border-hum-border/30 bg-hum-bg px-5 pb-8 pt-3">
+          {/* Grab handle */}
+          <View className="mb-4 items-center">
+            <View className="h-[4px] w-9 rounded-full bg-hum-border/40" />
+          </View>
+
+          <Text className="text-[18px] font-semibold tracking-tight text-hum-text">edit habit</Text>
 
           <ScrollView
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ ...scrollContentStandard, paddingHorizontal: 0, paddingTop: 16 }}
           >
-            <View className="gap-y-3">
-              <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">cadence</Text>
-              <View className="flex-row flex-wrap gap-2">
-                {(
-                  [
-                    { key: 'daily' as const, label: 'daily' },
-                    { key: 'weekly' as const, label: 'weekly' },
-                  ] as const
-                ).map(({ key, label }) => (
-                  <TouchableOpacity
-                    key={key}
-                    onPress={() => setCadence(key)}
-                    className={`rounded-full border px-4 py-2.5 ${
-                      cadence === key
-                        ? 'border-hum-primary/25 bg-hum-primary'
-                        : 'border-hum-border/16 bg-hum-card'
-                    }`}
-                    activeOpacity={0.88}
-                  >
-                    <Text
-                      className={`text-[13px] font-medium tracking-wide ${
-                        cadence === key ? 'text-hum-ink' : 'text-hum-muted'
-                      }`}
-                    >
-                      {label}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-
-            <View className="gap-y-3">
-              <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">who</Text>
-              <View className="flex-row flex-wrap gap-2">
-                {(
-                  [
-                    { key: 'shared' as const, label: 'together' },
-                    { key: 'personal' as const, label: 'just you' },
-                  ] as const
-                ).map(({ key, label }) => (
-                  <TouchableOpacity
-                    key={key}
-                    onPress={() => setScope(key)}
-                    className={`rounded-full border px-4 py-2.5 ${
-                      scope === key
-                        ? 'border-hum-primary/25 bg-hum-primary'
-                        : 'border-hum-border/16 bg-hum-card'
-                    }`}
-                    activeOpacity={0.88}
-                  >
-                    <Text
-                      className={`text-[13px] font-medium tracking-wide ${
-                        scope === key ? 'text-hum-ink' : 'text-hum-muted'
-                      }`}
-                    >
-                      {label}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-
             <Input
               label="title"
               placeholder="evening walk"
@@ -172,10 +168,10 @@ export function EditHabitSheet({ visible, habit, onClose }: Props) {
               autoCapitalize="sentences"
             />
 
-            <View className="gap-y-2">
+            <View className="gap-y-2.5">
               <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">emoji</Text>
               <TextInput
-                className="min-h-[52px] rounded-[18px] border border-hum-border/16 bg-hum-surface/65 px-4 py-3.5 text-[22px] font-light text-hum-text"
+                className="min-h-[52px] rounded-[20px] border border-hum-border/16 bg-hum-surface/65 px-4 py-3.5 text-[22px] font-light text-hum-text"
                 placeholder="✨"
                 placeholderTextColor={theme.dim}
                 value={emoji}
@@ -184,13 +180,32 @@ export function EditHabitSheet({ visible, habit, onClose }: Props) {
               />
             </View>
 
-            <Button label="save" onPress={() => void submit()} loading={busy} disabled={!title.trim()} size="lg" />
+            <View className="h-px bg-hum-border/12" />
 
-            <Button label="cancel" variant="secondary" onPress={handleClose} size="lg" />
+            <PillGroup
+              label="cadence"
+              options={CADENCE_OPTIONS}
+              value={cadence}
+              onChange={setCadence}
+            />
 
-            <TouchableOpacity onPress={archive} className="items-center py-3" accessibilityRole="button">
-              <Text className="text-[13px] font-medium text-red-400/90">archive</Text>
-            </TouchableOpacity>
+            <PillGroup
+              label="who"
+              options={SCOPE_OPTIONS}
+              value={scope}
+              onChange={setScope}
+            />
+
+            <View className="gap-y-2.5 pt-2">
+              <Button label="save" onPress={() => void submit()} loading={busy} disabled={!title.trim()} size="lg" />
+              <Button label="cancel" variant="secondary" onPress={handleClose} size="lg" />
+            </View>
+
+            <View className="mt-2 items-center border-t border-hum-border/10 pt-4">
+              <TouchableOpacity onPress={archive} className="px-4 py-2" accessibilityRole="button">
+                <Text className="text-[13px] font-medium text-red-400/80">archive this habit</Text>
+              </TouchableOpacity>
+            </View>
           </ScrollView>
         </View>
       </KeyboardAvoidingView>

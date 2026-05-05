@@ -446,7 +446,7 @@ export default function ReasonsScreen() {
                   hitSlop={12}
                   accessibilityRole="button"
                   accessibilityLabel="Close and return to write"
-                  className="min-h-11 min-w-11 items-center justify-center rounded-full border border-hum-border/30 bg-hum-surface/60"
+                  className="min-h-11 min-w-11 items-center justify-center rounded-full border border-hum-border/18 bg-hum-surface/55"
                 >
                   <Text className="text-xs font-medium text-hum-primary">done</Text>
                 </TouchableOpacity>
@@ -487,8 +487,8 @@ export default function ReasonsScreen() {
           )}
         </View>
 
-        <View className="flex-row gap-3 opacity-90">
-          <View className="flex-1 items-center gap-y-1.5 rounded-[20px] border border-hum-border/30 bg-hum-card/90 px-2 py-4">
+        <View className="flex-row gap-3">
+          <View className="flex-1 items-center gap-y-1.5 rounded-[20px] border border-hum-border/18 bg-hum-card px-2 py-4">
             <Text
               className="min-h-[28px] w-full text-center text-[22px] font-extralight leading-[28px] text-hum-text tabular-nums"
               maxFontSizeMultiplier={1.25}
@@ -499,7 +499,7 @@ export default function ReasonsScreen() {
               about you
             </Text>
           </View>
-          <View className="flex-1 items-center gap-y-1.5 rounded-[20px] border border-hum-border/30 bg-hum-card/90 px-2 py-4">
+          <View className="flex-1 items-center gap-y-1.5 rounded-[20px] border border-hum-border/18 bg-hum-card px-2 py-4">
             <Text
               className="min-h-[28px] w-full text-center text-[22px] font-extralight leading-[28px] text-hum-text tabular-nums"
               maxFontSizeMultiplier={1.25}
@@ -513,7 +513,7 @@ export default function ReasonsScreen() {
         </View>
 
         {myUid && partnerId ? (
-          <View className="gap-y-3 rounded-[24px] border border-hum-border/30 bg-hum-card/85 px-5 py-5">
+          <View className="gap-y-3 rounded-[24px] border border-hum-border/18 bg-hum-card/85 px-5 py-5">
             <Text
               className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
               maxFontSizeMultiplier={1.2}

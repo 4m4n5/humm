@@ -59,7 +59,7 @@ function AnimatedProgressBar({ pct, allDone }: { pct: number; allDone: boolean }
   });
 
   return (
-    <View className="relative h-[5px] flex-1 overflow-hidden rounded-full bg-hum-border/40">
+    <View className="relative h-[6px] flex-1 overflow-hidden rounded-full bg-hum-border/30">
       <Animated.View
         className="absolute inset-y-0 left-0 rounded-full"
         style={{
@@ -115,7 +115,7 @@ export function HabitsActionBar({
       )}
 
       {jointStreak > 0 ? (
-        <View className="flex-row items-center gap-1 rounded-full bg-hum-secondary/15 px-2 py-1">
+        <View className="flex-row items-center gap-1 rounded-full border border-hum-secondary/20 bg-hum-secondary/10 px-2.5 py-1">
           <Text className="text-[12px]" allowFontScaling={false}>
             🔥
           </Text>
@@ -132,7 +132,7 @@ export function HabitsActionBar({
         onPress={onAddPress}
         accessibilityLabel="add habit"
         hitSlop={10}
-        className="h-9 w-9 items-center justify-center rounded-full bg-hum-card/50"
+        className="h-9 w-9 items-center justify-center rounded-full border border-hum-border/20 bg-hum-card/60"
       >
         <Ionicons name="add" size={20} color={theme.secondary} />
       </Pressable>

@@ -7,7 +7,22 @@ import { grantXp, type GrantXpResult } from '@/lib/firestore/gamification';
 import { XP_REWARDS } from '@/constants/levels';
 import { enqueueGamificationToasts } from '@/lib/stores/xpFeedbackStore';
 import { DEFAULT_STREAKS } from '@/lib/coupleGamificationDefaults';
-import { evaluateReasonStreakCoupleBadges } from '@/lib/gamificationBadges';
+import {
+  evaluateReasonStreakCoupleBadges,
+  evaluateWeeklyChallengeBadges,
+} from '@/lib/gamificationBadges';
+
+/** Streak thresholds rewarded with `*_streak_milestone` XP. Mirrors HABIT_STREAK_MILESTONES. */
+export const STREAK_MILESTONES = [7, 14, 30, 60, 90] as const;
+
+/** Returns the highest milestone in [...STREAK_MILESTONES] that is <= streak. 0 if none reached. */
+export function highestMilestoneReached(streak: number): number {
+  let best = 0;
+  for (const m of STREAK_MILESTONES) {
+    if (streak >= m) best = m;
+  }
+  return best;
+}
 
 function nextStreakValue(lastKey: string | null, todayKey: string, current: number): { streak: number; bumped: boolean } {
   if (lastKey === todayKey) return { streak: current, bumped: false };
@@ -85,16 +100,29 @@ async function patchStreak(
   return { dailyCheckinBoth, reasonStreakBumped };
 }
 
-/** Quick Spin / battle decision saved */
-export async function updateCoupleStreakAfterDecision(coupleId: string): Promise<void> {
+/** Quick Spin / battle decision saved. Bumps streak, grants daily_checkin + streak-milestone XP, returns new badges. */
+export async function updateCoupleStreakAfterDecision(coupleId: string): Promise<{ xp: (GrantXpResult | null)[]; badgeIds: string[] }> {
   const { dailyCheckinBoth } = await patchStreak(coupleId, 'decision');
-  if (!dailyCheckinBoth) return;
+  const xp: (GrantXpResult | null)[] = [];
+  if (!dailyCheckinBoth) return { xp, badgeIds: [] };
   const snap = await getDoc(coupleDoc(coupleId));
-  if (!snap.exists()) return;
+  if (!snap.exists()) return { xp, badgeIds: [] };
   const c = snap.data() as Couple;
-  const a = await grantXp(c.user1Id, XP_REWARDS.daily_checkin);
-  const b = await grantXp(c.user2Id, XP_REWARDS.daily_checkin);
-  enqueueGamificationToasts([a, b], []);
+  const streaks: CoupleStreaksState = { ...DEFAULT_STREAKS, ...c.streaks };
+
+  xp.push(await grantXp(c.user1Id, XP_REWARDS.daily_checkin));
+  xp.push(await grantXp(c.user2Id, XP_REWARDS.daily_checkin));
+
+  // Streak milestone — grant XP once per (per-threshold) crossing.
+  const reached = highestMilestoneReached(streaks.decisionStreak);
+  const previouslyRewarded = c.lastDecisionStreakMilestoneRewarded ?? 0;
+  if (reached > previouslyRewarded) {
+    xp.push(await grantXp(c.user1Id, XP_REWARDS.decision_streak_milestone));
+    xp.push(await grantXp(c.user2Id, XP_REWARDS.decision_streak_milestone));
+    await updateDoc(coupleDoc(coupleId), { lastDecisionStreakMilestoneRewarded: reached });
+  }
+
+  return { xp, badgeIds: [] };
 }
 
 export async function updateCoupleStreakAfterNomination(coupleId: string): Promise<void> {
@@ -123,6 +151,14 @@ export async function updateCoupleStreakAfterReason(coupleId: string): Promise<R
     const a = await grantXp(c.user1Id, XP_REWARDS.reason_streak_day);
     const b = await grantXp(c.user2Id, XP_REWARDS.reason_streak_day);
     xp.push(a, b);
+
+    const reached = highestMilestoneReached(reasonStreak);
+    const previouslyRewarded = c.lastReasonStreakMilestoneRewarded ?? 0;
+    if (reached > previouslyRewarded) {
+      xp.push(await grantXp(c.user1Id, XP_REWARDS.reason_streak_milestone));
+      xp.push(await grantXp(c.user2Id, XP_REWARDS.reason_streak_milestone));
+      await updateDoc(coupleDoc(coupleId), { lastReasonStreakMilestoneRewarded: reached });
+    }
   }
 
   const badgeIds =
@@ -162,9 +198,12 @@ export async function recordWeeklyChallengeProgress(
   if (completedBy.includes(c.user1Id) && completedBy.includes(c.user2Id)) {
     const a = await grantXp(c.user1Id, XP_REWARDS.weekly_challenge_completed);
     const b = await grantXp(c.user2Id, XP_REWARDS.weekly_challenge_completed);
-    enqueueGamificationToasts([a, b], []);
+    const newWinsTotal = (c.weeklyChallengeWinsTotal ?? 0) + 1;
+    const badgeIds = await evaluateWeeklyChallengeBadges(c.user1Id, c.user2Id, newWinsTotal);
+    enqueueGamificationToasts([a, b], badgeIds);
     await updateDoc(ref, {
       weeklyChallenge: { ...wc, completedBy, xpGranted: true },
+      weeklyChallengeWinsTotal: newWinsTotal,
     });
   } else {
     await updateDoc(ref, {
@@ -201,9 +240,12 @@ export async function recordHabitWeeklyChallengeJointDay(
   if (coversFullWeek) {
     const a = await grantXp(c.user1Id, XP_REWARDS.weekly_challenge_completed);
     const b = await grantXp(c.user2Id, XP_REWARDS.weekly_challenge_completed);
-    enqueueGamificationToasts([a, b], []);
+    const newWinsTotal = (c.weeklyChallengeWinsTotal ?? 0) + 1;
+    const badgeIds = await evaluateWeeklyChallengeBadges(c.user1Id, c.user2Id, newWinsTotal);
+    enqueueGamificationToasts([a, b], badgeIds);
     await updateDoc(ref, {
       weeklyChallenge: { ...wc, habitJointDayKeysThisWeek, xpGranted: true },
+      weeklyChallengeWinsTotal: newWinsTotal,
     });
   } else {
     await updateDoc(ref, {

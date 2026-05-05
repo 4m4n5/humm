@@ -25,6 +25,7 @@ import { HabitCard } from '@/components/habits/HabitCard';
 import { InlineAddHabitTile } from '@/components/habits/InlineAddHabitTile';
 import { SectionLabel } from '@/components/habits/SectionLabel';
 import { EditHabitSheet } from '@/components/habits/EditHabitSheet';
+import { HabitsAdherenceLog } from '@/components/habits/HabitsAdherenceLog';
 import { purgeLegacyHabitsIfNeeded } from '@/lib/firestore/habitsLegacyPurge';
 
 function sortSharedDailyKeys(
@@ -122,6 +123,7 @@ export default function HabitsBoardScreen() {
   const habits = useHabitStore((s) => s.habits);
   const todayDailyCheckins = useHabitStore((s) => s.todayDailyCheckins);
   const weekWeeklyCheckins = useHabitStore((s) => s.weekWeeklyCheckins);
+  const rangeDailyCheckins = useHabitStore((s) => s.rangeDailyCheckins);
   const couple = useHabitStore((s) => s.couple);
   const view = useHabitStore((s) => s.view);
   const setView = useHabitStore((s) => s.setView);
@@ -478,17 +480,29 @@ export default function HabitsBoardScreen() {
         )}
 
         {noHabitsInView ? (
-          <View className="items-center gap-y-2 py-8">
-            <Text className="text-[28px]" allowFontScaling={false}>
+          <View className="items-center gap-y-2.5 py-10">
+            <Text className="text-[30px]" allowFontScaling={false}>
               ✨
             </Text>
-            <Text className="text-[14px] font-light text-hum-muted">
-              {view === 'daily' ? 'no daily habits yet.' : 'no weekly habits yet.'}
+            <Text className="text-[14px] font-light leading-[20px] text-hum-muted">
+              {view === 'daily'
+                ? 'no daily habits yet — add one below'
+                : 'no weekly habits yet — add one below'}
             </Text>
           </View>
         ) : null}
 
         <InlineAddHabitTile onPress={() => router.push('/habits/new')} />
+
+        {view === 'daily' ? (
+          <HabitsAdherenceLog
+            habits={habits}
+            rangeCheckins={rangeDailyCheckins}
+            myUid={myUid}
+            partnerId={partnerId}
+            todayKey={todayKey}
+          />
+        ) : null}
       </ScrollView>
 
       <EditHabitSheet visible={!!editHabit} habit={editHabit} onClose={() => setEditHabit(null)} />

@@ -1,29 +1,34 @@
 import React, { useEffect, useRef } from 'react';
+import { Platform } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import * as Notifications from 'expo-notifications';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { View } from 'react-native';
 import { LoadingState } from '@/components/shared/LoadingState';
-import { ensureNotificationHandler } from '@/lib/ceremonyReminders';
-import { registerExpoPushToken } from '@/lib/registerExpoPushToken';
 import { migrateLegacyMoodSticker } from '@/lib/moodMigration';
 
 /** Main app shell — only loaded when Firebase env vars are present (see `app/_layout.tsx`). */
 export default function AppRoot() {
   const { init, isLoading, firebaseUser, profile } = useAuthStore();
-  const responseListener = useRef<Notifications.EventSubscription | null>(null);
+  const responseListener = useRef<{ remove(): void } | null>(null);
 
   useEffect(() => {
-    ensureNotificationHandler();
     const unsub = init();
 
-    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-      const screen = response.notification.request.content.data?.screen;
-      if (typeof screen === 'string' && screen.startsWith('/')) {
-        router.push(screen as never);
-      }
-    });
+    if (Platform.OS !== 'web') {
+      const setup = async () => {
+        const Notifications = await import('expo-notifications');
+        const { ensureNotificationHandler } = await import('@/lib/ceremonyReminders');
+        ensureNotificationHandler();
+        responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+          const screen = response.notification.request.content.data?.screen;
+          if (typeof screen === 'string' && screen.startsWith('/')) {
+            router.push(screen as never);
+          }
+        });
+      };
+      setup();
+    }
 
     return () => {
       unsub();
@@ -33,9 +38,13 @@ export default function AppRoot() {
 
   useEffect(() => {
     if (!profile?.uid) return;
-    void registerExpoPushToken(profile.uid).catch((e) =>
-      console.warn('[AppRoot] registerExpoPushToken', e),
-    );
+    if (Platform.OS !== 'web') {
+      import('@/lib/registerExpoPushToken').then(({ registerExpoPushToken }) =>
+        registerExpoPushToken(profile.uid).catch((e) =>
+          console.warn('[AppRoot] registerExpoPushToken', e),
+        ),
+      );
+    }
     if (profile) {
       void migrateLegacyMoodSticker(profile).catch((e) =>
         console.warn('[AppRoot] migrateLegacyMoodSticker', e),

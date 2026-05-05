@@ -8,6 +8,7 @@ import { ScreenTitle } from '@/components/shared/ScreenTitle';
 import { DECISION_CATEGORIES } from '@/constants/categories';
 import { theme } from '@/constants/theme';
 import { scrollContentStandard } from '@/constants/screenLayout';
+import { cardShadow } from '@/constants/elevation';
 
 export default function Decide() {
   const { history } = useDecisionStore();
@@ -23,6 +24,7 @@ export default function Decide() {
 
         <TouchableOpacity
           className="gap-y-4 rounded-[24px] border border-hum-primary/20 bg-hum-card p-5 active:opacity-88"
+          style={cardShadow}
           onPress={() => router.push('/decide/quick-spin')}
           activeOpacity={0.88}
           accessibilityRole="button"
@@ -44,10 +46,10 @@ export default function Decide() {
           </View>
           <View className="flex-row flex-wrap gap-2">
             {DECISION_CATEGORIES.map((c) => (
-              <View
-                key={c.id}
-                className="rounded-full border border-hum-border/30 bg-hum-surface/45 px-3 py-1.5"
-              >
+                <View
+                  key={c.id}
+                  className="rounded-full border border-hum-border/18 bg-hum-surface/40 px-3 py-1.5"
+                >
                 <Text className="text-[11px] font-medium uppercase tracking-[0.12em] text-hum-dim">
                   {c.label.toLowerCase()}
                 </Text>
@@ -58,6 +60,7 @@ export default function Decide() {
 
         <TouchableOpacity
           className="flex-row items-start gap-x-4 rounded-[24px] border border-hum-secondary/20 bg-hum-card p-5 active:opacity-88"
+          style={cardShadow}
           onPress={() => router.push('/decide/battle')}
           activeOpacity={0.88}
           accessibilityRole="button"
@@ -79,16 +82,24 @@ export default function Decide() {
 
         {history.length > 0 ? (
           <TouchableOpacity
-            className="flex-row items-center justify-between rounded-[20px] border border-hum-border/30 bg-hum-card/90 px-4 py-3.5 active:opacity-88"
+            className="flex-row items-center justify-between rounded-[18px] border border-hum-border/18 bg-hum-card/85 px-4 py-3 active:opacity-88"
             onPress={() => router.push('/decide/history')}
             activeOpacity={0.88}
             accessibilityRole="button"
             accessibilityLabel={`Decision history, ${history.length} saved`}
           >
-            <Text className="min-w-0 flex-1 pr-2 text-[13px] font-light tabular-nums text-hum-muted">
+            <Text
+              className="min-w-0 flex-1 pr-2 text-[12px] font-light tabular-nums text-hum-muted"
+              maxFontSizeMultiplier={1.3}
+            >
               {history.length} saved
             </Text>
-            <Ionicons name="chevron-forward" size={18} color={theme.dim} style={{ opacity: 0.45 }} />
+            <Ionicons
+              name="chevron-forward"
+              size={15}
+              color={theme.dim}
+              style={{ opacity: 0.55 }}
+            />
           </TouchableOpacity>
         ) : null}
       </ScrollView>

@@ -31,7 +31,7 @@ export function BadgeShelf({
 
   if (earned.length === 0) {
     return (
-      <View className="rounded-[24px] border border-dashed border-hum-border/30 bg-hum-card/60 px-6 py-8">
+      <View className="rounded-[22px] border border-dashed border-hum-border/18 bg-hum-card/50 px-6 py-8">
         <Text className="text-center text-[14px] font-light leading-[22px] text-hum-muted">
           {emptyMessage}
         </Text>
@@ -57,7 +57,7 @@ export function BadgeShelf({
         return (
           <View key={id} style={{ width: cardWidth, marginRight: GAP }} accessibilityRole="none">
             <View
-              className="justify-center rounded-[20px] border border-hum-border/30 bg-hum-card px-4 py-3.5"
+              className="justify-center rounded-[20px] border border-hum-border/18 bg-hum-card px-4 py-3.5"
               style={{ minHeight: CARD_MIN_HEIGHT }}
               accessibilityLabel={def ? `${def.name}. ${def.description}` : `Badge ${id}`}
             >

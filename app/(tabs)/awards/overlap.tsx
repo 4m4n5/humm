@@ -65,7 +65,7 @@ export default function OverlapScreen() {
         contentContainerStyle={scrollContentStandard}
         showsVerticalScrollIndicator={false}
       >
-        <View className="gap-y-3 rounded-[22px] border border-hum-border/16 bg-emerald-950/10 p-5">
+        <View className="gap-y-3 rounded-[22px] border border-hum-border/18 bg-emerald-950/10 p-5">
           <View className="flex-row items-center gap-x-2.5">
             <View className="h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-900/35">
               <Text className="text-[14px] leading-none">✓</Text>
@@ -105,7 +105,7 @@ export default function OverlapScreen() {
           )}
         </View>
 
-        <View className="gap-y-3 rounded-[24px] border border-hum-border/30 bg-amber-950/12 p-5">
+        <View className="gap-y-3 rounded-[22px] border border-hum-border/18 bg-amber-950/12 p-5">
           <View className="flex-row items-center gap-x-2.5">
             <View className="h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-900/18">
               <Text className="text-[14px] leading-none">◇</Text>

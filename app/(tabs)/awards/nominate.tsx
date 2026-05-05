@@ -266,7 +266,7 @@ export default function NominateScreen() {
                 className={`rounded-full border px-4 py-2.5 ${
                   nominee === key
                     ? 'border-hum-primary/25 bg-hum-primary'
-                    : 'border-hum-border/16 bg-hum-card'
+                    : 'border-hum-border/18 bg-hum-card/60'
                 }`}
                 accessibilityRole="button"
                 accessibilityState={{ selected: nominee === key }}
@@ -290,7 +290,7 @@ export default function NominateScreen() {
         <View className="gap-y-2">
           <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">story</Text>
           <TextInput
-            className="min-h-[120px] rounded-[18px] border border-hum-border/16 bg-hum-surface/65 px-4 py-3.5 text-[14px] font-light leading-[22px] text-hum-text"
+            className="min-h-[120px] rounded-[20px] border border-hum-border/18 bg-hum-surface/65 px-4 py-3.5 text-[14px] font-light leading-[22px] text-hum-text"
             placeholder="the moment"
             placeholderTextColor={theme.dim}
             value={description}

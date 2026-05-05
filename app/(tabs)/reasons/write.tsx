@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { ScreenHeader } from '@/components/shared/ScreenHeader';
 import { Button } from '@/components/shared/Button';
+import { ReasonWrittenCelebration } from '@/components/reasons/ReasonWrittenCelebration';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useReasonStore } from '@/lib/stores/reasonStore';
 import { useReasonsRewardStore } from '@/lib/stores/reasonsRewardStore';
@@ -18,6 +26,7 @@ export default function WriteReasonScreen() {
   const { addReason } = useReasonStore();
   const [text, setText] = useState('');
   const [saving, setSaving] = useState(false);
+  const [celebrating, setCelebrating] = useState(false);
 
   if (!profile?.coupleId || !profile.partnerId) {
     return (
@@ -48,12 +57,13 @@ export default function WriteReasonScreen() {
         text,
       });
       useReasonsRewardStore.getState().armPendingReward();
-      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      router.back();
+      // Drop the keyboard so the shower has a clean stage; the celebration
+      // component handles the success haptic + auto-navigates back when done.
+      Keyboard.dismiss();
+      setCelebrating(true);
     } catch (e) {
       console.error(e);
       Alert.alert('couldn’t save', 'check connection, try again');
-    } finally {
       setSaving(false);
     }
   }
@@ -68,7 +78,7 @@ export default function WriteReasonScreen() {
       >
         <View className="px-6 pb-5 pt-4" style={{ gap: 12 }}>
           <TextInput
-            className="min-h-[48px] max-h-[88px] rounded-[20px] border border-hum-border/30 bg-hum-surface/80 px-4 py-3 text-[16px] font-light leading-[22px] text-hum-text"
+            className="min-h-[48px] max-h-[88px] rounded-[20px] border border-hum-border/18 bg-hum-surface/80 px-4 py-3 text-[16px] font-light leading-[22px] text-hum-text"
             placeholder="what you love, appreciate, or want them to remember"
             placeholderTextColor={theme.dim}
             value={text}
@@ -77,12 +87,23 @@ export default function WriteReasonScreen() {
             scrollEnabled
             maxLength={MAX_CHARS}
             textAlignVertical="top"
-            autoFocus
+            autoFocus={!celebrating}
+            editable={!celebrating && !saving}
             accessibilityLabel="Reason for your partner, one sentence"
           />
-          <Button label="save" onPress={handleSave} loading={saving} size="lg" />
+          <Button
+            label="save"
+            onPress={handleSave}
+            loading={saving && !celebrating}
+            disabled={celebrating}
+            size="lg"
+          />
         </View>
       </KeyboardAvoidingView>
+      <ReasonWrittenCelebration
+        visible={celebrating}
+        onFinished={() => router.back()}
+      />
     </SafeAreaView>
   );
 }

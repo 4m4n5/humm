@@ -264,8 +264,8 @@ export default function QuickSpin() {
                 }}
                 className={`flex-row items-center gap-x-2 rounded-full border px-5 py-2.5 ${
                   category === cat.id
-                    ? 'border-hum-primary bg-hum-primary'
-                    : 'border-hum-border/30 bg-hum-card/90'
+                    ? 'border-hum-primary/25 bg-hum-primary'
+                    : 'border-hum-border/18 bg-hum-card/80'
                 }`}
                 accessibilityRole="button"
                 accessibilityLabel={`category ${cat.label}`}
@@ -285,7 +285,7 @@ export default function QuickSpin() {
           </ScrollView>
         </View>
 
-        <View className="z-10 border-b border-hum-border/30 bg-hum-bg py-3.5">
+        <View className="z-10 border-b border-hum-border/14 bg-hum-bg py-3.5">
           <Text
             className="text-[13px] font-medium tracking-wide text-hum-text"
             maxFontSizeMultiplier={1.35}
@@ -305,7 +305,7 @@ export default function QuickSpin() {
 
         <View>
         {/* Spin area */}
-        <View className="min-h-[220px] items-center justify-center gap-y-6 rounded-[24px] border border-hum-border/30 bg-hum-card/90 p-10">
+        <View className="min-h-[220px] items-center justify-center gap-y-6 rounded-[24px] border border-hum-border/18 bg-hum-card p-10">
           {spinState === 'idle' && (
             <>
               <Text className="text-5xl opacity-90">{currentCat.emoji}</Text>
@@ -315,7 +315,7 @@ export default function QuickSpin() {
                   : `${availableOptions.length} option${availableOptions.length !== 1 ? 's' : ''} ready when you are`}
               </Text>
               {vetoUsed && (
-                <View className="rounded-full border border-hum-border/30 bg-hum-surface/60 px-5 py-2">
+                <View className="rounded-full border border-hum-border/18 bg-hum-surface/50 px-5 py-2">
                   <Text className="text-center text-[12px] font-light text-hum-muted">
                     one veto used — spin again from what’s left
                   </Text>
@@ -408,7 +408,7 @@ export default function QuickSpin() {
           {showAddInput && (
             <View className="flex-row gap-3">
               <TextInput
-                className="flex-1 rounded-[20px] border border-hum-border/30 bg-hum-surface/80 px-4 py-3.5 text-[16px] text-hum-text"
+                className="flex-1 rounded-[20px] border border-hum-border/18 bg-hum-surface/80 px-4 py-3.5 text-[16px] text-hum-text"
                 placeholder="something you’d both say yes to…"
                 placeholderTextColor={theme.dim}
                 value={newOptionText}
@@ -429,7 +429,7 @@ export default function QuickSpin() {
           )}
 
           {categoryOptions.length === 0 ? (
-            <View className="items-center gap-4 rounded-[20px] border border-dashed border-hum-border/30 py-8 px-4">
+            <View className="items-center gap-4 rounded-[20px] border border-dashed border-hum-border/20 py-8 px-4">
               <Text
                 className="text-center text-[14px] font-light text-hum-muted"
                 maxFontSizeMultiplier={1.4}
@@ -444,7 +444,7 @@ export default function QuickSpin() {
               return (
                 <View
                   key={opt.id}
-                  className={`flex-row items-center gap-x-3 rounded-[20px] border border-hum-border/30 bg-hum-card/90 px-4 py-3.5 ${isVetoed ? 'opacity-35' : ''}`}
+                  className={`flex-row items-center gap-x-3 rounded-[20px] border border-hum-border/18 bg-hum-card px-4 py-3.5 ${isVetoed ? 'opacity-35' : ''}`}
                 >
                   <Text className="flex-1 text-[15px] font-light text-hum-text" numberOfLines={1}>
                     {opt.label}

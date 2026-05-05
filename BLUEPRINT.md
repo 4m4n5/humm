@@ -128,7 +128,12 @@ users/{userId}
   partnerId:        string | null        // other user's ID
   coupleId:         string | null        // shared couple document ID
   fcmToken:         string | null        // Expo push token (field name legacy); see registerExpoPushToken
-  notificationPreferences?: { reasons, mood, nominations, battles, decisions } // optional per-feature push toggles
+  notificationPreferences?: { mood, habits, decide, reasons, awards, weeklyChallenge, reminders } // per-feature push toggles; keys match the `feature` field on push payloads
+  dailyReminders?: {                      // server-scheduled mood + habit reminders (Cloud Scheduler)
+    mood: { enabled, localTime: "HH:MM" } // half-hour granularity
+    habits: { enabled, localTime: "HH:MM" }
+    timezone: string                      // IANA tz, resolved on device
+  }
   xp:               number
   level:            number
   badges:           string[]             // badge IDs earned
@@ -682,9 +687,15 @@ App Shell (authenticated)
 
 ## 10. Notifications & Scheduling
 
-**Implemented in this repo:** **Local** ceremony-window reminders (`lib/ceremonyReminders.ts` + `uiPreferencesStore`). **Expo push token** stored as `users.fcmToken`. **Cloud Functions** (`functions/src/`) send partner-facing pushes on selected Firestore events (mood entry sticker change, new reason, new nomination, new battle, quick-spin decision save, weekly challenge XP granted). Users opt out per surface via **`notificationPreferences`** (`reasons`, `mood`, `nominations`, `battles`, `decisions`).
+**Implemented in this repo:**
+- **Local** ceremony-window reminders (`lib/ceremonyReminders.ts` + `uiPreferencesStore`).
+- **Expo push token** stored as `users.fcmToken`.
+- **Firestore-triggered partner pings** (`functions/src/index.ts`): mood sticker change, reason created, nomination created, battle created, quick-spin decision saved, **habit created, habit checked-in, ceremony picks submitted / category locked / ceremony complete, couple linked welcome**, weekly challenge completion. Each push carries an explicit `feature` field on its `data` payload that maps 1:1 to a `NotificationPreferences` toggle.
+- **Server-scheduled daily reminders** (`functions/src/dailyReminders.ts`): `dailyReminderTick` runs every 30 minutes via Cloud Scheduler; per-user, per-channel (mood + habits) configuration in `users.dailyReminders` with half-hour granularity in the user's IANA tz; skip-if-logged guard checks `moodEntries` / `habitCheckins` for the current local `dayKey`.
 
-The sections below describe the **full product vision** for scheduled nudges; many cron-style rows are **not** implemented as recurring Cloud Scheduler jobs yet.
+Users opt out per surface via **`notificationPreferences`** (`mood`, `habits`, `decide`, `reasons`, `awards`, `weeklyChallenge`, `reminders`).
+
+The sections below describe the **full product vision** for scheduled nudges; the daily mood + habit reminders are now live, but other cron-style rows below are **not** yet implemented as recurring Cloud Scheduler jobs.
 
 All scheduling (when implemented) is intended to run via **Firebase Cloud Functions** (cron jobs + Firestore triggers).
 

@@ -153,7 +153,7 @@ export default function DeliberateScreen() {
                     key={n.id}
                     onPress={() => setPick(cat.id, n.id)}
                     className={`rounded-[20px] border px-4 py-3.5 ${
-                      selected ? 'border-hum-primary/18 bg-hum-primary/8' : 'border-hum-border/16 bg-hum-card'
+                      selected ? 'border-hum-primary/20 bg-hum-primary/8' : 'border-hum-border/18 bg-hum-card'
                     }`}
                     activeOpacity={0.88}
                     accessibilityRole="button"

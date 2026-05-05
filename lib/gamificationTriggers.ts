@@ -19,6 +19,7 @@ import {
   evaluateFirstHabitBadge,
   evaluateFirstCheckinBadge,
   evaluateHabitStreakBadges,
+  evaluateHabitDepthBadges,
 } from '@/lib/gamificationBadges';
 import { localDayKey, localWeekKey, offsetLocalDayKey } from '@/lib/dateKeys';
 import type { Ceremony, Couple, Habit, HabitCheckin, MoodEntry, Nomination, UserProfile } from '@/types';
@@ -71,11 +72,11 @@ async function grantXpSafe(uid: string, amount: number): Promise<GrantXpResult |
 export async function afterQuickSpinDecisionSaved(actingUid: string, coupleId: string): Promise<void> {
   const pair = await couplePair(coupleId);
   if (!pair) return;
-  const xp: GrantXpResult[] = [];
-  const r = await grantXp(actingUid, XP_REWARDS.decision_made);
-  if (r) xp.push(r);
+  const xp: (GrantXpResult | null)[] = [];
+  xp.push(await grantXp(actingUid, XP_REWARDS.decision_made));
 
-  await updateCoupleStreakAfterDecision(coupleId);
+  const streakResult = await updateCoupleStreakAfterDecision(coupleId);
+  xp.push(...streakResult.xp);
   await recordWeeklyChallengeProgress(coupleId, 'both_quickspin', actingUid);
 
   const badgeNew = await evaluateDecisionCoupleBadges(coupleId, pair.uidA, pair.uidB);
@@ -86,9 +87,9 @@ export async function afterQuickSpinDecisionSaved(actingUid: string, coupleId: s
 export async function afterBattleDecisionSaved(coupleId: string): Promise<void> {
   const pair = await couplePair(coupleId);
   if (!pair) return;
-  await updateCoupleStreakAfterDecision(coupleId);
+  const streakResult = await updateCoupleStreakAfterDecision(coupleId);
   const badgeNew = await evaluateDecisionCoupleBadges(coupleId, pair.uidA, pair.uidB);
-  enqueueGamificationToasts([], badgeNew);
+  enqueueGamificationToasts(streakResult.xp, badgeNew);
 }
 
 export async function afterNominationSaved(
@@ -160,6 +161,9 @@ export async function afterResolutionCategoryLocked(actingUid: string, coupleId:
 /**
  * Mood v2: called after upsertMoodEntry. Grants XP, updates couple streak,
  * records weekly challenge progress, and runs badge evaluator.
+ *
+ * Anti-farming: in_sync / match XP is granted at most once per couple per local day —
+ * mid-day sticker swaps cannot repeat the bonus.
  */
 export async function afterMoodEntryWritten(
   actingUid: string,
@@ -186,35 +190,71 @@ export async function afterMoodEntryWritten(
   const bothLoggedToday = !!partnerEntry;
   const bothMatchToday = bothLoggedToday && partnerEntry!.current.stickerId === newStickerId;
 
-  if (bothLoggedToday) {
+  // Read couple state once for dedup + streak math.
+  const coupleSnap = await getDoc(coupleDoc(coupleId));
+  const couple = coupleSnap.exists() ? (coupleSnap.data() as Couple) : null;
+
+  const inSyncAlreadyGranted = couple?.lastMoodInSyncXpDayKey === dayKey;
+  const matchAlreadyGranted = couple?.lastMoodMatchXpDayKey === dayKey;
+
+  if (bothLoggedToday && !inSyncAlreadyGranted) {
     const r1 = await grantXpSafe(actingUid, XP_REWARDS.mood_in_sync_today);
     const r2 = await grantXpSafe(partnerUid, XP_REWARDS.mood_in_sync_today);
     if (r1) xp.push(r1);
     if (r2) xp.push(r2);
+    try {
+      await updateDoc(coupleDoc(coupleId), { lastMoodInSyncXpDayKey: dayKey });
+    } catch (e) {
+      console.warn('[gamification] mood in_sync dedup write failed:', e);
+    }
   }
 
-  if (bothMatchToday) {
+  if (bothMatchToday && !matchAlreadyGranted) {
     const r1 = await grantXpSafe(actingUid, XP_REWARDS.mood_match_today);
     const r2 = await grantXpSafe(partnerUid, XP_REWARDS.mood_match_today);
     if (r1) xp.push(r1);
     if (r2) xp.push(r2);
+    try {
+      await updateDoc(coupleDoc(coupleId), { lastMoodMatchXpDayKey: dayKey });
+    } catch (e) {
+      console.warn('[gamification] mood match dedup write failed:', e);
+    }
   }
 
+  let newBothLoggedStreak = couple?.bothLoggedDayStreak ?? 0;
   if (bothLoggedToday) {
     try {
       const { previousLocalDayKey } = await import('@/lib/dateKeys');
-      const coupleSnap = await getDoc(coupleDoc(coupleId));
-      const c = coupleSnap.exists() ? (coupleSnap.data() as Couple) : null;
-      const prevStreakKey = c?.lastBothLoggedDayKey ?? null;
-      const prevStreak = c?.bothLoggedDayStreak ?? 0;
+      const prevStreakKey = couple?.lastBothLoggedDayKey ?? null;
+      const prevStreak = couple?.bothLoggedDayStreak ?? 0;
       const yesterdayKey = previousLocalDayKey(dayKey);
-      const newStreak = prevStreakKey === yesterdayKey ? prevStreak + 1 : prevStreakKey === dayKey ? prevStreak : 1;
+      newBothLoggedStreak = prevStreakKey === yesterdayKey
+        ? prevStreak + 1
+        : prevStreakKey === dayKey
+          ? prevStreak
+          : 1;
       await updateDoc(coupleDoc(coupleId), {
-        bothLoggedDayStreak: newStreak,
+        bothLoggedDayStreak: newBothLoggedStreak,
         lastBothLoggedDayKey: dayKey,
       });
     } catch (e) {
       console.warn('[gamification] mood streak update failed:', e);
+    }
+
+    // Streak milestone XP — once per threshold crossing for the couple.
+    try {
+      const { highestMilestoneReached } = await import('@/lib/firestore/coupleGamification');
+      const reached = highestMilestoneReached(newBothLoggedStreak);
+      const previouslyRewarded = couple?.lastMoodStreakMilestoneRewarded ?? 0;
+      if (reached > previouslyRewarded) {
+        const r1 = await grantXpSafe(actingUid, XP_REWARDS.mood_streak_milestone);
+        const r2 = await grantXpSafe(partnerUid, XP_REWARDS.mood_streak_milestone);
+        if (r1) xp.push(r1);
+        if (r2) xp.push(r2);
+        await updateDoc(coupleDoc(coupleId), { lastMoodStreakMilestoneRewarded: reached });
+      }
+    } catch (e) {
+      console.warn('[gamification] mood streak milestone failed:', e);
     }
   }
 
@@ -225,6 +265,7 @@ export async function afterMoodEntryWritten(
     query(moodEntriesCol(), where('coupleId', '==', coupleId), where('uid', '==', actingUid)),
   );
   const isFirstEver = myAllSnap.size <= 1;
+  const myTotalEntries = myAllSnap.size;
 
   const actingQuadrants = new Set<string>();
   for (const d of myAllSnap.docs) {
@@ -234,11 +275,24 @@ export async function afterMoodEntryWritten(
   const bothDaysSnap = await getDocs(
     query(moodEntriesCol(), where('coupleId', '==', coupleId), where('uid', '==', partnerUid)),
   );
-  const partnerDayKeys = new Set(bothDaysSnap.docs.map((d) => (d.data() as MoodEntry).dayKey));
-  const myDayKeys = new Set(myAllSnap.docs.map((d) => (d.data() as MoodEntry).dayKey));
+  const partnerByDay = new Map<string, MoodEntry>();
+  for (const d of bothDaysSnap.docs) {
+    const e = d.data() as MoodEntry;
+    partnerByDay.set(e.dayKey, e);
+  }
+  const myByDay = new Map<string, MoodEntry>();
+  for (const d of myAllSnap.docs) {
+    const e = d.data() as MoodEntry;
+    myByDay.set(e.dayKey, e);
+  }
   let bothLoggedDayCount = 0;
-  for (const dk of myDayKeys) {
-    if (partnerDayKeys.has(dk)) bothLoggedDayCount++;
+  let twinDayCount = 0;
+  for (const [dk, mine] of myByDay) {
+    const theirs = partnerByDay.get(dk);
+    if (theirs) {
+      bothLoggedDayCount++;
+      if (theirs.current.stickerId === mine.current.stickerId) twinDayCount++;
+    }
   }
 
   const badgeNew = await evaluateNewMoodBadges(
@@ -249,6 +303,11 @@ export async function afterMoodEntryWritten(
     bothMatchToday,
     actingQuadrants,
     bothLoggedDayCount,
+    {
+      myTotalEntries,
+      twinDayCount,
+      bothLoggedStreak: newBothLoggedStreak,
+    },
   );
 
   enqueueGamificationToasts(xp, badgeNew);
@@ -346,6 +405,39 @@ export async function afterHabitCheckin(
   const xp: GrantXpResult[] = [];
 
   /** Once per habit per local day/week for shared XP (undo + re-check same period must not re-grant). */
+  if (habit.scope === 'personal' && toggleResult === 'added') {
+    const hRef = doc(habitsCol(), habit.id);
+    if (habit.cadence === 'daily' && ctx.kind === 'daily') {
+      const snapSelf = await getDoc(hRef);
+      const hRow = snapSelf.exists() ? (snapSelf.data() as Habit) : habit;
+      const selfDaily = { ...(hRow.lastSelfDailyXpByUid ?? {}) };
+      if (selfDaily[actingUid] !== ctx.dayKey) {
+        const r = await grantXpSafe(actingUid, XP_REWARDS.habit_self_personal_daily);
+        if (r) xp.push(r);
+        selfDaily[actingUid] = ctx.dayKey;
+        try {
+          await updateDoc(hRef, { lastSelfDailyXpByUid: selfDaily });
+        } catch (e) {
+          console.warn('[gamification] personal habit daily xp guard write failed:', habit.id, e);
+        }
+      }
+    } else if (habit.cadence === 'weekly' && ctx.kind === 'weekly') {
+      const snapSelf = await getDoc(hRef);
+      const hRow = snapSelf.exists() ? (snapSelf.data() as Habit) : habit;
+      const selfWeekly = { ...(hRow.lastSelfWeeklyXpByUid ?? {}) };
+      if (selfWeekly[actingUid] !== ctx.weekKey) {
+        const r = await grantXpSafe(actingUid, XP_REWARDS.habit_self_personal_weekly);
+        if (r) xp.push(r);
+        selfWeekly[actingUid] = ctx.weekKey;
+        try {
+          await updateDoc(hRef, { lastSelfWeeklyXpByUid: selfWeekly });
+        } catch (e) {
+          console.warn('[gamification] personal habit weekly xp guard write failed:', habit.id, e);
+        }
+      }
+    }
+  }
+
   if (habit.scope === 'shared' && toggleResult === 'added') {
     const hRef = doc(habitsCol(), habit.id);
 
@@ -458,10 +550,18 @@ export async function afterHabitCheckin(
   const totalCheckins = countSnap.data().count;
   const isFirstCheckin = totalCheckins === 1;
 
+  // Active habit count for the acting user (drives habit_collector_* tiers).
+  const myActiveHabitCount = habits.filter(
+    (h) => !h.archived && (h.scope === 'shared' || h.createdBy === actingUid),
+  ).length;
+
   const badgeNew: string[] = [];
   badgeNew.push(...(await evaluateFirstCheckinBadge(actingUid, isFirstCheckin)));
   badgeNew.push(
     ...(await evaluateHabitStreakBadges(pair.uidA, pair.uidB, newA, newB, newJoint)),
+  );
+  badgeNew.push(
+    ...(await evaluateHabitDepthBadges(actingUid, totalCheckins, myActiveHabitCount)),
   );
 
   enqueueGamificationToasts(xp, badgeNew);

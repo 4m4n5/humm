@@ -20,6 +20,7 @@ import { hapticSuccess } from '@/lib/haptics';
 import { scrollContentStandard } from '@/constants/screenLayout';
 import { ceremonySeasonShortLabel } from '@/lib/ceremonyCalendar';
 import { theme } from '@/constants/theme';
+import { cardShadow } from '@/constants/elevation';
 
 function statusLabel(status: string | undefined, revealReady: boolean): string {
   switch (status) {
@@ -149,10 +150,13 @@ export default function Awards() {
         <View className="-mt-3 gap-3">
           <CeremonyPhaseStrip status={ceremony?.status} revealUnlocked={revealReady} />
 
-          <View className="gap-y-4 rounded-[22px] border border-hum-border/16 bg-hum-card px-5 pb-5 pt-4">
+          <View
+            className="gap-y-4 rounded-[22px] border border-hum-border/18 bg-hum-card px-5 pb-5 pt-4"
+            style={cardShadow}
+          >
             <View className="flex-row items-center gap-x-3.5">
-              <View className="h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-hum-gold/6">
-                <Text className="text-lg text-hum-gold/80">✦</Text>
+              <View className="h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-hum-gold/12">
+                <Text className="text-lg text-hum-gold/85">✦</Text>
               </View>
               <TouchableOpacity
                 className="min-w-0 flex-1 flex-row items-center gap-1.5 py-1 active:opacity-88"
@@ -252,7 +256,7 @@ export default function Awards() {
               return (
                 <TouchableOpacity
                   key={cat.id}
-                  className="flex-row items-center gap-x-3.5 rounded-[18px] border border-hum-border/16 bg-hum-card px-4 py-4 active:opacity-88"
+                  className="flex-row items-center gap-x-3.5 rounded-[18px] border border-hum-border/18 bg-hum-card px-4 py-4 active:opacity-88"
                   onPress={() => router.push(`/awards/${cat.id}`)}
                   activeOpacity={0.88}
                   accessibilityRole="button"
@@ -267,18 +271,18 @@ export default function Awards() {
                   >
                     {cat.label}
                   </Text>
-                  <View className="h-8 min-w-8 shrink-0 items-center justify-center rounded-full border border-hum-border/16 bg-hum-surface/40 px-2.5">
+                  <View className="h-8 min-w-8 shrink-0 items-center justify-center rounded-full border border-hum-border/18 bg-hum-surface/40 px-2.5">
                     <Text className="text-[13px] font-medium tabular-nums text-hum-muted">{count}</Text>
                   </View>
                 </TouchableOpacity>
               );
             })}
             {pausedRows.length > 0 ? (
-              <View className="mt-3 gap-y-2.5 border-t border-hum-border/16 pt-3">
+              <View className="mt-3 gap-y-2.5 border-t border-hum-border/18 pt-3">
                 {pausedRows.map((cat) => (
                   <TouchableOpacity
                     key={cat.id}
-                    className="flex-row items-center gap-x-3.5 rounded-[18px] border border-dashed border-hum-border/16 bg-hum-surface/22 px-4 py-4 active:opacity-88"
+                    className="flex-row items-center gap-x-3.5 rounded-[18px] border border-dashed border-hum-border/18 bg-hum-surface/22 px-4 py-4 active:opacity-88"
                     onPress={() => router.push('/awards/manage-categories')}
                     activeOpacity={0.88}
                     accessibilityRole="button"
@@ -310,7 +314,7 @@ export default function Awards() {
           </Text>
           <TouchableOpacity
             onPress={() => router.push('/awards/manage-categories')}
-            className="flex-row items-center justify-between rounded-[18px] border border-hum-border/16 bg-hum-surface/28 px-4 py-4 active:opacity-88"
+            className="flex-row items-center justify-between rounded-[18px] border border-hum-border/18 bg-hum-surface/28 px-4 py-4 active:opacity-88"
             activeOpacity={0.88}
             accessibilityRole="button"
             accessibilityLabel="Award categories — rename, emoji, add, pause, or re-enable"
@@ -322,7 +326,7 @@ export default function Awards() {
           <View className="flex-row gap-3">
             <TouchableOpacity
               onPress={() => router.push('/awards/ceremony-calendar')}
-              className="min-h-[76px] flex-1 items-center justify-center rounded-[18px] border border-hum-border/16 bg-hum-surface/28 px-3 py-3 active:opacity-88"
+              className="min-h-[76px] flex-1 items-center justify-center rounded-[18px] border border-hum-border/18 bg-hum-surface/28 px-3 py-3 active:opacity-88"
               activeOpacity={0.88}
               accessibilityRole="button"
               accessibilityLabel="Season calendar — dates and reminders"
@@ -332,7 +336,7 @@ export default function Awards() {
 
             <TouchableOpacity
               onPress={() => router.push('/awards/past')}
-              className="min-h-[76px] flex-1 items-center justify-center rounded-[18px] border border-hum-border/16 bg-hum-surface/28 px-3 py-3 active:opacity-88"
+              className="min-h-[76px] flex-1 items-center justify-center rounded-[18px] border border-hum-border/18 bg-hum-surface/28 px-3 py-3 active:opacity-88"
               activeOpacity={0.88}
               accessibilityRole="button"
               accessibilityLabel="Past award seasons in the archive"

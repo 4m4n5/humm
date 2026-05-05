@@ -28,16 +28,48 @@ export interface UserProfile {
   moodSticker?: { id: string; emoji: string; label: string; updatedAt: Timestamp } | null;
   /** @deprecated Migrated to `moodEntries`. */
   moodUpdateCount?: number;
-  /** Per-feature push notification preferences (null = all enabled). */
+  /** Per-feature push notification preferences (null/undefined = all enabled). */
   notificationPreferences?: NotificationPreferences | null;
+  /** Daily reminder schedules (mood / habits). Null/undefined = both disabled. */
+  dailyReminders?: DailyRemindersPreferences | null;
 }
 
+/**
+ * Per-feature partner-activity push preferences. Keys map 1:1 to the `feature`
+ * field that Cloud Functions attach to each push payload — adding a key here
+ * means the gate in `functions/src/push.ts` will respect it automatically.
+ */
 export interface NotificationPreferences {
-  reasons: boolean;
+  /** Partner logged a mood / changed sticker. */
   mood: boolean;
-  nominations: boolean;
-  battles: boolean;
-  decisions: boolean;
+  /** Partner checked in a habit or created a new one. */
+  habits: boolean;
+  /** Partner spun the wheel / started a battle. */
+  decide: boolean;
+  /** Partner wrote a reason for you. */
+  reasons: boolean;
+  /** Awards lifecycle: nominations, deliberation, resolution, ceremony complete. */
+  awards: boolean;
+  /** Weekly challenge wins. */
+  weeklyChallenge: boolean;
+  /** Daily reminder pushes (mood + habits). */
+  reminders: boolean;
+}
+
+/** HH:MM in 24-hour local time (e.g. "09:00", "20:30"). Half-hour granularity. */
+export type LocalTimeOfDay = string;
+
+export interface DailyReminderConfig {
+  enabled: boolean;
+  /** HH:MM 24h, half-hour granularity (":00" or ":30"). */
+  localTime: LocalTimeOfDay;
+}
+
+export interface DailyRemindersPreferences {
+  mood: DailyReminderConfig;
+  habits: DailyReminderConfig;
+  /** IANA tz name (e.g. "America/Los_Angeles"). Resolved on the device when prefs are first written. */
+  timezone: string;
 }
 
 // ─── Mood Entries ───────────────────────────────────────────────────────────
@@ -145,6 +177,18 @@ export interface Couple {
   /** Mood: consecutive days both partners logged a mood entry. */
   bothLoggedDayStreak?: number;
   lastBothLoggedDayKey?: string | null;
+  /** Couple-level dedup: last day in_sync XP was granted to both. Prevents farming via mid-day mood swaps. */
+  lastMoodInSyncXpDayKey?: string | null;
+  /** Couple-level dedup: last day match XP was granted to both. */
+  lastMoodMatchXpDayKey?: string | null;
+  /** Highest mood-streak threshold (7/14/30/60/90) already rewarded; keeps milestone XP idempotent. */
+  lastMoodStreakMilestoneRewarded?: number;
+  /** Highest decision-streak threshold already rewarded. */
+  lastDecisionStreakMilestoneRewarded?: number;
+  /** Highest reason-streak threshold already rewarded. */
+  lastReasonStreakMilestoneRewarded?: number;
+  /** Total weekly challenges this couple has cleared (drives weekly_* badge tiers). */
+  weeklyChallengeWinsTotal?: number;
 }
 
 // ─── Habits v2 (partner habits) ───────────────────────────────────────────

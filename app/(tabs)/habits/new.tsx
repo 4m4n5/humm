@@ -18,6 +18,61 @@ import { theme } from '@/constants/theme';
 import { scrollContentStandard } from '@/constants/screenLayout';
 import type { HabitCadence, HabitScope } from '@/types';
 
+function PillGroup<T extends string>({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: readonly { key: T; label: string }[];
+  value: T;
+  onChange: (v: T) => void;
+}) {
+  return (
+    <View className="gap-y-2.5">
+      <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">{label}</Text>
+      <View className="flex-row flex-wrap gap-2">
+        {options.map(({ key, label: l }) => {
+          const on = value === key;
+          return (
+            <TouchableOpacity
+              key={key}
+              onPress={() => onChange(key)}
+              className={`rounded-full border px-4 py-2.5 ${
+                on
+                  ? 'border-hum-primary/25 bg-hum-primary'
+                  : 'border-hum-border/16 bg-hum-card/60'
+              }`}
+              accessibilityRole="button"
+              accessibilityState={{ selected: on }}
+              activeOpacity={0.88}
+            >
+              <Text
+                className={`text-[13px] font-medium tracking-wide ${
+                  on ? 'text-hum-ink' : 'text-hum-muted'
+                }`}
+              >
+                {l}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+
+const CADENCE_OPTIONS = [
+  { key: 'daily' as const, label: 'daily' },
+  { key: 'weekly' as const, label: 'weekly' },
+] as const;
+
+const SCOPE_OPTIONS = [
+  { key: 'shared' as const, label: 'together' },
+  { key: 'personal' as const, label: 'just you' },
+] as const;
+
 export default function NewHabitScreen() {
   const profile = useAuthStore((s) => s.profile);
   const createHabit = useHabitStore((s) => s.createHabit);
@@ -59,7 +114,7 @@ export default function NewHabitScreen() {
       router.back();
     } catch (e) {
       console.error(e);
-      Alert.alert('couldn’t save', 'check connection, try again');
+      Alert.alert("couldn't save", 'check connection, try again');
     } finally {
       setBusy(false);
     }
@@ -67,79 +122,13 @@ export default function NewHabitScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <ScreenHeader title="new habit" />
+      <ScreenHeader title="new habit" subtitle="something small you want to keep up" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <View className="gap-y-3">
-          <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">cadence</Text>
-          <View className="flex-row flex-wrap gap-2">
-            {(
-              [
-                { key: 'daily' as const, label: 'daily' },
-                { key: 'weekly' as const, label: 'weekly' },
-              ] as const
-            ).map(({ key, label }) => (
-              <TouchableOpacity
-                key={key}
-                onPress={() => setCadence(key)}
-                className={`rounded-full border px-4 py-2.5 ${
-                  cadence === key
-                    ? 'border-hum-primary/25 bg-hum-primary'
-                    : 'border-hum-border/16 bg-hum-card'
-                }`}
-                accessibilityRole="button"
-                accessibilityState={{ selected: cadence === key }}
-                activeOpacity={0.88}
-              >
-                <Text
-                  className={`text-[13px] font-medium tracking-wide ${
-                    cadence === key ? 'text-hum-ink' : 'text-hum-muted'
-                  }`}
-                >
-                  {label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        <View className="gap-y-3">
-          <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">who</Text>
-          <View className="flex-row flex-wrap gap-2">
-            {(
-              [
-                { key: 'shared' as const, label: 'together' },
-                { key: 'personal' as const, label: 'just you' },
-              ] as const
-            ).map(({ key, label }) => (
-              <TouchableOpacity
-                key={key}
-                onPress={() => setScope(key)}
-                className={`rounded-full border px-4 py-2.5 ${
-                  scope === key
-                    ? 'border-hum-primary/25 bg-hum-primary'
-                    : 'border-hum-border/16 bg-hum-card'
-                }`}
-                accessibilityRole="button"
-                accessibilityState={{ selected: scope === key }}
-                activeOpacity={0.88}
-              >
-                <Text
-                  className={`text-[13px] font-medium tracking-wide ${
-                    scope === key ? 'text-hum-ink' : 'text-hum-muted'
-                  }`}
-                >
-                  {label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
         <Input
           label="title"
           placeholder="evening walk"
@@ -148,10 +137,10 @@ export default function NewHabitScreen() {
           autoCapitalize="sentences"
         />
 
-        <View className="gap-y-2">
+        <View className="gap-y-2.5">
           <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">emoji</Text>
           <TextInput
-            className="min-h-[52px] rounded-[18px] border border-hum-border/16 bg-hum-surface/65 px-4 py-3.5 text-[22px] font-light text-hum-text"
+            className="min-h-[52px] rounded-[20px] border border-hum-border/16 bg-hum-surface/65 px-4 py-3.5 text-[22px] font-light text-hum-text"
             placeholder="✨"
             placeholderTextColor={theme.dim}
             value={emoji}
@@ -160,13 +149,31 @@ export default function NewHabitScreen() {
           />
         </View>
 
-        <Button
-          label="save"
-          onPress={handleSave}
-          loading={busy}
-          disabled={!title.trim()}
-          size="lg"
+        <View className="h-px bg-hum-border/12" />
+
+        <PillGroup
+          label="cadence"
+          options={CADENCE_OPTIONS}
+          value={cadence}
+          onChange={setCadence}
         />
+
+        <PillGroup
+          label="who"
+          options={SCOPE_OPTIONS}
+          value={scope}
+          onChange={setScope}
+        />
+
+        <View className="pt-2">
+          <Button
+            label="save"
+            onPress={handleSave}
+            loading={busy}
+            disabled={!title.trim()}
+            size="lg"
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

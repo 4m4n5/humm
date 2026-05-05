@@ -189,7 +189,21 @@ Use **`types/index.ts`** as the schema reference. Primary write/read modules:
 ### Client
 
 - Token persistence: **`users/{uid}.fcmToken`** (Expo push token string).
-- Preferences: **`users/{uid}.notificationPreferences`** — `reasons`, `mood`, `nominations`, `battles`, `decisions` booleans; omitted/null treated as all on where supported (`functions/src/push.ts` maps **`data.screen`** path segments to these keys). **Weekly challenge** pushes use `screen: "/"`, which yields an empty feature segment — they are **not** gated by the toggles until a `challenge` (or home) key exists in prefs.
+- **Activity preferences:** **`users/{uid}.notificationPreferences`** — keyed by canonical `feature` names that match the `feature` field on every push payload (no path-segment mapping):
+
+  | Key | Pings on |
+  |-----|----------|
+  | `mood` | partner sticker change |
+  | `habits` | partner habit check-in or new habit |
+  | `decide` | partner quick spin or battle started |
+  | `reasons` | partner wrote a reason for you |
+  | `awards` | nominations, deliberation submitted, category locked, ceremony complete, couple linked |
+  | `weeklyChallenge` | both partners completed the weekly challenge |
+  | `reminders` | server-scheduled daily mood + habit reminders |
+
+  Omitted/null = all on. Gating lives in `functions/src/push.ts`: `if (prefs[opts.feature] === false) return;`.
+
+- **Daily reminders:** **`users/{uid}.dailyReminders`** — `{ mood, habits, timezone }`, where each channel is `{ enabled, localTime: "HH:MM" }` (half-hour granularity, 24-hour). `timezone` is an IANA name resolved on the device.
 - UI: `app/(tabs)/profile/notification-settings.tsx`.
 - **Expo Go / simulators:** token registration may no-op or warn — use physical device + EAS dev build for realistic testing.
 
@@ -197,18 +211,30 @@ Use **`types/index.ts`** as the schema reference. Primary write/read modules:
 
 Build: `cd functions && npm install && npm run build`.
 
-Deploy: `npm run deploy` inside `functions/` (requires Firebase CLI logged in, project selected).
+Deploy: `npm run deploy` inside `functions/` (requires Firebase CLI logged in, project on Blaze plan, Cloud Scheduler API enabled for `dailyReminderTick`).
 
-**Triggers** (all call `sendPushToUser` → Expo Push API):
+**Firestore-triggered partner pings** (all call `sendPushToUser` → Expo Push API; each passes `feature` for the prefs gate):
 
-| Export | Trigger |
-|--------|---------|
-| `onMoodEntryWritten` | `moodEntries/{docId}` write |
-| `onReasonCreated` | `reasons` create |
-| `onNominationCreated` | `nominations` create |
-| `onBattleCreated` | `battles` create |
-| `onDecisionCreated` | `decisions` create (`mode === 'quickspin'` only) |
-| `onWeeklyChallengeCompleted` | `couples/{id}` update when weekly challenge XP flips |
+| Export | Trigger | Feature |
+|--------|---------|---------|
+| `onMoodEntryWritten` | `moodEntries/{docId}` write (sticker changed) | `mood` |
+| `onReasonCreated` | `reasons` create | `reasons` |
+| `onNominationCreated` | `nominations` create | `awards` |
+| `onBattleCreated` | `battles` create | `decide` |
+| `onDecisionCreated` | `decisions` create (`mode === 'quickspin'` only) | `decide` |
+| `onHabitCreated` | `habits` create | `habits` |
+| `onHabitCheckinCreated` | `habitCheckins` create | `habits` |
+| `onCeremonyUpdated` | `ceremonies/{id}` update — emits separate pings for picks-submitted, category-locked, status→complete | `awards` |
+| `onCoupleWritten` | `couples/{id}` write — both `user1Id`/`user2Id` first co-exist | `awards` |
+| `onWeeklyChallengeCompleted` | `couples/{id}` update when weekly challenge XP flips | `weeklyChallenge` |
+
+**Scheduled reminder** (`functions/src/dailyReminders.ts`):
+
+| Export | Schedule | Behavior |
+|--------|----------|----------|
+| `dailyReminderTick` | every 30 minutes (Cloud Scheduler) | Scans users with `dailyReminders != null`, computes their local time + day in their stored IANA tz, snaps to current half-hour slot, fires `mood` / `habits` reminder when the slot matches **and** the user has not yet logged that thing today (`moodEntries` / `habitCheckins` query by `(uid, dayKey)`) |
+
+Reminder pushes use `feature: "reminders"` and are gated by both `notificationPreferences.reminders` and the per-channel `dailyReminders.{mood,habits}.enabled`.
 
 ---
 
@@ -257,7 +283,7 @@ Utility scripts: `scripts/reset-couple-data.mjs`, `recompute-gamification.ts`, d
 3. Add Zustand slice or extend existing store; subscribe from **`(tabs)/_layout.tsx`** only if the feature needs global eager sync.
 4. Add routes under **`app/(tabs)/...`** with `_layout.tsx` stacks as needed.
 5. Update **rules** in Console (and fragments in-repo); run **`deploy:indexes`** if queries need composites.
-6. If partner-facing events should notify: extend **`functions/src/index.ts`** + respect **`notificationPreferences`** in **`functions/src/push.ts`**.
+6. If partner-facing events should notify: add a trigger in **`functions/src/index.ts`** that calls `sendPushToUser` with an explicit `feature` matching a `NotificationPreferences` key (extend the type + settings UI if introducing a new feature key).
 7. Document behavior in **`docs/APPS_AND_FEATURES.md`** (product) and touch this file or **AGENTS** if architecture shifts.
 
 ---

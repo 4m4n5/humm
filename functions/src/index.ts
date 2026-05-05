@@ -1,8 +1,11 @@
 import * as admin from "firebase-admin";
-import { onDocumentWritten } from "firebase-functions/v2/firestore";
-import { onDocumentCreated } from "firebase-functions/v2/firestore";
-import { onDocumentUpdated } from "firebase-functions/v2/firestore";
+import {
+  onDocumentWritten,
+  onDocumentCreated,
+  onDocumentUpdated,
+} from "firebase-functions/v2/firestore";
 import { sendPushToUser } from "./push";
+import { dailyReminderTick } from "./dailyReminders";
 
 /**
  * Firestore-triggered partner notifications via Expo Push API (`expo-server-sdk`).
@@ -24,6 +27,11 @@ function firstName(displayName?: string): string {
   return (displayName ?? "your partner").split(" ")[0] || "your partner";
 }
 
+async function firstNameOf(uid: string): Promise<string> {
+  const snap = await admin.firestore().doc(`users/${uid}`).get();
+  return firstName(snap.data()?.displayName);
+}
+
 // ─── Mood ───────────────────────────────────────────────────────────────────
 
 export const onMoodEntryWritten = onDocumentWritten(
@@ -41,11 +49,11 @@ export const onMoodEntryWritten = onDocumentWritten(
     const partnerUid = await partnerUidOf(actingUid);
     if (!partnerUid) return;
 
-    const actorSnap = await admin.firestore().doc(`users/${actingUid}`).get();
-    const name = firstName(actorSnap.data()?.displayName);
+    const name = await firstNameOf(actingUid);
     const emoji: string = after.current?.emoji ?? "";
 
     await sendPushToUser(partnerUid, "mood", `${name} tapped ${emoji}`, {
+      feature: "mood",
       screen: "/mood",
     });
   },
@@ -62,16 +70,16 @@ export const onReasonCreated = onDocumentCreated(
     const partnerUid = await partnerUidOf(authorUid);
     if (!partnerUid) return;
 
-    const authorSnap = await admin.firestore().doc(`users/${authorUid}`).get();
-    const name = firstName(authorSnap.data()?.displayName);
+    const name = await firstNameOf(authorUid);
 
     await sendPushToUser(partnerUid, "reasons", `${name} wrote a reason for you`, {
+      feature: "reasons",
       screen: "/reasons",
     });
   },
 );
 
-// ─── Nominations ────────────────────────────────────────────────────────────
+// ─── Awards: Nominations ────────────────────────────────────────────────────
 
 export const onNominationCreated = onDocumentCreated(
   "nominations/{docId}",
@@ -82,10 +90,10 @@ export const onNominationCreated = onDocumentCreated(
     const partnerUid = await partnerUidOf(submitterUid);
     if (!partnerUid) return;
 
-    const snap = await admin.firestore().doc(`users/${submitterUid}`).get();
-    const name = firstName(snap.data()?.displayName);
+    const name = await firstNameOf(submitterUid);
 
     await sendPushToUser(partnerUid, "awards", `${name} added a nomination`, {
+      feature: "awards",
       screen: "/awards",
     });
   },
@@ -109,7 +117,8 @@ export const onBattleCreated = onDocumentCreated(
       const partnerUid = userSnap.data()?.partnerId;
       if (!partnerUid) continue;
       const name = firstName(userSnap.data()?.displayName);
-      await sendPushToUser(partnerUid, "battle", `${name} started a battle — join in`, {
+      await sendPushToUser(partnerUid, "decide", `${name} started a battle — join in`, {
+        feature: "decide",
         screen: "/decide/battle-lobby",
       });
       break;
@@ -130,12 +139,180 @@ export const onDecisionCreated = onDocumentCreated(
     const partnerUid = await partnerUidOf(creatorUid);
     if (!partnerUid) return;
 
-    const snap = await admin.firestore().doc(`users/${creatorUid}`).get();
-    const name = firstName(snap.data()?.displayName);
+    const name = await firstNameOf(creatorUid);
 
     await sendPushToUser(partnerUid, "decide", `${name} spun the wheel`, {
+      feature: "decide",
       screen: "/decide",
     });
+  },
+);
+
+// ─── Habits ─────────────────────────────────────────────────────────────────
+
+export const onHabitCreated = onDocumentCreated(
+  "habits/{docId}",
+  async (event) => {
+    const data = event.data?.data();
+    if (!data) return;
+    const creatorUid: string = data.createdBy;
+    if (!creatorUid) return;
+    const partnerUid = await partnerUidOf(creatorUid);
+    if (!partnerUid) return;
+
+    const name = await firstNameOf(creatorUid);
+    const emoji: string = data.emoji ?? "";
+    const title: string = data.title ?? "a new habit";
+    const body = emoji
+      ? `${name} added ${emoji} ${title}`
+      : `${name} added ${title}`;
+
+    await sendPushToUser(partnerUid, "habits", body, {
+      feature: "habits",
+      screen: "/habits",
+    });
+  },
+);
+
+export const onHabitCheckinCreated = onDocumentCreated(
+  "habitCheckins/{docId}",
+  async (event) => {
+    const data = event.data?.data();
+    if (!data) return;
+    const actingUid: string = data.uid;
+    if (!actingUid) return;
+    const partnerUid = await partnerUidOf(actingUid);
+    if (!partnerUid) return;
+
+    const habitId: string | undefined = data.habitId;
+    let title = "a habit";
+    let emoji = "";
+    if (habitId) {
+      const habitSnap = await admin.firestore().doc(`habits/${habitId}`).get();
+      const h = habitSnap.data();
+      if (h) {
+        title = h.title ?? title;
+        emoji = h.emoji ?? "";
+      }
+    }
+    const name = await firstNameOf(actingUid);
+    const body = emoji
+      ? `${name} checked off ${emoji} ${title}`
+      : `${name} checked off ${title}`;
+
+    await sendPushToUser(partnerUid, "habits", body, {
+      feature: "habits",
+      screen: "/habits",
+    });
+  },
+);
+
+// ─── Awards: Ceremony lifecycle ─────────────────────────────────────────────
+
+/**
+ * Watches `ceremonies/{id}` updates and emits up to three classes of partner pings:
+ *  • deliberation submitted — `picksSubmitted[uid]` flips false→true (only one partner notified)
+ *  • resolution category locked — a new key appears in `winners`
+ *  • ceremony completed — `status` transitions to `complete` (both partners notified)
+ */
+export const onCeremonyUpdated = onDocumentUpdated(
+  "ceremonies/{docId}",
+  async (event) => {
+    const before = event.data?.before?.data();
+    const after = event.data?.after?.data();
+    if (!before || !after) return;
+
+    const coupleId: string = after.coupleId;
+    if (!coupleId) return;
+    const coupleSnap = await admin.firestore().doc(`couples/${coupleId}`).get();
+    if (!coupleSnap.exists) return;
+    const c = coupleSnap.data()!;
+    const uids = [c.user1Id, c.user2Id].filter(Boolean) as string[];
+    if (uids.length === 0) return;
+
+    // 1) Deliberation submitted — picksSubmitted[uid] flipped to true
+    const submittedBefore: Record<string, boolean> = before.picksSubmitted ?? {};
+    const submittedAfter: Record<string, boolean> = after.picksSubmitted ?? {};
+    for (const uid of uids) {
+      const wasSubmitted = submittedBefore[uid] === true;
+      const isSubmitted = submittedAfter[uid] === true;
+      if (!wasSubmitted && isSubmitted) {
+        const partnerUid = uids.find((u) => u !== uid);
+        if (partnerUid) {
+          const name = await firstNameOf(uid);
+          await sendPushToUser(
+            partnerUid,
+            "awards",
+            `${name} submitted their picks`,
+            { feature: "awards", screen: "/awards" },
+          );
+        }
+      }
+    }
+
+    // 2) Resolution category locked — a new key appeared in winners
+    const winnersBefore: Record<string, unknown> = before.winners ?? {};
+    const winnersAfter: Record<string, unknown> = after.winners ?? {};
+    const newlyLocked = Object.keys(winnersAfter).filter(
+      (k) => !(k in winnersBefore),
+    );
+    if (newlyLocked.length > 0) {
+      const label =
+        newlyLocked.length === 1
+          ? "a category was locked in"
+          : `${newlyLocked.length} categories were locked in`;
+      for (const uid of uids) {
+        await sendPushToUser(uid, "awards", label, {
+          feature: "awards",
+          screen: "/awards",
+        });
+      }
+    }
+
+    // 3) Ceremony completed — status transitioned to "complete"
+    if (before.status !== "complete" && after.status === "complete") {
+      for (const uid of uids) {
+        await sendPushToUser(
+          uid,
+          "awards",
+          "the ceremony is complete 🎉",
+          { feature: "awards", screen: "/awards" },
+        );
+      }
+    }
+  },
+);
+
+// ─── Couple linked ──────────────────────────────────────────────────────────
+
+/**
+ * Couple-linked welcome ping. Detects the moment both `user1Id` and `user2Id`
+ * become populated on the couple doc (covers both create-with-both-set and
+ * create-then-link-later flows). Bypasses category prefs (uses `awards` channel
+ * sparingly — fires at most once per couple).
+ */
+export const onCoupleWritten = onDocumentWritten(
+  "couples/{coupleId}",
+  async (event) => {
+    const before = event.data?.before?.data();
+    const after = event.data?.after?.data();
+    if (!after) return;
+
+    const wasLinked = !!(before?.user1Id && before?.user2Id);
+    const isLinked = !!(after.user1Id && after.user2Id);
+    if (wasLinked || !isLinked) return;
+
+    const uids = [after.user1Id, after.user2Id] as string[];
+    const names = await Promise.all(uids.map(firstNameOf));
+    for (let i = 0; i < uids.length; i++) {
+      const partnerName = names[1 - i];
+      await sendPushToUser(
+        uids[i],
+        "humm",
+        `you and ${partnerName} are linked — welcome 💞`,
+        { feature: "awards", screen: "/" },
+      );
+    }
   },
 );
 
@@ -155,8 +332,13 @@ export const onWeeklyChallengeCompleted = onDocumentUpdated(
     const uids = [after.user1Id, after.user2Id].filter(Boolean) as string[];
     for (const uid of uids) {
       await sendPushToUser(uid, "challenge", "you both nailed this week's challenge 🎉", {
+        feature: "weeklyChallenge",
         screen: "/",
       });
     }
   },
 );
+
+// ─── Daily reminders (scheduled) ────────────────────────────────────────────
+
+export { dailyReminderTick };

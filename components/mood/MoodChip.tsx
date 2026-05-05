@@ -33,7 +33,6 @@ const SIZE: Record<
   },
 };
 
-/** Full pill chips — matches softer mood language (no rounded-rect trays). */
 export function MoodChip({
   entry,
   ownerLabel,
@@ -43,28 +42,27 @@ export function MoodChip({
   className,
 }: Props) {
   const s = SIZE[size];
-  const pill = 'rounded-full';
 
   if (!entry) {
     return (
       <View
-        className={`flex-1 flex-row items-center justify-center ${pill} ${s.px} ${s.py} ${s.gap} ${
+        className={`flex-1 flex-row items-center justify-center rounded-full ${s.px} ${s.py} ${s.gap} ${
           embedded
-            ? 'border border-dashed border-hum-border/28 bg-hum-surface/30'
-            : 'border border-dashed border-hum-border/32 bg-hum-surface/25'
+            ? 'border border-dashed border-hum-petal/28 bg-hum-petal/[0.04]'
+            : 'border border-dashed border-hum-border/28 bg-hum-surface/20'
         } ${className ?? ''}`}
         accessibilityRole="text"
         accessibilityLabel={emptyLabel ?? `${ownerLabel}: not yet today`}
       >
-        <Text className={`${s.emoji} opacity-45`} maxFontSizeMultiplier={1.2}>
+        <Text className={`${s.emoji} opacity-35`} maxFontSizeMultiplier={1.2}>
           ✦
         </Text>
         <Text
-          className={`${s.label} font-medium ${embedded ? 'text-hum-muted' : 'text-hum-dim'}`}
+          className={`${s.label} font-medium text-hum-dim`}
           numberOfLines={1}
           maxFontSizeMultiplier={1.3}
         >
-          {emptyLabel ?? 'not yet today'}
+          {emptyLabel ?? 'not yet'}
         </Text>
       </View>
     );
@@ -72,10 +70,10 @@ export function MoodChip({
 
   return (
     <View
-      className={`flex-1 flex-row items-center justify-center ${pill} ${s.px} ${s.py} ${s.gap} ${
+      className={`flex-1 flex-row items-center justify-center rounded-full ${s.px} ${s.py} ${s.gap} ${
         embedded
-          ? 'border border-hum-petal/22 bg-hum-petal/[0.08]'
-          : 'border border-hum-petal/22 bg-hum-card/95'
+          ? 'bg-hum-petal/[0.12]'
+          : 'border border-hum-petal/20 bg-hum-card/90'
       } ${className ?? ''}`}
       accessibilityRole="text"
       accessibilityLabel={`${ownerLabel}: ${entry.current.label}`}

@@ -22,7 +22,10 @@
     "build:android:play": "npx eas-cli build -p android --profile production",
     "verify:store-pages": "playwright test tests/store-pages.spec.ts",
     "demo:create": "node scripts/create-demo-accounts.mjs --confirm CREATE-DEMO",
-    "demo:create:force": "node scripts/create-demo-accounts.mjs --confirm CREATE-DEMO --force"
+    "demo:create:force": "node scripts/create-demo-accounts.mjs --confirm CREATE-DEMO --force",
+    "demo:seed-moods": "node scripts/seed-demo-moods.mjs --confirm SEED-MOODS",
+    "demo:seed-moods:force": "node scripts/seed-demo-moods.mjs --confirm SEED-MOODS --force",
+    "demo:seed-habits": "node scripts/seed-demo-habits.mjs --confirm SEED-HABITS"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -33,6 +36,7 @@
     "expo-font": "~14.0.11",
     "expo-haptics": "~15.0.8",
     "expo-image-picker": "~17.0.10",
+    "expo-linear-gradient": "~15.0.8",
     "expo-linking": "~8.0.11",
     "expo-notifications": "~0.32.16",
     "expo-router": "~6.0.23",

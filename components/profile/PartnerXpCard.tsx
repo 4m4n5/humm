@@ -61,9 +61,6 @@ export function PartnerXpCard({ partner, loading }: Props) {
           >
             {partner.displayName}
           </Text>
-          <Text className="text-[13px] font-light text-hum-muted" maxFontSizeMultiplier={1.35}>
-            {level.name}
-          </Text>
         </View>
         <View className="items-end gap-y-0.5">
           <Text className="text-[20px] font-light text-hum-primary/90">{partner.xp ?? 0}</Text>
@@ -73,15 +70,10 @@ export function PartnerXpCard({ partner, loading }: Props) {
 
       {level.nextLevelXp ? (
         <View className="gap-y-2">
-          <View className="flex-row justify-between">
-            <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
-              level {level.level}
-            </Text>
-            <Text className="text-[11px] text-hum-muted">
-              {partner.xp ?? 0} / {level.nextLevelXp}
-            </Text>
-          </View>
-          <View className="h-1 overflow-hidden rounded-full bg-hum-surface">
+          <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+            level {level.level}
+          </Text>
+          <View className="h-[6px] overflow-hidden rounded-full bg-hum-border/30">
             <View
               className="h-full rounded-full bg-hum-primary/50"
               style={{ width: `${Math.min(xpProgress * 100, 100)}%` }}

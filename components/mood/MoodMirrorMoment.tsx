@@ -10,14 +10,13 @@ type Props = {
 };
 
 /**
- * Subtle celebration when both partners pick the same emoji within 5 minutes.
- * Uses the same edge-detection pattern as InSyncCelebration so it does not
- * fire on remount, navigation, or stale data.
+ * Subtle toast when both partners pick the same emoji within 5 minutes.
+ * Rising-edge detection prevents re-firing on remount or stale data.
  */
 export function MoodMirrorMoment({ myEntry, partnerEntry, onFinished }: Props) {
   const [visible, setVisible] = useState(false);
   const opacity = useRef(new Animated.Value(0)).current;
-  const scale = useRef(new Animated.Value(0.94)).current;
+  const translateY = useRef(new Animated.Value(-12)).current;
   const prevMatch = useRef<boolean | null>(null);
 
   const match =
@@ -58,31 +57,31 @@ export function MoodMirrorMoment({ myEntry, partnerEntry, onFinished }: Props) {
       setVisible(true);
       if (reduce) {
         opacity.setValue(1);
-        scale.setValue(1);
+        translateY.setValue(0);
         timeoutId = setTimeout(() => {
           if (!cancelled) {
             setVisible(false);
             onFinished?.();
           }
-        }, 2600);
+        }, 2400);
         return;
       }
       opacity.setValue(0);
-      scale.setValue(0.94);
+      translateY.setValue(-12);
       Animated.sequence([
         Animated.parallel([
-          Animated.timing(opacity, { toValue: 1, duration: 380, useNativeDriver: true }),
-          Animated.spring(scale, {
-            toValue: 1,
-            friction: 7,
-            tension: 120,
+          Animated.timing(opacity, { toValue: 1, duration: 280, useNativeDriver: true }),
+          Animated.spring(translateY, {
+            toValue: 0,
+            friction: 8,
+            tension: 90,
             useNativeDriver: true,
           }),
         ]),
-        Animated.delay(2100),
+        Animated.delay(1900),
         Animated.parallel([
-          Animated.timing(opacity, { toValue: 0, duration: 520, useNativeDriver: true }),
-          Animated.timing(scale, { toValue: 0.94, duration: 520, useNativeDriver: true }),
+          Animated.timing(opacity, { toValue: 0, duration: 360, useNativeDriver: true }),
+          Animated.timing(translateY, { toValue: -8, duration: 360, useNativeDriver: true }),
         ]),
       ]).start(() => {
         if (!cancelled) {
@@ -96,21 +95,38 @@ export function MoodMirrorMoment({ myEntry, partnerEntry, onFinished }: Props) {
       cancelled = true;
       clearTimeout(timeoutId);
     };
-  }, [shouldFire, opacity, scale, onFinished]);
+  }, [shouldFire, opacity, translateY, onFinished]);
 
   if (!visible || !myEntry) return null;
 
   return (
-    <View className="absolute inset-x-0 top-0 z-50 items-center px-6 pt-[72px]" pointerEvents="none">
+    <View
+      className="absolute inset-x-0 top-0 z-50 items-center px-6 pt-[60px]"
+      pointerEvents="none"
+    >
       <Animated.View
-        className="items-center gap-y-2 rounded-[28px] border border-hum-petal/28 bg-hum-card px-8 py-6"
-        style={[cardShadow, { opacity, transform: [{ scale }] }]}
+        className="flex-row items-center gap-3 rounded-full border border-hum-secondary/45 bg-hum-card px-4 py-2.5"
+        style={[cardShadow, { opacity, transform: [{ translateY }] }]}
       >
-        <Text className="text-[40px] leading-[44px]" allowFontScaling={false}>
-          {myEntry.current.emoji}
-          {myEntry.current.emoji}
-        </Text>
-        <Text className="text-[15px] font-medium tracking-tight text-hum-text">same mood</Text>
+        <View className="h-8 w-8 items-center justify-center rounded-xl bg-hum-secondary/22">
+          <Text className="text-[18px]" allowFontScaling={false}>
+            {myEntry.current.emoji}
+          </Text>
+        </View>
+        <View className="gap-y-0.5">
+          <Text
+            className="text-[13px] font-medium tracking-tight text-hum-text"
+            maxFontSizeMultiplier={1.2}
+          >
+            in sync
+          </Text>
+          <Text
+            className="text-[11px] font-light text-hum-dim"
+            maxFontSizeMultiplier={1.2}
+          >
+            same mood right now
+          </Text>
+        </View>
       </Animated.View>
     </View>
   );

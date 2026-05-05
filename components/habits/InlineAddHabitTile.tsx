@@ -13,12 +13,12 @@ export function InlineAddHabitTile({ onPress }: Props) {
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel="add habit"
-      className="flex-row items-center justify-center gap-2 rounded-[20px] border border-dashed border-hum-border/30 bg-hum-card/40 py-4"
+      className="flex-row items-center justify-center gap-2.5 rounded-[20px] border border-dashed border-hum-secondary/20 bg-hum-card/30 py-4"
     >
-      <View className="h-8 w-8 items-center justify-center rounded-xl bg-hum-secondary/10">
-        <Ionicons name="add" size={18} color={theme.secondary} />
+      <View className="h-8 w-8 items-center justify-center rounded-full border border-hum-secondary/15 bg-hum-secondary/8">
+        <Ionicons name="add" size={17} color={theme.secondary} />
       </View>
-      <Text className="text-[13px] font-light text-hum-muted">add habit</Text>
+      <Text className="text-[13px] font-light tracking-wide text-hum-dim">add habit</Text>
     </Pressable>
   );
 }
