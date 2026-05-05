@@ -142,7 +142,7 @@ export default function RevealScreen() {
   if (!ready) {
     return (
       <SafeAreaView className="flex-1 bg-hum-bg">
-        <ScreenHeader title="cheer" subtitle="not ready" />
+        <ScreenHeader title="cheer" />
         <View className="flex-1 justify-center px-8">
           <Text className="mb-6 text-center text-[14px] font-light text-hum-muted">
             crown every category · or sync splits on awards
@@ -211,7 +211,7 @@ export default function RevealScreen() {
   return (
     <View className="flex-1 bg-hum-bg">
       <SafeAreaView className="flex-1">
-        <ScreenHeader title="cheer" subtitle={`${step + 1} / ${steps.length}`} />
+        <ScreenHeader title="cheer" />
         <View className="flex-1 justify-between px-6 pb-10 pt-1">
           <Text
             className="mb-1 text-[10px] font-medium uppercase tracking-[0.24em] text-hum-dim"

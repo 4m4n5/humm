@@ -23,7 +23,6 @@ export function ceremonyHubPhaseHint(
 }
 
 export const awardsVoice = {
-  screenSubtitle: 'celebrate the goods',
   startAlignmentTitle: 'start alignment?',
   startAlignmentBody:
     'private picks \u00b7 one per category with stories\nboth done \u2192 overlap\n(every active category needs a story first)',
@@ -50,7 +49,6 @@ export const moodVoice = {
 } as const;
 
 export const reasonsVoice = {
-  screenSubtitle: '1 for them \u00b7 3 for you',
   waitingOnPartnerTitle: (name: string) => `when ${name} writes about you`,
   waitingOnPartnerBody: 'your trio opens here',
   writeFirstTitle: (name: string) => `one reason for ${name}`,

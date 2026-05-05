@@ -59,7 +59,7 @@ export default function OverlapScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <ScreenHeader title="overlap" subtitle="match · split" />
+      <ScreenHeader title="overlap" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}

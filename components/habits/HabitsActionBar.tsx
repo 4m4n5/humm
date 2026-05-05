@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { theme } from '@/constants/theme';
 import { HabitSegmentedControl } from './HabitSegmentedControl';
+import { AnimatedNumber } from '@/components/shared/AnimatedNumber';
 import type { HabitsView } from '@/lib/stores/habitStore';
 
 type Props = {
@@ -101,14 +102,24 @@ export function HabitsActionBar({
       {hasProgress ? (
         <View className="flex-1 flex-row items-center gap-2">
           <AnimatedProgressBar pct={pct} allDone={allDone} />
-          <Text
-            className={`text-[11px] font-medium tabular-nums ${
-              allDone ? 'text-hum-secondary' : 'text-hum-dim'
-            }`}
-            allowFontScaling={false}
-          >
-            {doneCount}/{totalCount}
-          </Text>
+          <View className="flex-row items-baseline">
+            <AnimatedNumber
+              value={doneCount}
+              duration={420}
+              className={`text-[11px] font-medium tabular-nums ${
+                allDone ? 'text-hum-secondary' : 'text-hum-dim'
+              }`}
+              allowFontScaling={false}
+            />
+            <Text
+              className={`text-[11px] font-medium tabular-nums ${
+                allDone ? 'text-hum-secondary' : 'text-hum-dim'
+              }`}
+              allowFontScaling={false}
+            >
+              /{totalCount}
+            </Text>
+          </View>
         </View>
       ) : (
         <View className="flex-1" />
@@ -119,12 +130,12 @@ export function HabitsActionBar({
           <Text className="text-[12px]" allowFontScaling={false}>
             🔥
           </Text>
-          <Text
+          <AnimatedNumber
+            value={jointStreak}
+            duration={520}
             className="text-[12px] font-semibold tabular-nums text-hum-text"
             allowFontScaling={false}
-          >
-            {jointStreak}
-          </Text>
+          />
         </View>
       ) : null}
 

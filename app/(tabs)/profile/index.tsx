@@ -9,6 +9,8 @@ import { Card } from '@/components/shared/Card';
 import { theme } from '@/constants/theme';
 import { updateUserProfile, subscribeToUserProfile } from '@/lib/firestore/users';
 import { ScreenTitle } from '@/components/shared/ScreenTitle';
+import { AnimatedNumber } from '@/components/shared/AnimatedNumber';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { BadgeShelf } from '@/components/profile/BadgeShelf';
 import { PartnerXpCard } from '@/components/profile/PartnerXpCard';
 import { ProfileSoftStats } from '@/components/profile/ProfileSoftStats';
@@ -71,13 +73,14 @@ export default function Profile() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
+      <AmbientGlow tone="petal" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <ScreenTitle title="you" subtitle="xp · badges · cred" />
+        <ScreenTitle title="you" />
 
         <Card className="gap-y-5">
           <View className="flex-row items-center gap-x-4">
@@ -160,9 +163,14 @@ export default function Profile() {
                 </TouchableOpacity>
               )}
             </View>
-            <View className="items-end gap-y-0.5">
-              <Text className="text-[20px] font-light text-hum-primary">{profile?.xp ?? 0}</Text>
-              <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">xp</Text>
+            <View className="items-end">
+              <AnimatedNumber
+                value={profile?.xp ?? 0}
+                className="text-[34px] font-extralight tabular-nums leading-[36px] tracking-[-0.025em] text-hum-primary"
+              />
+              <Text className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+                xp
+              </Text>
             </View>
           </View>
 

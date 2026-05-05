@@ -1,129 +1,65 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import { Animated, Easing, Text, View, useWindowDimensions } from 'react-native';
-import * as Haptics from 'expo-haptics';
+import React, { useMemo } from 'react';
+import { Animated, Text } from 'react-native';
+import {
+  EmojiShower,
+  type ShowerIntensity,
+} from '@/components/shared/EmojiShower';
 import { reasonsVoice } from '@/constants/hummVoice';
 
 /**
- * Sibling celebration to `InSyncCelebration` (habits). Same architectural
- * shape so both moments feel like they live in the same family, but tuned
- * to feel _more_ generous, not gentler — writing for your person should
- * land at least as exciting as a co-completed habit.
+ * Celebration when a reason is written for the partner. Sibling to
+ * `InSyncCelebration` (habits): both share the same {@link EmojiShower}
+ * primitive but use distinct emoji vocabularies and intensity rules.
  *
- *   - denser shower (22 vs habits' 18) → abundance reads as generosity
- *   - taller, faster arc (translateY -380 over 2200ms) → punchier launch
- *   - tighter timing window (delays up to 300ms) → unified opening burst
- *   - heart-forward palette + petal-tinted badge → unmistakably "reasons"
- *   - subtle per-particle rotation → petals/notes tumbling, not just rising
- *   - badge pops with an over-shoot spring + heart anchor (💖) for warmth
+ * Reasons get a slightly more generous default than habits — writing for
+ * your person is a more intimate act than checking a box — and milestone
+ * fires (1st, 10th, 25th, 50th, 100th) bloom into the lavish preset so the
+ * gravity of "you've now told them 25 things" lands.
  */
 
-const PARTICLE_COUNT = 22;
-const EMOJIS = ['💖', '💕', '💞', '💝', '🌹', '✨', '💗', '💌', '✦'];
-const DURATION = 2200;
+const EMOJI_POOL = [
+  '💖',
+  '💕',
+  '💞',
+  '💝',
+  '🌹',
+  '✨',
+  '💗',
+  '💌',
+  '✦',
+  '🌷',
+  '🫶',
+  '💐',
+];
 
-type Particle = {
-  emoji: string;
-  startX: number;
-  drift: number;
-  delay: number;
-  size: number;
-  spin: number;
+type Props = {
+  visible: boolean;
+  onFinished: () => void;
+  /**
+   * The number of reasons by this author for this partner *before* this
+   * one was added — so milestone math reads as "this is the Nth reason".
+   */
+  authorCountBefore?: number;
 };
 
-function makeParticles(screenWidth: number): Particle[] {
-  return Array.from({ length: PARTICLE_COUNT }).map(() => ({
-    emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)]!,
-    startX: Math.random() * (screenWidth - 32),
-    // Slightly more sway than habits for a "petals tumbling up" feel,
-    // but tight enough that the upward arc still dominates.
-    drift: (Math.random() - 0.5) * 75,
-    delay: Math.random() * 300,
-    size: 16 + Math.random() * 16,
-    spin: (Math.random() - 0.5) * 18,
-  }));
-}
+const MILESTONES = new Set([0, 9, 24, 49, 99, 249]);
 
-function FloatingParticle({ p }: { p: Particle }) {
-  const translateY = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
-  const translateX = useRef(new Animated.Value(0)).current;
-  const rotate = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.sequence([
-      Animated.delay(p.delay),
-      Animated.parallel([
-        Animated.timing(translateY, {
-          toValue: -380,
-          duration: DURATION,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(translateX, {
-          toValue: p.drift,
-          duration: DURATION,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-        Animated.timing(rotate, {
-          toValue: p.spin,
-          duration: DURATION,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-        Animated.sequence([
-          Animated.timing(opacity, {
-            toValue: 1,
-            duration: 240,
-            useNativeDriver: true,
-          }),
-          Animated.delay(DURATION - 880),
-          Animated.timing(opacity, {
-            toValue: 0,
-            duration: 640,
-            useNativeDriver: true,
-          }),
-        ]),
-      ]),
-    ]).start();
-  }, [translateY, translateX, opacity, rotate, p.delay, p.drift, p.spin]);
-
-  const rotateInterp = rotate.interpolate({
-    inputRange: [-30, 30],
-    outputRange: ['-30deg', '30deg'],
-  });
-
-  return (
-    <Animated.View
-      pointerEvents="none"
-      style={{
-        position: 'absolute',
-        bottom: 80,
-        left: p.startX,
-        opacity,
-        transform: [
-          { translateY },
-          { translateX },
-          { rotate: rotateInterp },
-        ],
-      }}
-    >
-      <Text style={{ fontSize: p.size }} allowFontScaling={false}>
-        {p.emoji}
-      </Text>
-    </Animated.View>
-  );
+function pickIntensity(authorCountBefore: number): ShowerIntensity {
+  // Hitting a "round" reason (1st, 10th, 25th, 50th, 100th, 250th) gets the
+  // lavish shower. Otherwise keep the standard generosity that this moment
+  // historically earned.
+  if (MILESTONES.has(authorCountBefore)) return 'lavish';
+  return 'standard';
 }
 
 function CenterBadge() {
-  const scale = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
+  const scale = React.useRef(new Animated.Value(0)).current;
+  const opacity = React.useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
+  React.useEffect(() => {
     Animated.sequence([
       Animated.delay(160),
       Animated.parallel([
-        // Snappier overshoot than habits → the badge "pops" rather than blooms.
         Animated.spring(scale, {
           toValue: 1,
           friction: 3.5,
@@ -170,37 +106,24 @@ function CenterBadge() {
   );
 }
 
-type Props = {
-  visible: boolean;
-  onFinished: () => void;
-};
-
-export function ReasonWrittenCelebration({ visible, onFinished }: Props) {
-  const { width } = useWindowDimensions();
-  const particles = useMemo(
-    () => (visible ? makeParticles(width) : []),
-    [visible, width],
+export function ReasonWrittenCelebration({
+  visible,
+  onFinished,
+  authorCountBefore = 0,
+}: Props) {
+  const intensity = useMemo(
+    () => pickIntensity(authorCountBefore),
+    [authorCountBefore],
   );
 
-  useEffect(() => {
-    if (!visible) return;
-    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    const t = setTimeout(onFinished, DURATION + 600);
-    return () => clearTimeout(t);
-  }, [visible, onFinished]);
-
-  if (!visible) return null;
-
   return (
-    <View
-      pointerEvents="none"
-      className="absolute inset-0 z-40"
-      style={{ overflow: 'hidden' }}
+    <EmojiShower
+      visible={visible}
+      onFinished={onFinished}
+      emojiPool={EMOJI_POOL}
+      intensity={intensity}
     >
-      {particles.map((p, i) => (
-        <FloatingParticle key={i} p={p} />
-      ))}
-      <CenterBadge />
-    </View>
+      {visible ? <CenterBadge /> : null}
+    </EmojiShower>
   );
 }

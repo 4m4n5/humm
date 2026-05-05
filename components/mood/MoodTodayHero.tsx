@@ -31,23 +31,23 @@ function MoodRow({
   const lastAgo = lastAt ? relativeMoodTime(lastAt) : null;
 
   const anchor = entry ? (
-    <View className="h-11 w-11 items-center justify-center rounded-xl bg-hum-bg/55">
-      <Text className="text-[24px] leading-[26px]" allowFontScaling={false}>
+    <View className="h-12 w-12 items-center justify-center rounded-xl bg-hum-bg/55">
+      <Text className="text-[30px] leading-[34px]" allowFontScaling={false}>
         {entry.current.emoji}
       </Text>
     </View>
   ) : (
     <View
-      className={`h-11 w-11 items-center justify-center rounded-xl border border-dashed ${
+      className={`h-12 w-12 items-center justify-center rounded-xl border border-dashed ${
         pressable
           ? 'border-hum-primary/45 bg-hum-primary/[0.06]'
           : 'border-hum-border/30 bg-hum-bg/40'
       }`}
     >
       {pressable ? (
-        <Ionicons name="add" size={18} color={theme.primary} />
+        <Ionicons name="add" size={20} color={theme.primary} />
       ) : (
-        <Text className="text-[15px] opacity-30" allowFontScaling={false}>
+        <Text className="text-[16px] opacity-30" allowFontScaling={false}>
           ✦
         </Text>
       )}

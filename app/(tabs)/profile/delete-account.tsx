@@ -46,7 +46,7 @@ export default function DeleteAccountScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 8 : 0}
       >
-        <ScreenHeader title="delete account" subtitle="permanent · can’t be undone" />
+        <ScreenHeader title="delete account" />
         <ScrollView
           className="flex-1"
           contentContainerStyle={scrollContentStandard}

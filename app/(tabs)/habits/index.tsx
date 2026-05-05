@@ -5,6 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { router } from 'expo-router';
 import { ScreenTitle } from '@/components/shared/ScreenTitle';
 import { LoadingState } from '@/components/shared/LoadingState';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useHabitStore } from '@/lib/stores/habitStore';
 import { usePartnerName } from '@/lib/usePartnerName';
@@ -334,6 +335,7 @@ export default function HabitsBoardScreen() {
   if (!coupleId) {
     return (
       <SafeAreaView className="flex-1 bg-hum-bg">
+        <AmbientGlow tone="secondary" />
         <ScrollView
           className="flex-1"
           contentContainerStyle={scrollContentStandard}
@@ -341,7 +343,6 @@ export default function HabitsBoardScreen() {
         >
           <ScreenTitle
             title="habits"
-            subtitle="link with your partner to share a habits board."
           />
         </ScrollView>
       </SafeAreaView>
@@ -350,20 +351,25 @@ export default function HabitsBoardScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
+      <AmbientGlow tone="secondary" />
       {purging ? (
         <View className="absolute inset-0 z-50 items-center justify-center bg-hum-bg/70">
           <LoadingState message="updating habits…" />
         </View>
       ) : null}
 
-      <InSyncCelebration visible={celebrating} onFinished={onCelebrationFinished} />
+      <InSyncCelebration
+        visible={celebrating}
+        onFinished={onCelebrationFinished}
+        jointStreak={jointStreak}
+      />
 
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}
         showsVerticalScrollIndicator={false}
       >
-        <ScreenTitle title="habits" subtitle="small wins, same rhythm" />
+        <ScreenTitle title="habits" />
 
         <HabitsActionBar
           mode={view}

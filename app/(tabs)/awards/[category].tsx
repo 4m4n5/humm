@@ -60,7 +60,7 @@ export default function AwardCategoryScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <ScreenHeader title={display.label} subtitle="add stories" />
+      <ScreenHeader title={display.label} />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentWithBottomCTA}

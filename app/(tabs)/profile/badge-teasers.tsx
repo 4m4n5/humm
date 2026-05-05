@@ -21,7 +21,7 @@ export default function BadgeTeasersScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <ScreenHeader title="coming soon" subtitle="random hints" />
+      <ScreenHeader title="coming soon" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}

@@ -117,7 +117,7 @@ export default function ManageAwardCategoriesScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <ScreenHeader title="award categories" subtitle="shared edit" />
+      <ScreenHeader title="award categories" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}

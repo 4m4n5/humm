@@ -125,7 +125,7 @@ export default function BattleVoteScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <ScreenHeader title="matchup" subtitle="tap pick" />
+      <ScreenHeader title="matchup" />
 
       {coinFlip ? (
         <View className="absolute inset-0 z-50 justify-center bg-hum-bg/95 px-4">

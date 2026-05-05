@@ -72,7 +72,7 @@ export default function BattleScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <ScreenHeader title="battle" subtitle="live bracket" />
+      <ScreenHeader title="battle" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}

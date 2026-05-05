@@ -136,10 +136,7 @@ export default function BattleLobbyScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <ScreenHeader
-        title="load the bracket"
-        subtitle={cat ? `${cat.emoji} ${cat.label.toLowerCase()}` : battle.category}
-      />
+      <ScreenHeader title="load the bracket" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}

@@ -95,7 +95,7 @@ export default function DeliberateScreen() {
   if (mySubmitted) {
     return (
       <SafeAreaView className="flex-1 bg-hum-bg">
-        <ScreenHeader title="alignment" subtitle="picks in" />
+        <ScreenHeader title="alignment" />
         <View className="flex-1 justify-center px-8">
           <Text className="text-center text-[14px] font-light leading-[22px] text-hum-muted">
             {partnerSubmitted ? `both in · awards → overlap` : `their turn · yours stay hidden`}
@@ -109,7 +109,7 @@ export default function DeliberateScreen() {
   if (required.length === 0) {
     return (
       <SafeAreaView className="flex-1 bg-hum-bg">
-        <ScreenHeader title="alignment" subtitle="no stories yet" />
+        <ScreenHeader title="alignment" />
         <View className="flex-1 justify-center px-8">
           <Text className="text-center text-[14px] text-hum-muted">add a nomination first</Text>
           <Button label="back to awards" onPress={() => router.back()} className="mt-6" />
@@ -120,7 +120,7 @@ export default function DeliberateScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <ScreenHeader title="your picks" subtitle="one per category" />
+      <ScreenHeader title="your picks" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}

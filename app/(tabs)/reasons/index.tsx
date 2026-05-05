@@ -15,6 +15,7 @@ import * as Haptics from 'expo-haptics';
 import { router, useFocusEffect } from 'expo-router';
 import { Button } from '@/components/shared/Button';
 import { ScreenTitle } from '@/components/shared/ScreenTitle';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useReasonStore } from '@/lib/stores/reasonStore';
 import { useReasonsRewardStore } from '@/lib/stores/reasonsRewardStore';
@@ -350,12 +351,13 @@ export default function ReasonsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
+      <AmbientGlow tone="petal" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}
         showsVerticalScrollIndicator={false}
       >
-        <ScreenTitle title="reasons" subtitle={reasonsVoice.screenSubtitle} />
+        <ScreenTitle title="reasons" />
 
         <View
           className="relative overflow-hidden rounded-[28px] border border-hum-petal/25 bg-hum-card"

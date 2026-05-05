@@ -85,7 +85,7 @@ export default function ResolveScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <ScreenHeader title="sync splits" subtitle="same tap · locks" />
+      <ScreenHeader title="sync splits" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}

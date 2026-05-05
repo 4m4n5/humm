@@ -8,11 +8,10 @@ import { containsDevanagari } from '@/lib/containsDevanagari';
 
 type Props = {
   title: string;
-  subtitle?: string;
 };
 
-/** Stack screens: floating back control + same title/subtitle rhythm as ScreenTitle. */
-export function ScreenHeader({ title, subtitle }: Props) {
+/** Stack screens: floating back control + same title rhythm as ScreenTitle. */
+export function ScreenHeader({ title }: Props) {
   const titleIsDevanagari = containsDevanagari(title);
 
   const titleEl = (
@@ -36,21 +35,11 @@ export function ScreenHeader({ title, subtitle }: Props) {
       >
         <Ionicons name="chevron-back" size={19} color={theme.text} style={{ opacity: 0.85 }} />
       </Pressable>
-      <View className="gap-y-2">
-        {titleIsDevanagari ? (
-          <View className="-mb-1.5 pt-1.5">{titleEl}</View>
-        ) : (
-          titleEl
-        )}
-        {subtitle ? (
-          <Text
-            className="w-full self-stretch pr-1 text-[14px] font-light leading-[22px] tracking-[0.01em] text-hum-muted"
-            maxFontSizeMultiplier={1.4}
-          >
-            {subtitle}
-          </Text>
-        ) : null}
-      </View>
+      {titleIsDevanagari ? (
+        <View className="-mb-1.5 pt-1.5">{titleEl}</View>
+      ) : (
+        titleEl
+      )}
     </View>
   );
 }

@@ -133,10 +133,7 @@ export default function BattleResultScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <ScreenHeader
-        title="champion"
-        subtitle={cat ? `${cat.emoji} ${cat.label.toLowerCase()}` : battle.category}
-      />
+      <ScreenHeader title="champion" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}

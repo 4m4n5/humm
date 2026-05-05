@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import { BlurView } from 'expo-blur';
 import { theme } from '@/constants/theme';
 import type { Habit, HabitCadence, HabitScope } from '@/types';
 import { useHabitStore } from '@/lib/stores/habitStore';
@@ -147,7 +148,15 @@ export function EditHabitSheet({ visible, habit, onClose }: Props) {
         className="flex-1 justify-end bg-black/50"
       >
         <Pressable className="flex-1" onPress={handleClose} accessibilityLabel="Dismiss" />
-        <View className="max-h-[88%] rounded-t-[28px] border-t border-hum-border/30 bg-hum-bg px-5 pb-8 pt-3">
+        <BlurView
+          intensity={Platform.OS === 'ios' ? 70 : 0}
+          tint="dark"
+          className="max-h-[88%] overflow-hidden rounded-t-[28px] border-t border-hum-border/18 px-5 pb-8 pt-3"
+          style={{
+            backgroundColor:
+              Platform.OS === 'ios' ? 'rgba(15,14,20,0.55)' : 'rgba(15,14,20,0.95)',
+          }}
+        >
           {/* Grab handle */}
           <View className="mb-4 items-center">
             <View className="h-[4px] w-9 rounded-full bg-hum-border/40" />
@@ -207,7 +216,7 @@ export function EditHabitSheet({ visible, habit, onClose }: Props) {
               </TouchableOpacity>
             </View>
           </ScrollView>
-        </View>
+        </BlurView>
       </KeyboardAvoidingView>
     </Modal>
   );

@@ -77,13 +77,10 @@ export default function MoodLogScreen() {
     setPending(null);
   }
 
-  const subtitle = myToday
-    ? `currently ${myToday.current.label} — tap to change`
-    : 'pick what fits right now';
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <ScreenHeader title="log mood" subtitle={subtitle} />
+      <ScreenHeader title="log mood" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}

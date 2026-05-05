@@ -29,7 +29,11 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ['System'],
+        // Note: actual font-family per Text node is injected at runtime in
+        // `lib/setupFonts.ts` based on each node's `fontWeight`. These values
+        // exist mainly to keep Tailwind classes type-safe.
+        sans: ['Inter_400Regular', 'System'],
+        display: ['Inter_200ExtraLight', 'System'],
       },
     },
   },

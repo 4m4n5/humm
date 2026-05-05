@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { Modal, Pressable, Text, View } from 'react-native';
+import { Modal, Platform, Pressable, Text, View } from 'react-native';
+import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { Button } from '@/components/shared/Button';
 import { cardShadow } from '@/constants/elevation';
@@ -58,7 +59,7 @@ export function MoodConfirmModal({
       statusBarTranslucent
     >
       <Pressable
-        className="flex-1 items-center justify-center bg-hum-bg/85 px-8"
+        className="flex-1 items-center justify-center bg-hum-bg/70 px-8"
         onPress={() => {
           if (saving) return;
           onCancel();
@@ -66,11 +67,20 @@ export function MoodConfirmModal({
         accessibilityRole="none"
       >
         <Pressable
-          className="w-full max-w-[360px] gap-y-5 rounded-[28px] border border-hum-secondary/35 bg-hum-card px-6 py-7"
-          style={cardShadow}
           onPress={(e) => e.stopPropagation()}
           accessibilityViewIsModal
+          className="w-full max-w-[360px] overflow-hidden rounded-[28px] border border-hum-secondary/30"
+          style={cardShadow}
         >
+          <BlurView
+            intensity={Platform.OS === 'ios' ? 60 : 0}
+            tint="dark"
+            className="gap-y-5 px-6 py-7"
+            style={{
+              backgroundColor:
+                Platform.OS === 'ios' ? 'rgba(30,28,39,0.62)' : 'rgba(30,28,39,0.96)',
+            }}
+          >
           {isChange ? (
             <View className="flex-row items-center justify-center gap-x-3.5">
               <StickerPreview sticker={current} dim />
@@ -113,6 +123,7 @@ export function MoodConfirmModal({
               className="flex-1"
             />
           </View>
+          </BlurView>
         </Pressable>
       </Pressable>
     </Modal>

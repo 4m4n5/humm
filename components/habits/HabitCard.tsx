@@ -50,6 +50,35 @@ function ParticipantPill({
   onPress: () => void;
   readOnly: boolean;
 }) {
+  // Tap-bloom on the participant check disc when this person flips to done.
+  // Suppressed for readOnly (partner) display so it only blooms for its
+  // owner's actual interaction, not for arriving snapshots.
+  const scale = useRef(new Animated.Value(1)).current;
+  const prev = useRef<boolean | null>(null);
+  useEffect(() => {
+    if (prev.current === null) {
+      prev.current = checked;
+      return;
+    }
+    if (!readOnly && checked && prev.current === false) {
+      Animated.sequence([
+        Animated.spring(scale, {
+          toValue: 1.18,
+          friction: 3.5,
+          tension: 220,
+          useNativeDriver: true,
+        }),
+        Animated.spring(scale, {
+          toValue: 1,
+          friction: 5,
+          tension: 160,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+    prev.current = checked;
+  }, [checked, readOnly, scale]);
+
   return (
     <Pressable
       onPress={readOnly ? undefined : onPress}
@@ -63,12 +92,13 @@ function ParticipantPill({
           : 'border-hum-border/18 bg-hum-bg/30'
       }`}
     >
-      <View
+      <Animated.View
         className={`h-[26px] w-[26px] items-center justify-center rounded-full ${
           checked
             ? 'bg-hum-secondary/45'
             : 'border border-hum-border/25 bg-hum-card/50'
         }`}
+        style={{ transform: [{ scale }] }}
       >
         {checked ? (
           <Ionicons name="checkmark" size={13} color={theme.text} />
@@ -77,7 +107,7 @@ function ParticipantPill({
             {initialOf(label)}
           </Text>
         )}
-      </View>
+      </Animated.View>
       <Text
         numberOfLines={1}
         className={`flex-1 text-[13px] tracking-[-0.01em] ${
@@ -99,6 +129,8 @@ function AnimatedEmojiTile({ emoji, completed, bothJustCompleted }: {
   const glow = useRef(new Animated.Value(0)).current;
   /** null = not hydrated yet; skip animation on mount when already both-done */
   const prevBoth = useRef<boolean | null>(null);
+  /** null = not hydrated; track to bloom on the first solo check */
+  const prevCompleted = useRef<boolean | null>(null);
 
   useEffect(() => {
     if (prevBoth.current === null) {
@@ -125,6 +157,33 @@ function AnimatedEmojiTile({ emoji, completed, bothJustCompleted }: {
     prevBoth.current = bothJustCompleted;
   }, [bothJustCompleted, bounce, glow]);
 
+  // Solo tap-bloom: when this user toggles `completed` on, the emoji
+  // springs out and back so even individual taps feel alive (the both-done
+  // moment above stays the bigger celebration).
+  useEffect(() => {
+    if (prevCompleted.current === null) {
+      prevCompleted.current = completed;
+      return;
+    }
+    if (completed && prevCompleted.current === false && !bothJustCompleted) {
+      Animated.sequence([
+        Animated.spring(bounce, {
+          toValue: 1.22,
+          friction: 3.5,
+          tension: 220,
+          useNativeDriver: true,
+        }),
+        Animated.spring(bounce, {
+          toValue: 1,
+          friction: 5,
+          tension: 160,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+    prevCompleted.current = completed;
+  }, [completed, bothJustCompleted, bounce]);
+
   return (
     <View className="relative">
       <Animated.View
@@ -149,6 +208,48 @@ function AnimatedEmojiTile({ emoji, completed, bothJustCompleted }: {
         <Text className="text-[20px]" allowFontScaling={false}>{emoji}</Text>
       </Animated.View>
     </View>
+  );
+}
+
+function BloomingCheck({ checked }: { checked: boolean }) {
+  const scale = useRef(new Animated.Value(1)).current;
+  const prev = useRef<boolean | null>(null);
+
+  useEffect(() => {
+    if (prev.current === null) {
+      prev.current = checked;
+      return;
+    }
+    if (checked && prev.current === false) {
+      Animated.sequence([
+        Animated.spring(scale, {
+          toValue: 1.18,
+          friction: 3.5,
+          tension: 220,
+          useNativeDriver: true,
+        }),
+        Animated.spring(scale, {
+          toValue: 1,
+          friction: 5,
+          tension: 160,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+    prev.current = checked;
+  }, [checked, scale]);
+
+  return (
+    <Animated.View
+      className={`h-[30px] w-[30px] items-center justify-center rounded-full ${
+        checked
+          ? 'bg-hum-secondary/45'
+          : 'border-[1.5px] border-hum-border/25 bg-hum-bg/35'
+      }`}
+      style={{ transform: [{ scale }] }}
+    >
+      {checked ? <Ionicons name="checkmark" size={15} color={theme.text} /> : null}
+    </Animated.View>
   );
 }
 
@@ -314,15 +415,7 @@ export function HabitCard({
       >
         <Ionicons name="ellipsis-horizontal" size={17} color={theme.dim} style={{ opacity: 0.45 }} />
       </TouchableOpacity>
-      <View
-        className={`h-[30px] w-[30px] items-center justify-center rounded-full ${
-          myChecked
-            ? 'bg-hum-secondary/45'
-            : 'border-[1.5px] border-hum-border/25 bg-hum-bg/35'
-        }`}
-      >
-        {myChecked ? <Ionicons name="checkmark" size={15} color={theme.text} /> : null}
-      </View>
+      <BloomingCheck checked={myChecked} />
     </Pressable>
   );
 }

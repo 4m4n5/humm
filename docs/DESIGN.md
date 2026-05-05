@@ -12,7 +12,7 @@ Aligned with **balanced density** + **subtle motion**; avoids heavy “boxed qua
 
 | Pattern | Where |
 |---------|--------|
-| **`rounded-[28px]`** outer shells | `MoodTodayHero`, week strip container, day cards on mood index, `MoodMirrorMoment` |
+| **`rounded-[28px]`** outer shells | `MoodTodayHero`, week strip container, day cards on mood index |
 | **`rounded-full` pills** | Horizontal quadrant picker (`MoodGrid`), `MoodChip`, habit-adjacent `SectionLabel` usage on mood index |
 | **Floating emoji** | Hero shows large emoji without an inner tray; empty states use dashed **`rounded-full`** + icon |
 | **Week dots** | Circular dots; **today** uses a ring — not square wells |

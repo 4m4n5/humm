@@ -122,7 +122,7 @@ export default function NewHabitScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <ScreenHeader title="new habit" subtitle="something small you want to keep up" />
+      <ScreenHeader title="new habit" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}

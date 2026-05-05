@@ -1,5 +1,6 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useRef } from 'react';
+import { Animated, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import type { MoodStickerOption } from '@/types';
 import { MOOD_QUADRANTS } from '@/constants/moodStickers';
 import { theme } from '@/constants/theme';
@@ -31,9 +32,33 @@ function StickerPill({
   const interactionLocked = disabled || selected;
   const showGloballyDimmed = disabled && !saving && !selected;
 
+  // Tap-bloom: when a mood is selected, the emoji breathes outward briefly.
+  // Sequence: 1 → 1.22 (snappy spring) → 1 (settle). Tied to a synchronized
+  // light haptic so the visual + tactile arrive together.
+  const bloom = useRef(new Animated.Value(1)).current;
+
+  const handlePress = () => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    Animated.sequence([
+      Animated.spring(bloom, {
+        toValue: 1.22,
+        friction: 3.5,
+        tension: 220,
+        useNativeDriver: true,
+      }),
+      Animated.spring(bloom, {
+        toValue: 1,
+        friction: 5,
+        tension: 160,
+        useNativeDriver: true,
+      }),
+    ]).start();
+    onPress();
+  };
+
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={handlePress}
       disabled={interactionLocked}
       activeOpacity={0.88}
       accessibilityRole="button"
@@ -50,9 +75,11 @@ function StickerPill({
       {saving ? (
         <ActivityIndicator size="small" color={theme.secondary} />
       ) : (
-        <Text className="text-[18px] leading-[20px]" allowFontScaling={false}>
-          {sticker.emoji}
-        </Text>
+        <Animated.View style={{ transform: [{ scale: bloom }] }}>
+          <Text className="text-[18px] leading-[20px]" allowFontScaling={false}>
+            {sticker.emoji}
+          </Text>
+        </Animated.View>
       )}
       <Text
         className={`text-[13px] tracking-[-0.01em] ${

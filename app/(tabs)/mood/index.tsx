@@ -13,7 +13,7 @@ import { SectionLabel } from '@/components/habits/SectionLabel';
 import { MoodTodayHero } from '@/components/mood/MoodTodayHero';
 import { WeekStrip } from '@/components/mood/WeekStrip';
 import { IntradayTrail } from '@/components/mood/IntradayTrail';
-import { MoodMirrorMoment } from '@/components/mood/MoodMirrorMoment';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { scrollContentStandard } from '@/constants/screenLayout';
 import { cardShadow } from '@/constants/elevation';
 import { theme } from '@/constants/theme';
@@ -105,6 +105,7 @@ export default function MoodScreen() {
   if (!partnerLinked) {
     return (
       <SafeAreaView className="flex-1 bg-hum-bg">
+        <AmbientGlow tone="secondary" />
         <ScrollView
           className="flex-1"
           contentContainerStyle={scrollContentStandard}
@@ -112,7 +113,6 @@ export default function MoodScreen() {
         >
           <ScreenTitle
             title="mood"
-            subtitle="link with your partner to share check-ins."
           />
         </ScrollView>
       </SafeAreaView>
@@ -121,14 +121,14 @@ export default function MoodScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <MoodMirrorMoment myEntry={myToday} partnerEntry={partnerToday} />
+      <AmbientGlow tone="secondary" />
 
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}
         showsVerticalScrollIndicator={false}
       >
-        <ScreenTitle title="mood" subtitle="small check-ins, same rhythm" />
+        <ScreenTitle title="mood" />
 
         <View className="gap-y-2.5">
           <SectionLabel title="today" />

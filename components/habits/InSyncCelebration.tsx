@@ -1,95 +1,45 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import { Animated, Easing, Text, View, useWindowDimensions } from 'react-native';
-import * as Haptics from 'expo-haptics';
+import React, { useMemo } from 'react';
+import { Animated, Text } from 'react-native';
+import {
+  EmojiShower,
+  type ShowerIntensity,
+} from '@/components/shared/EmojiShower';
 
-const PARTICLE_COUNT = 22;
-const EMOJIS = ['✨', '💛', '🤝', '🌟', '💜', '✦'];
-const DURATION = 2200;
+/**
+ * Celebration when both partners complete every shared habit for the day
+ * (or week). Uses the shared {@link EmojiShower} primitive so it stays in
+ * the same family as the reasons celebration, with its own emoji vocabulary
+ * and a streak-aware intensity bump (a 7-day joint streak should feel
+ * meaningfully bigger than a casual day-to-day completion).
+ */
 
-type Particle = {
-  emoji: string;
-  startX: number;
-  drift: number;
-  delay: number;
-  size: number;
+const EMOJI_POOL = ['✨', '💛', '🤝', '🌟', '💜', '✦', '🌈', '🎉', '🪩'];
+
+type Props = {
+  visible: boolean;
+  onFinished: () => void;
+  /** Joint daily streak (days). Used to bump intensity on milestone runs. */
+  jointStreak?: number;
 };
 
-function makeParticles(screenWidth: number): Particle[] {
-  return Array.from({ length: PARTICLE_COUNT }).map(() => ({
-    emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)]!,
-    startX: Math.random() * (screenWidth - 32),
-    // Tighter sway than reasons → sparkles shoot upward, they don't tumble.
-    drift: (Math.random() - 0.5) * 60,
-    delay: Math.random() * 300,
-    size: 16 + Math.random() * 16,
-  }));
-}
-
-function FloatingParticle({ p }: { p: Particle }) {
-  const translateY = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
-  const translateX = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.sequence([
-      Animated.delay(p.delay),
-      Animated.parallel([
-        Animated.timing(translateY, {
-          toValue: -380,
-          duration: DURATION,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(translateX, {
-          toValue: p.drift,
-          duration: DURATION,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-        Animated.sequence([
-          Animated.timing(opacity, {
-            toValue: 1,
-            duration: 240,
-            useNativeDriver: true,
-          }),
-          Animated.delay(DURATION - 880),
-          Animated.timing(opacity, {
-            toValue: 0,
-            duration: 640,
-            useNativeDriver: true,
-          }),
-        ]),
-      ]),
-    ]).start();
-  }, [translateY, translateX, opacity, p.delay, p.drift]);
-
-  return (
-    <Animated.View
-      pointerEvents="none"
-      style={{
-        position: 'absolute',
-        bottom: 80,
-        left: p.startX,
-        opacity,
-        transform: [{ translateY }, { translateX }],
-      }}
-    >
-      <Text style={{ fontSize: p.size }} allowFontScaling={false}>
-        {p.emoji}
-      </Text>
-    </Animated.View>
-  );
+function pickIntensity(streak: number): ShowerIntensity {
+  // Streak milestones get the lavish treatment so co-completing on day 7
+  // feels different from co-completing on day 2.
+  if (streak >= 7) return 'lavish';
+  if (streak >= 3) return 'standard';
+  // Even very early streaks get a standard shower — this is a paired
+  // achievement, not a solo tap, and should always read as a real moment.
+  return 'standard';
 }
 
 function CenterBadge() {
-  const scale = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
+  const scale = React.useRef(new Animated.Value(0)).current;
+  const opacity = React.useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
+  React.useEffect(() => {
     Animated.sequence([
       Animated.delay(160),
       Animated.parallel([
-        // Snappier overshoot than the previous pass → the badge pops in.
         Animated.spring(scale, {
           toValue: 1,
           friction: 3.5,
@@ -134,34 +84,17 @@ function CenterBadge() {
   );
 }
 
-type Props = {
-  visible: boolean;
-  onFinished: () => void;
-};
-
-export function InSyncCelebration({ visible, onFinished }: Props) {
-  const { width } = useWindowDimensions();
-  const particles = useMemo(() => (visible ? makeParticles(width) : []), [visible, width]);
-
-  useEffect(() => {
-    if (!visible) return;
-    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    const t = setTimeout(onFinished, DURATION + 600);
-    return () => clearTimeout(t);
-  }, [visible, onFinished]);
-
-  if (!visible) return null;
+export function InSyncCelebration({ visible, onFinished, jointStreak = 0 }: Props) {
+  const intensity = useMemo(() => pickIntensity(jointStreak), [jointStreak]);
 
   return (
-    <View
-      pointerEvents="none"
-      className="absolute inset-0 z-40"
-      style={{ overflow: 'hidden' }}
+    <EmojiShower
+      visible={visible}
+      onFinished={onFinished}
+      emojiPool={EMOJI_POOL}
+      intensity={intensity}
     >
-      {particles.map((p, i) => (
-        <FloatingParticle key={i} p={p} />
-      ))}
-      <CenterBadge />
-    </View>
+      {visible ? <CenterBadge /> : null}
+    </EmojiShower>
   );
 }

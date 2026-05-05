@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ScreenTitle } from '@/components/shared/ScreenTitle';
 import { Button } from '@/components/shared/Button';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useNominationsStore } from '@/lib/stores/nominationsStore';
 import { startDeliberation } from '@/lib/firestore/ceremonies';
@@ -140,12 +141,13 @@ export default function Awards() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
+      <AmbientGlow tone="gold" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}
         showsVerticalScrollIndicator={false}
       >
-        <ScreenTitle title="awards" subtitle={awardsVoice.screenSubtitle} />
+        <ScreenTitle title="awards" />
 
         <View className="-mt-3 gap-3">
           <CeremonyPhaseStrip status={ceremony?.status} revealUnlocked={revealReady} />

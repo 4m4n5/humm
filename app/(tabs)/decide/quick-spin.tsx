@@ -239,7 +239,7 @@ export default function QuickSpin() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <ScreenHeader title="quick spin" subtitle="spin · veto · save" />
+      <ScreenHeader title="quick spin" />
 
       <ScrollView
         className="flex-1"

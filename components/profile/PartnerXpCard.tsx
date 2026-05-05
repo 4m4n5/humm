@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { Card } from '@/components/shared/Card';
+import { AnimatedNumber } from '@/components/shared/AnimatedNumber';
 import { getLevelForXp } from '@/constants/levels';
 import type { UserProfile } from '@/types';
 
@@ -62,9 +63,14 @@ export function PartnerXpCard({ partner, loading }: Props) {
             {partner.displayName}
           </Text>
         </View>
-        <View className="items-end gap-y-0.5">
-          <Text className="text-[20px] font-light text-hum-primary/90">{partner.xp ?? 0}</Text>
-          <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">xp</Text>
+        <View className="items-end">
+          <AnimatedNumber
+            value={partner.xp ?? 0}
+            className="text-[34px] font-extralight tabular-nums leading-[36px] tracking-[-0.025em] text-hum-primary/90"
+          />
+          <Text className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+            xp
+          </Text>
         </View>
       </View>
 

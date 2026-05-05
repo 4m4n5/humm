@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useDecisionStore } from '@/lib/stores/decisionStore';
 import { ScreenTitle } from '@/components/shared/ScreenTitle';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { DECISION_CATEGORIES } from '@/constants/categories';
 import { theme } from '@/constants/theme';
 import { scrollContentStandard } from '@/constants/screenLayout';
@@ -15,12 +16,13 @@ export default function Decide() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
+      <AmbientGlow tone="primary" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}
         showsVerticalScrollIndicator={false}
       >
-        <ScreenTitle title="decide" subtitle="gentle spin or full battle" />
+        <ScreenTitle title="decide" />
 
         <TouchableOpacity
           className="gap-y-4 rounded-[24px] border border-hum-primary/20 bg-hum-card p-5 active:opacity-88"

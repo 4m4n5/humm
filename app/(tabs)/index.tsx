@@ -8,6 +8,7 @@ import { usePartnerName } from '@/lib/usePartnerName';
 import { useMoodStore } from '@/lib/stores/moodStore';
 import { MoodHomeRow } from '@/components/mood/MoodHomeRow';
 import { ScreenTitle } from '@/components/shared/ScreenTitle';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { theme } from '@/constants/theme';
 import { cardShadow } from '@/constants/elevation';
 
@@ -137,6 +138,7 @@ export default function Home() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
+      <AmbientGlow tone="petal" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 4, paddingBottom: 36 }}
@@ -144,7 +146,6 @@ export default function Home() {
       >
         <ScreenTitle
           title={profile?.displayName ?? 'hey you'}
-          subtitle="choose where to start"
           titleNumberOfLines={1}
         />
 
@@ -181,6 +182,31 @@ export default function Home() {
         <View className="mt-5">
           <TileGrid />
         </View>
+
+        <Pressable
+          onPress={() => router.push('/profile')}
+          className="mt-5 flex-row items-center gap-x-3 rounded-[22px] border border-hum-border/18 bg-hum-card px-5 py-4 active:opacity-88"
+          style={cardShadow}
+          accessibilityRole="button"
+          accessibilityLabel="profile and settings"
+          accessibilityHint="xp, badges, and relationship cred"
+        >
+          <View className="h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-hum-primary/10">
+            <Ionicons name="person-outline" size={20} color={theme.primary} />
+          </View>
+          <Text
+            className="min-w-0 flex-1 text-[14px] font-medium leading-[18px] tracking-tight text-hum-text"
+            maxFontSizeMultiplier={1.25}
+          >
+            you
+          </Text>
+          <Ionicons
+            name="chevron-forward"
+            size={16}
+            color={theme.dim}
+            style={{ opacity: 0.55 }}
+          />
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );

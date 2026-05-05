@@ -2,15 +2,50 @@ import React, { useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import * as SplashScreen from 'expo-splash-screen';
+import {
+  useFonts,
+  Inter_200ExtraLight,
+  Inter_300Light,
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+} from '@expo-google-fonts/inter';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { View } from 'react-native';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { migrateLegacyMoodSticker } from '@/lib/moodMigration';
+import { applyInterToTextDefaults } from '@/lib/setupFonts';
+
+// Wire the Inter weight → fontFamily mapping for all <Text> in the app once.
+// Safe to call before fonts are actually loaded; iOS / Android will fall back
+// to the system font for the brief moment between mount and useFonts resolve.
+applyInterToTextDefaults();
+
+// Keep the native splash up until fonts are loaded so we never flash the
+// system font on first launch. Errors are non-fatal (e.g. on web).
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 /** Main app shell — only loaded when Firebase env vars are present (see `app/_layout.tsx`). */
 export default function AppRoot() {
   const { init, isLoading, firebaseUser, profile } = useAuthStore();
   const responseListener = useRef<{ remove(): void } | null>(null);
+
+  const [fontsLoaded] = useFonts({
+    Inter_200ExtraLight,
+    Inter_300Light,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
+  });
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync().catch(() => {});
+    }
+  }, [fontsLoaded]);
 
   useEffect(() => {
     const unsub = init();
@@ -64,7 +99,7 @@ export default function AppRoot() {
     }
   }, [isLoading, firebaseUser, profile?.coupleId]);
 
-  if (isLoading) {
+  if (isLoading || !fontsLoaded) {
     return (
       <View className="flex-1 justify-center bg-hum-bg">
         <LoadingState />

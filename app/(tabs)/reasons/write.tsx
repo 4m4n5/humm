@@ -23,10 +23,13 @@ const MAX_CHARS = 240;
 
 export default function WriteReasonScreen() {
   const { profile, firebaseUser } = useAuthStore();
-  const { addReason } = useReasonStore();
+  const { addReason, reasons } = useReasonStore();
   const [text, setText] = useState('');
   const [saving, setSaving] = useState(false);
   const [celebrating, setCelebrating] = useState(false);
+  // Snapshot the author's reason count *before* saving so milestone math
+  // ("this is the 25th reason") stays stable across the celebration window.
+  const [authorCountAtSave, setAuthorCountAtSave] = useState(0);
 
   if (!profile?.coupleId || !profile.partnerId) {
     return (
@@ -50,6 +53,9 @@ export default function WriteReasonScreen() {
     }
     setSaving(true);
     try {
+      const priorCount = reasons.filter(
+        (r) => r.authorId === authorId && r.aboutId === profile.partnerId,
+      ).length;
       await addReason({
         coupleId: profile.coupleId,
         authorId,
@@ -60,6 +66,7 @@ export default function WriteReasonScreen() {
       // Drop the keyboard so the shower has a clean stage; the celebration
       // component handles the success haptic + auto-navigates back when done.
       Keyboard.dismiss();
+      setAuthorCountAtSave(priorCount);
       setCelebrating(true);
     } catch (e) {
       console.error(e);
@@ -103,6 +110,7 @@ export default function WriteReasonScreen() {
       <ReasonWrittenCelebration
         visible={celebrating}
         onFinished={() => router.back()}
+        authorCountBefore={authorCountAtSave}
       />
     </SafeAreaView>
   );
