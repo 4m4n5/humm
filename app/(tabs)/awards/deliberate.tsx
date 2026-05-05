@@ -142,7 +142,7 @@ export default function DeliberateScreen() {
                 <View className="h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-hum-surface/55">
                   <Text className="text-[15px] leading-none">{cat.emoji}</Text>
                 </View>
-                <Text className="flex-1 text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+                <Text className="flex-1 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
                   {cat.label}
                 </Text>
               </View>

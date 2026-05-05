@@ -83,17 +83,17 @@ export default function PastCeremonyDetailScreen() {
             return (
               <View
                 key={catId}
-                className="gap-y-3 rounded-[18px] border border-hum-border/16 bg-hum-card px-4 py-3.5"
+                className="gap-y-3 rounded-[18px] border border-hum-border/18 bg-hum-card px-4 py-3.5"
               >
                 <View className="flex-row items-center gap-x-2.5">
                   <View className="h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-hum-surface/55">
                     <Text className="text-[15px] leading-none">{meta.emoji}</Text>
                   </View>
-                  <Text className="flex-1 text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+                  <Text className="flex-1 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
                     {meta.label}
                   </Text>
                 </View>
-                <Text className="text-[15px] font-medium leading-snug text-hum-text">{nom?.title ?? '—'}</Text>
+                <Text className="text-[15px] font-medium leading-[20px] text-hum-text">{nom?.title ?? '—'}</Text>
                 {nom?.description ? (
                   <Text className="text-[14px] font-light leading-5 text-hum-muted">{nom.description}</Text>
                 ) : null}

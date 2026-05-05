@@ -192,7 +192,7 @@ export default function NotificationSettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* ─── Partner activity ─── */}
-        <Text className="mb-2 text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+        <Text className="mb-2 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
           partner activity
         </Text>
         <View
@@ -226,7 +226,7 @@ export default function NotificationSettingsScreen() {
         </View>
 
         {/* ─── Daily reminders ─── */}
-        <Text className="mb-2 text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+        <Text className="mb-2 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
           daily reminders
         </Text>
         <View

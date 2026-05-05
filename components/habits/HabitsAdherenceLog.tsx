@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, useWindowDimensions } from 'react-native';
 import { cardShadow } from '@/constants/elevation';
 import {
   activeDailyHabits,
@@ -142,22 +142,25 @@ function cellClasses(cell: Cell): { bg: string; border: string } {
   };
 }
 
-function HeatmapCell({ cell }: { cell: Cell }) {
+const GAP = 4;
+
+function HeatmapCell({ cell, size }: { cell: Cell; size: number }) {
   const { bg, border } = cellClasses(cell);
   return (
     <View
-      className={`flex-1 rounded-[4px] border ${bg} ${border}`}
-      style={{ aspectRatio: 1 }}
+      className={`rounded-[4px] border ${bg} ${border}`}
+      style={{ width: size, height: size }}
       accessibilityElementsHidden
     />
   );
 }
 
 function LegendDot({ bg }: { bg: string }) {
-  return <View className={`h-2 w-2 rounded-[2.5px] ${bg}`} />;
+  return <View className={`h-[8px] w-[8px] rounded-[2px] ${bg}`} />;
 }
 
 export function HabitsAdherenceLog(props: Props) {
+  const { width: screenW } = useWindowDimensions();
   const dailies = useMemo(
     () => activeDailyHabits(props.habits),
     [props.habits],
@@ -167,21 +170,27 @@ export function HabitsAdherenceLog(props: Props) {
 
   if (dailies.length === 0) return null;
 
+  const cardPadH = 24;
+  const scrollPadH = 24;
+  const available = screenW - scrollPadH * 2 - cardPadH * 2;
+  const cellSize = Math.min(Math.floor((available - GAP * 6) / 7), 34);
+  const gridW = cellSize * 7 + GAP * 6;
+
   return (
     <View className="gap-y-2.5">
-      <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+      <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
         log
       </Text>
       <View
         accessibilityRole="summary"
         accessibilityLabel="six-week habit adherence heatmap"
-        className="overflow-hidden rounded-[22px] border border-hum-border/18 bg-hum-card px-4 pb-3 pt-2.5"
+        className="items-center overflow-hidden rounded-[22px] border border-hum-border/18 bg-hum-card py-3.5"
         style={cardShadow}
       >
         {/* Day-of-week header */}
-        <View className="mb-1.5 flex-row px-0.5">
+        <View className="mb-2 flex-row" style={{ gap: GAP, width: gridW }}>
           {DAY_LETTERS.map((l, i) => (
-            <View key={`l-${i}`} className="flex-1 items-center">
+            <View key={`l-${i}`} style={{ width: cellSize }} className="items-center">
               <Text
                 className="text-[9px] font-medium text-hum-dim/40"
                 allowFontScaling={false}
@@ -193,18 +202,18 @@ export function HabitsAdherenceLog(props: Props) {
         </View>
 
         {/* Heatmap rows */}
-        <View className="gap-y-[2.5px] px-0.5">
+        <View style={{ gap: GAP }}>
           {grid.map((row, ri) => (
-            <View key={`r-${ri}`} className="flex-row gap-x-[2.5px]">
+            <View key={`r-${ri}`} className="flex-row" style={{ gap: GAP }}>
               {row.map((c) => (
-                <HeatmapCell key={c.dayKey} cell={c} />
+                <HeatmapCell key={c.dayKey} cell={c} size={cellSize} />
               ))}
             </View>
           ))}
         </View>
 
         {/* Legend */}
-        <View className="mt-2.5 flex-row items-center justify-center gap-x-3">
+        <View className="mt-3 flex-row items-center justify-center gap-x-3">
           <View className="flex-row items-center gap-x-[2.5px]">
             <Text className="mr-0.5 text-[9px] font-light text-hum-dim/40" allowFontScaling={false}>
               less

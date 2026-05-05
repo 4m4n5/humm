@@ -28,7 +28,7 @@ function CredSection(props: { title: string; showTopRule: boolean; children: Rea
   return (
     <View className={props.showTopRule ? 'mt-2.5 border-t border-hum-border/15 pt-2.5' : ''}>
       <Text
-        className="mb-1.5 text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
+        className="mb-1.5 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
         maxFontSizeMultiplier={1.2}
       >
         {props.title}
@@ -397,7 +397,7 @@ export function ProfileSoftStats({
   return (
     <View className="gap-y-2">
       <Text
-        className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
+        className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
         maxFontSizeMultiplier={1.2}
       >
         relationship cred

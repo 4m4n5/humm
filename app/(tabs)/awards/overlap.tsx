@@ -70,7 +70,7 @@ export default function OverlapScreen() {
             <View className="h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-900/35">
               <Text className="text-[14px] leading-none">✓</Text>
             </View>
-            <Text className="flex-1 text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+            <Text className="flex-1 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
               same page · {agreed.length}
             </Text>
           </View>
@@ -91,10 +91,10 @@ export default function OverlapScreen() {
                       <Text className="text-[15px] leading-none">{meta?.emoji}</Text>
                     </View>
                     <View className="min-w-0 flex-1 gap-y-1">
-                      <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+                      <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
                         {meta?.label}
                       </Text>
-                      <Text className="text-[14px] font-medium leading-snug text-hum-text">
+                      <Text className="text-[14px] font-medium leading-[20px] text-hum-text">
                         {n?.title ?? '—'}
                       </Text>
                     </View>
@@ -110,7 +110,7 @@ export default function OverlapScreen() {
             <View className="h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-900/18">
               <Text className="text-[14px] leading-none">◇</Text>
             </View>
-            <Text className="flex-1 text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+            <Text className="flex-1 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
               different picks · {contested.length}
             </Text>
           </View>
@@ -134,7 +134,7 @@ export default function OverlapScreen() {
                       <View className="h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-950/35">
                         <Text className="text-[15px] leading-none">{meta?.emoji}</Text>
                       </View>
-                      <Text className="flex-1 text-[15px] font-medium leading-snug text-hum-text">
+                      <Text className="flex-1 text-[15px] font-medium leading-[20px] text-hum-text">
                         {meta?.label}
                       </Text>
                     </View>

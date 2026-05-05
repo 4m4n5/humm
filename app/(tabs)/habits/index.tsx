@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { router } from 'expo-router';
 import { ScreenTitle } from '@/components/shared/ScreenTitle';
+import { LoadingState } from '@/components/shared/LoadingState';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useHabitStore } from '@/lib/stores/habitStore';
 import { usePartnerName } from '@/lib/usePartnerName';
-import { theme } from '@/constants/theme';
 import { scrollContentStandard } from '@/constants/screenLayout';
 import { InSyncCelebration } from '@/components/habits/InSyncCelebration';
 import { localDayKey, localWeekKey } from '@/lib/dateKeys';
@@ -352,8 +352,7 @@ export default function HabitsBoardScreen() {
     <SafeAreaView className="flex-1 bg-hum-bg">
       {purging ? (
         <View className="absolute inset-0 z-50 items-center justify-center bg-hum-bg/70">
-          <ActivityIndicator size="large" color={theme.secondary} />
-          <Text className="mt-3 text-[13px] text-hum-muted">updating habits…</Text>
+          <LoadingState message="updating habits…" />
         </View>
       ) : null}
 
@@ -480,14 +479,26 @@ export default function HabitsBoardScreen() {
         )}
 
         {noHabitsInView ? (
-          <View className="items-center gap-y-2.5 py-10">
-            <Text className="text-[30px]" allowFontScaling={false}>
+          <View className="items-center py-8">
+            <Text
+              className="mb-5 text-[44px] font-extralight leading-none text-hum-secondary/70"
+              allowFontScaling={false}
+            >
               ✨
             </Text>
-            <Text className="text-[14px] font-light leading-[20px] text-hum-muted">
+            <Text
+              className="text-center text-[18px] font-light leading-[24px] tracking-[-0.01em] text-hum-text"
+              maxFontSizeMultiplier={1.3}
+            >
+              {view === 'daily' ? 'a fresh canvas' : 'a fresh week'}
+            </Text>
+            <Text
+              className="mt-2 max-w-[280px] text-center text-[13px] font-light leading-[20px] text-hum-muted"
+              maxFontSizeMultiplier={1.4}
+            >
               {view === 'daily'
-                ? 'no daily habits yet — add one below'
-                : 'no weekly habits yet — add one below'}
+                ? 'pick one small thing to do every day — together or alone.'
+                : 'add a weekly habit — something gentler than every day.'}
             </Text>
           </View>
         ) : null}

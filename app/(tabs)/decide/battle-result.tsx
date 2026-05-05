@@ -145,7 +145,7 @@ export default function BattleResultScreen() {
         <View className="items-center rounded-[24px] border border-hum-primary/22 bg-hum-card/95 px-6 py-10">
           <Text className="text-6xl">🏆</Text>
           <Text
-            className="mt-4 text-center text-[10px] font-medium uppercase tracking-[0.26em] text-hum-muted"
+            className="mt-4 text-center text-[10px] font-medium uppercase tracking-[0.18em] text-hum-muted"
             maxFontSizeMultiplier={1.25}
             numberOfLines={1}
           >
@@ -162,7 +162,7 @@ export default function BattleResultScreen() {
 
         <View className="gap-y-2">
           <Text
-            className="px-1 text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
+            className="px-1 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
             maxFontSizeMultiplier={1.25}
             numberOfLines={1}
           >
@@ -172,7 +172,7 @@ export default function BattleResultScreen() {
             m.winner ? (
               <View
                 key={`${m.round}-${m.position}-${i}`}
-                className="flex-row flex-wrap items-center justify-between rounded-[20px] border border-hum-border/30 bg-hum-surface/30 px-4 py-3.5"
+                className="flex-row flex-wrap items-center justify-between rounded-[20px] border border-hum-border/18 bg-hum-surface/30 px-4 py-3.5"
               >
                 <Text
                   className="max-w-[70%] text-[14px] font-light text-hum-muted"

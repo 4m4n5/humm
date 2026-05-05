@@ -15,28 +15,31 @@ type Props = {
 export function EmptyState({ icon, title, description, primaryAction, className }: Props) {
   return (
     <View
-      className={`items-center gap-y-2.5 px-6 py-10 ${className ?? ''}`}
+      className={`items-center px-6 py-10 ${className ?? ''}`}
       accessibilityRole="text"
     >
       {icon ? (
-        <Text className="text-3xl font-extralight text-hum-primary/80" maxFontSizeMultiplier={1.3}>
+        <Text
+          className="mb-5 text-[44px] font-extralight leading-none text-hum-primary/70"
+          maxFontSizeMultiplier={1.3}
+        >
           {icon}
         </Text>
       ) : null}
       <Text
-        className="text-center text-[16px] font-medium text-hum-text"
-        maxFontSizeMultiplier={1.35}
+        className="text-center text-[18px] font-light leading-[24px] tracking-[-0.01em] text-hum-text"
+        maxFontSizeMultiplier={1.3}
       >
         {title}
       </Text>
       <Text
-        className="text-center text-[13px] font-light leading-[20px] text-hum-muted"
+        className="mt-2 max-w-[280px] text-center text-[13px] font-light leading-[20px] text-hum-muted"
         maxFontSizeMultiplier={1.4}
       >
         {description}
       </Text>
       {primaryAction ? (
-        <Button label={primaryAction.label} onPress={primaryAction.onPress} className="mt-4 w-full max-w-xs" />
+        <Button label={primaryAction.label} onPress={primaryAction.onPress} className="mt-6 w-full max-w-xs" />
       ) : null}
     </View>
   );

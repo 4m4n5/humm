@@ -29,7 +29,7 @@ export function RouletteRevealBlock({
   return (
     <Animated.View style={{ transform: [{ scale }] }} className="items-center gap-y-4">
       <Text
-        className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
+        className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
         numberOfLines={1}
         maxFontSizeMultiplier={1.25}
       >

@@ -7,7 +7,7 @@ type Props = {
 
 export function SectionLabel({ title }: Props) {
   return (
-    <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+    <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
       {title}
     </Text>
   );

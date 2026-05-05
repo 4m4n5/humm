@@ -73,7 +73,7 @@ function RevealWinnerCard({
       }}
       className="rounded-[22px] border border-hum-border/18 bg-hum-card px-6 py-9"
     >
-      <Text className="text-center text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+      <Text className="text-center text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
         {categoryLine}
       </Text>
       <Text className="mt-5 text-center text-[30px] font-semibold leading-[36px] tracking-tight text-hum-text">

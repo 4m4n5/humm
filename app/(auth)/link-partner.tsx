@@ -94,7 +94,7 @@ export default function LinkPartner() {
             </View>
 
             <View
-              className="flex-row rounded-full border border-hum-border/18 bg-hum-surface/60 p-1"
+              className="flex-row rounded-full border border-hum-border/18 bg-hum-surface/50 p-[3px]"
               accessibilityRole="tablist"
             >
               <TouchableOpacity
@@ -106,8 +106,8 @@ export default function LinkPartner() {
                 accessibilityLabel="show my invite code"
               >
                 <Text
-                  className={`text-center text-[13px] font-medium tracking-wide ${
-                    tab === 'share' ? 'text-hum-text' : 'text-hum-dim'
+                  className={`text-center text-[13px] tracking-wide ${
+                    tab === 'share' ? 'font-semibold text-hum-text' : 'font-light text-hum-dim'
                   }`}
                 >
                   my code
@@ -122,8 +122,8 @@ export default function LinkPartner() {
                 accessibilityLabel="enter partner invite code"
               >
                 <Text
-                  className={`text-center text-[13px] font-medium tracking-wide ${
-                    tab === 'enter' ? 'text-hum-text' : 'text-hum-dim'
+                  className={`text-center text-[13px] tracking-wide ${
+                    tab === 'enter' ? 'font-semibold text-hum-text' : 'font-light text-hum-dim'
                   }`}
                 >
                   their code
@@ -133,8 +133,8 @@ export default function LinkPartner() {
 
             {tab === 'share' ? (
               <View className="items-center gap-y-8">
-                <View className="w-full max-w-sm items-center gap-y-4 self-center rounded-[22px] border border-hum-border/18 bg-hum-card/95 px-7 py-11">
-                  <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+                <View className="w-full max-w-sm items-center gap-y-4 self-center rounded-[22px] border border-hum-border/18 bg-hum-card px-7 py-11">
+                  <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
                     your code
                   </Text>
                   <Text className="text-[32px] font-light tracking-[0.45em] text-hum-primary">

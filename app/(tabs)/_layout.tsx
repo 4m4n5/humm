@@ -79,9 +79,9 @@ export default function TabsLayout() {
         tabBarLabelStyle: {
           fontSize: 10,
           fontWeight: '500',
-          letterSpacing: 1.15,
+          letterSpacing: 0.3,
           textTransform: 'lowercase',
-          marginTop: 2,
+          marginTop: 3,
         },
         tabBarShowLabel: true,
       }}

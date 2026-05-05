@@ -91,15 +91,15 @@ export default function AwardCategoryScreen() {
             return (
               <View
                 key={n.id}
-                className="flex-row gap-3 rounded-[18px] border border-hum-border/16 bg-hum-card px-4 py-3.5"
+                className="flex-row gap-3 rounded-[18px] border border-hum-border/18 bg-hum-card px-4 py-3.5"
               >
                 <View className="min-w-0 flex-1 gap-y-2">
                   <View className="flex-row flex-wrap items-center gap-x-2 gap-y-1">
-                    <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-primary">
+                    <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-primary">
                       {nomineeShortLabel(n.nomineeId, profile, couple, partnerName)}
                     </Text>
                     <Text className="text-hum-dim text-xs">·</Text>
-                    <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+                    <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
                       by {authorShortLabel(n.submittedBy, profile, couple, partnerName)}
                     </Text>
                   </View>
@@ -129,7 +129,7 @@ export default function AwardCategoryScreen() {
         )}
       </ScrollView>
 
-      <View className="border-t border-hum-border/16 bg-hum-bg px-6 pb-8 pt-5">
+      <View className="border-t border-hum-border/18 bg-hum-bg px-6 pb-8 pt-5">
         {categoryDisabled ? (
           <Button
             label="re-enable in award categories"

@@ -109,12 +109,12 @@ export default function ResolveScreen() {
           const theirPick = ceremony.resolutionPicksByUser?.[partnerUid]?.[catId];
 
           return (
-            <View key={catId} className="gap-y-4 rounded-[22px] border border-hum-border/16 bg-hum-card p-5">
+            <View key={catId} className="gap-y-4 rounded-[22px] border border-hum-border/18 bg-hum-card p-5">
               <View className="flex-row items-center gap-x-2.5">
                 <View className="h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-hum-surface/55">
                   <Text className="text-[15px] leading-none">{meta?.emoji}</Text>
                 </View>
-                <Text className="flex-1 text-[15px] font-medium leading-snug text-hum-text">
+                <Text className="flex-1 text-[15px] font-medium leading-[20px] text-hum-text">
                   {meta?.label}
                 </Text>
               </View>
@@ -131,7 +131,7 @@ export default function ResolveScreen() {
                     disabled={!!busy}
                     onPress={() => choose(catId, n.id)}
                     className={`rounded-[20px] border px-4 py-3.5 ${
-                      isMine ? 'border-hum-primary/18 bg-hum-primary/8' : 'border-hum-border/16 bg-hum-surface/32'
+                      isMine ? 'border-hum-primary/18 bg-hum-primary/8' : 'border-hum-border/18 bg-hum-surface/32'
                     }`}
                     accessibilityRole="button"
                     accessibilityLabel={`${meta?.label}: ${n.title}`}
@@ -142,7 +142,7 @@ export default function ResolveScreen() {
                       {n.description}
                     </Text>
                     {isMine ? (
-                      <Text className="mt-2 text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+                      <Text className="mt-2 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
                         your choice
                       </Text>
                     ) : null}

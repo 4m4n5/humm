@@ -9,7 +9,6 @@ import { useMoodStore } from '@/lib/stores/moodStore';
 import { MoodHomeRow } from '@/components/mood/MoodHomeRow';
 import { ScreenTitle } from '@/components/shared/ScreenTitle';
 import { theme } from '@/constants/theme';
-import { scrollContentStandard } from '@/constants/screenLayout';
 import { cardShadow } from '@/constants/elevation';
 
 type FeatureTile = {
@@ -140,7 +139,7 @@ export default function Home() {
     <SafeAreaView className="flex-1 bg-hum-bg">
       <ScrollView
         className="flex-1"
-        contentContainerStyle={scrollContentStandard}
+        contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 4, paddingBottom: 36 }}
         showsVerticalScrollIndicator={false}
       >
         <ScreenTitle
@@ -152,38 +151,23 @@ export default function Home() {
         {partnerLinked && (
           <Pressable
             onPress={() => router.push('/mood')}
-            className="gap-y-4 rounded-[24px] border border-hum-petal/22 bg-hum-card p-5 active:opacity-95"
-            style={cardShadow}
+            className="mt-5 gap-y-4 rounded-[22px] bg-hum-card px-5 py-5 active:opacity-88"
+            style={[cardShadow, { borderWidth: 1, borderColor: 'rgba(212,160,160,0.15)' }]}
             accessibilityRole="button"
             accessibilityLabel="open mood"
             accessibilityHint="see history and check-ins"
           >
-            <View className="flex-row items-center justify-between">
-              <View className="flex-row items-center gap-x-2.5">
-                <View className="h-8 w-8 items-center justify-center rounded-xl bg-hum-petal/12">
-                  <Ionicons name="heart-half-outline" size={15} color={theme.petal} />
-                </View>
-                <View className="gap-y-0.5">
-                  <Text
-                    className="text-[14px] font-medium leading-[18px] tracking-tight text-hum-text"
-                    maxFontSizeMultiplier={1.25}
-                  >
-                    mood
-                  </Text>
-                  <Text
-                    className="text-[11px] font-light leading-[14px] text-hum-muted"
-                    maxFontSizeMultiplier={1.3}
-                  >
-                    today, together
-                  </Text>
-                </View>
+            <View className="flex-row items-center gap-x-3">
+              <View className="h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-hum-petal/12">
+                <Ionicons name="heart-half-outline" size={20} color={theme.petal} />
               </View>
-              <Ionicons
-                name="chevron-forward"
-                size={16}
-                color={theme.dim}
-                style={{ opacity: 0.55 }}
-              />
+              <Text
+                className="min-w-0 flex-1 text-[14px] font-medium leading-[18px] tracking-tight text-hum-text"
+                maxFontSizeMultiplier={1.25}
+              >
+                mood
+              </Text>
+              <Ionicons name="chevron-forward" size={16} color={theme.dim} style={{ opacity: 0.55 }} />
             </View>
             <MoodHomeRow
               myEntry={myToday}
@@ -194,34 +178,9 @@ export default function Home() {
           </Pressable>
         )}
 
-        <TileGrid />
-
-        <TouchableOpacity
-          className="flex-row items-center gap-x-3 rounded-[18px] border border-hum-border/22 bg-hum-card/85 px-4 py-3 active:opacity-88"
-          onPress={() => router.push('/profile')}
-          activeOpacity={0.88}
-          accessibilityRole="button"
-          accessibilityLabel="profile and settings"
-        >
-          <View className="h-8 w-8 items-center justify-center rounded-xl bg-hum-primary/10">
-            <Ionicons name="person-outline" size={16} color={theme.primary} />
-          </View>
-          <View className="min-w-0 flex-1 gap-y-0.5">
-            <Text
-              className="text-[13.5px] font-medium leading-[18px] tracking-tight text-hum-text"
-              maxFontSizeMultiplier={1.25}
-            >
-              you
-            </Text>
-            <Text
-              className="text-[11px] font-light leading-[15px] text-hum-muted"
-              maxFontSizeMultiplier={1.3}
-            >
-              xp · badges · cred
-            </Text>
-          </View>
-          <Ionicons name="chevron-forward" size={15} color={theme.dim} style={{ opacity: 0.55 }} />
-        </TouchableOpacity>
+        <View className="mt-5">
+          <TileGrid />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

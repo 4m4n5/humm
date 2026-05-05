@@ -93,7 +93,7 @@ export default function Profile() {
               {editingName ? (
                 <View className="flex-row items-center gap-2">
                   <TextInput
-                    className="flex-1 rounded-[20px] border border-hum-border/30 bg-hum-surface px-3 py-2.5 text-[18px] font-medium text-hum-text"
+                    className="flex-1 rounded-[20px] border border-hum-border/18 bg-hum-surface/80 px-3 py-2.5 text-[18px] font-medium text-hum-text"
                     value={nameDraft}
                     onChangeText={setNameDraft}
                     autoFocus
@@ -162,13 +162,13 @@ export default function Profile() {
             </View>
             <View className="items-end gap-y-0.5">
               <Text className="text-[20px] font-light text-hum-primary">{profile?.xp ?? 0}</Text>
-              <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">xp</Text>
+              <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">xp</Text>
             </View>
           </View>
 
           {level.nextLevelXp && (
             <View className="gap-y-2">
-              <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+              <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
                 level {level.level}
               </Text>
               <View className="h-[6px] overflow-hidden rounded-full bg-hum-border/30">
@@ -187,7 +187,7 @@ export default function Profile() {
 
         {profile?.partnerId ? (
           <View className="gap-y-3">
-            <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+            <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
               partner
             </Text>
             <PartnerXpCard partner={partnerProfile} loading={partnerProfileLoading} />
@@ -206,7 +206,7 @@ export default function Profile() {
 
         <View className="gap-y-3">
           <View className="flex-row items-baseline justify-between gap-3">
-            <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+            <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
               badges
             </Text>
             {(profile?.badges?.length ?? 0) > 0 ? (
@@ -291,7 +291,7 @@ export default function Profile() {
 
         {profile?.inviteCode && !profile?.partnerId ? (
           <Card className="gap-y-3 border-hum-primary/15">
-            <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+            <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
               invite
             </Text>
             <Text className="text-[26px] font-light tracking-[0.35em] text-hum-primary">

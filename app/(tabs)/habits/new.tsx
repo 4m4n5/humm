@@ -31,7 +31,7 @@ function PillGroup<T extends string>({
 }) {
   return (
     <View className="gap-y-2.5">
-      <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">{label}</Text>
+      <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">{label}</Text>
       <View className="flex-row flex-wrap gap-2">
         {options.map(({ key, label: l }) => {
           const on = value === key;
@@ -42,7 +42,7 @@ function PillGroup<T extends string>({
               className={`rounded-full border px-4 py-2.5 ${
                 on
                   ? 'border-hum-primary/25 bg-hum-primary'
-                  : 'border-hum-border/16 bg-hum-card/60'
+                  : 'border-hum-border/18 bg-hum-card/60'
               }`}
               accessibilityRole="button"
               accessibilityState={{ selected: on }}
@@ -138,9 +138,9 @@ export default function NewHabitScreen() {
         />
 
         <View className="gap-y-2.5">
-          <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">emoji</Text>
+          <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">emoji</Text>
           <TextInput
-            className="min-h-[52px] rounded-[20px] border border-hum-border/16 bg-hum-surface/65 px-4 py-3.5 text-[22px] font-light text-hum-text"
+            className="min-h-[52px] rounded-[20px] border border-hum-border/18 bg-hum-surface/65 px-4 py-3.5 text-[22px] font-light text-hum-text"
             placeholder="✨"
             placeholderTextColor={theme.dim}
             value={emoji}

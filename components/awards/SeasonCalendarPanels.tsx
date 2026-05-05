@@ -25,7 +25,7 @@ import {
 function Eyebrow(props: { children: string }) {
   return (
     <Text
-      className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
+      className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
       maxFontSizeMultiplier={1.15}
     >
       {props.children}
@@ -41,7 +41,7 @@ export function SeasonTimelinePanels(props: { ceremony: Ceremony; now: Date }) {
   const alignmentLine = alignmentStartsSummary(props.now, props.ceremony);
 
   return (
-    <View className="rounded-[22px] border border-hum-border/16 bg-hum-card px-5 py-5">
+    <View className="rounded-[22px] border border-hum-border/18 bg-hum-card px-5 py-5">
       <View className="flex-row items-baseline justify-between">
         <Text className="text-[22px] font-light text-hum-text" maxFontSizeMultiplier={1.15}>
           {half.half}
@@ -84,7 +84,7 @@ export function SeasonTimelinePanels(props: { ceremony: Ceremony; now: Date }) {
         </Text>
       </View>
 
-      <View className="mt-4 border-t border-hum-border/16 pt-4">
+      <View className="mt-4 border-t border-hum-border/18 pt-4">
         <Eyebrow>alignment</Eyebrow>
         <Text className="mt-1.5 text-[14px] font-light text-hum-text" maxFontSizeMultiplier={1.25}>
           {alignmentLine}
@@ -273,7 +273,7 @@ export function SeasonStatsInfographic(props: {
         <View className="mb-6 flex-row items-center gap-2.5">
           <Text className="text-[20px]">{hotDisplay.emoji}</Text>
           <View>
-            <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim" maxFontSizeMultiplier={1.12}>
+            <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim" maxFontSizeMultiplier={1.12}>
               most active
             </Text>
             <Text className="text-[15px] font-medium text-hum-text" maxFontSizeMultiplier={1.2}>

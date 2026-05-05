@@ -115,7 +115,7 @@ function MoodRow({
               : 'log your mood',
           }
         : {})}
-      className={`flex-row items-center gap-x-3.5 px-4 py-3.5 ${pressable ? 'active:opacity-90' : ''}`}
+      className={`flex-row items-center gap-x-3.5 px-4 py-3.5 ${pressable ? 'active:opacity-88' : ''}`}
     >
       {anchor}
       {centerColumn}

@@ -2,7 +2,7 @@ import type { ViewStyle } from 'react-native';
 
 /**
  * UI rhythm (NativeWind): primary card chrome uses `border-hum-border/18` and `rounded-[22px]` (`Card`).
- * Dense lists and awards rows use `border-hum-border/16` with `rounded-[18px]`–`rounded-[20px]`.
+ * Dense lists and awards rows use `border-hum-border/18` with `rounded-[18px]`–`rounded-[20px]`.
  */
 
 /**

@@ -42,7 +42,7 @@ function DecisionRow({ item }: { item: Decision }) {
           </Text>
           <View className="flex-row flex-wrap items-center gap-x-2">
             <Text
-              className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
+              className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
               numberOfLines={1}
             >
               {item.category}

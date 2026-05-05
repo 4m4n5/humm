@@ -32,9 +32,9 @@ export function ScreenHeader({ title, subtitle }: Props) {
         accessibilityRole="button"
         accessibilityLabel="go back"
         accessibilityHint="previous screen"
-        className="mb-4 h-10 w-10 items-center justify-center rounded-full border border-hum-border/18 bg-hum-card/90 active:opacity-88"
+        className="-ml-1 mb-5 h-9 w-9 items-center justify-center rounded-full bg-hum-surface/55 active:opacity-70"
       >
-        <Ionicons name="chevron-back" size={20} color={theme.text} style={{ opacity: 0.88 }} />
+        <Ionicons name="chevron-back" size={19} color={theme.text} style={{ opacity: 0.85 }} />
       </Pressable>
       <View className="gap-y-2">
         {titleIsDevanagari ? (

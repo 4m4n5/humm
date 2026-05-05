@@ -132,7 +132,7 @@ export function HabitsActionBar({
         onPress={onAddPress}
         accessibilityLabel="add habit"
         hitSlop={10}
-        className="h-9 w-9 items-center justify-center rounded-full border border-hum-border/20 bg-hum-card/60"
+        className="h-9 w-9 items-center justify-center rounded-full border border-hum-border/18 bg-hum-card/60"
       >
         <Ionicons name="add" size={20} color={theme.secondary} />
       </Pressable>

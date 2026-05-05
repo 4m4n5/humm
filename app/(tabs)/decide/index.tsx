@@ -82,7 +82,7 @@ export default function Decide() {
 
         {history.length > 0 ? (
           <TouchableOpacity
-            className="flex-row items-center justify-between rounded-[18px] border border-hum-border/18 bg-hum-card/85 px-4 py-3 active:opacity-88"
+            className="flex-row items-center justify-between rounded-[18px] border border-hum-border/18 bg-hum-card px-4 py-3 active:opacity-88"
             onPress={() => router.push('/decide/history')}
             activeOpacity={0.88}
             accessibilityRole="button"

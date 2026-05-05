@@ -51,7 +51,7 @@ export default function BadgeTeasersScreen() {
                     </Text>
                   </View>
                   <View className="min-w-0 flex-1 gap-y-1">
-                    <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+                    <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
                       not yet
                     </Text>
                     <Text

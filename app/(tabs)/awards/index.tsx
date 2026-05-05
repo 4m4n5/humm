@@ -174,7 +174,7 @@ export default function Awards() {
                 <Ionicons name="chevron-forward" size={15} color={theme.dim} style={{ opacity: 0.45 }} />
               </TouchableOpacity>
               <View className="shrink-0 rounded-full border border-hum-border/18 bg-hum-surface/45 px-3 py-1.5">
-                <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-muted">
+                <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-muted">
                   {statusLabel(ceremony?.status, revealReady)}
                 </Text>
               </View>
@@ -245,7 +245,7 @@ export default function Awards() {
 
         <View className="gap-y-3">
           <Text
-            className="px-0.5 text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
+            className="px-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
             maxFontSizeMultiplier={1.2}
           >
             categories
@@ -266,7 +266,7 @@ export default function Awards() {
                     <Text className="text-[19px] leading-none">{cat.emoji}</Text>
                   </View>
                   <Text
-                    className="min-w-0 flex-1 text-[15px] font-medium leading-snug text-hum-text"
+                    className="min-w-0 flex-1 text-[15px] font-medium leading-[20px] text-hum-text"
                     numberOfLines={2}
                   >
                     {cat.label}
@@ -292,7 +292,7 @@ export default function Awards() {
                       <Text className="text-[19px] leading-none">{cat.emoji}</Text>
                     </View>
                     <Text
-                      className="min-w-0 flex-1 text-[15px] font-medium leading-snug text-hum-muted"
+                      className="min-w-0 flex-1 text-[15px] font-medium leading-[20px] text-hum-muted"
                       numberOfLines={2}
                     >
                       {cat.label}
@@ -307,7 +307,7 @@ export default function Awards() {
 
         <View className="gap-y-3">
           <Text
-            className="px-0.5 text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
+            className="px-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
             maxFontSizeMultiplier={1.2}
           >
             more
@@ -326,21 +326,23 @@ export default function Awards() {
           <View className="flex-row gap-3">
             <TouchableOpacity
               onPress={() => router.push('/awards/ceremony-calendar')}
-              className="min-h-[76px] flex-1 items-center justify-center rounded-[18px] border border-hum-border/18 bg-hum-surface/28 px-3 py-3 active:opacity-88"
+              className="min-h-[76px] flex-1 items-center justify-center gap-y-2 rounded-[18px] border border-hum-border/18 bg-hum-surface/28 px-3 py-3 active:opacity-88"
               activeOpacity={0.88}
               accessibilityRole="button"
               accessibilityLabel="Season calendar — dates and reminders"
             >
+              <Ionicons name="calendar-outline" size={18} color={theme.gold} style={{ opacity: 0.85 }} />
               <Text className="text-center text-[13px] font-medium tracking-tight text-hum-text">calendar</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => router.push('/awards/past')}
-              className="min-h-[76px] flex-1 items-center justify-center rounded-[18px] border border-hum-border/18 bg-hum-surface/28 px-3 py-3 active:opacity-88"
+              className="min-h-[76px] flex-1 items-center justify-center gap-y-2 rounded-[18px] border border-hum-border/18 bg-hum-surface/28 px-3 py-3 active:opacity-88"
               activeOpacity={0.88}
               accessibilityRole="button"
               accessibilityLabel="Past award seasons in the archive"
             >
+              <Ionicons name="archive-outline" size={18} color={theme.gold} style={{ opacity: 0.85 }} />
               <Text className="text-center text-[13px] font-medium tracking-tight text-hum-text">archive</Text>
             </TouchableOpacity>
           </View>

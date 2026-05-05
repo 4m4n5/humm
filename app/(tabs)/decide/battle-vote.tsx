@@ -146,7 +146,7 @@ export default function BattleVoteScreen() {
         <BracketProgress bracket={battle.bracket} currentIdx={battle.currentMatchupIndex} />
 
         {showSplitHint ? (
-          <View className="rounded-[20px] border border-hum-border/30 bg-amber-950/22 px-4 py-3.5">
+          <View className="rounded-[20px] border border-hum-border/18 bg-amber-950/22 px-4 py-3.5">
             <Text
               className="text-center text-[14px] font-light text-amber-100/90"
               maxFontSizeMultiplier={1.3}
@@ -182,7 +182,7 @@ export default function BattleVoteScreen() {
           />
           <View className="justify-center px-1">
             <Text
-              className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
+              className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
               numberOfLines={1}
             >
               vs
@@ -277,7 +277,7 @@ function VoteCard({
             ? 'border-emerald-500/55 bg-emerald-950/25'
             : selected
               ? 'border-hum-primary/20 bg-hum-primary/12'
-              : 'border-hum-border/30 bg-hum-card/90'
+              : 'border-hum-border/18 bg-hum-card'
         } ${dimmed ? 'opacity-45' : ''}`}
         accessibilityRole="button"
         accessibilityLabel={`Option ${side}: ${label}${selected ? ', selected' : ''}`}

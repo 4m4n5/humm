@@ -53,7 +53,7 @@ export function BracketProgress({ bracket, currentIdx }: Props) {
   return (
     <View className="gap-y-3 px-1">
       <Text
-        className="text-center text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
+        className="text-center text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
         maxFontSizeMultiplier={1.25}
       >
         round {prog.currentRound + 1} · match {prog.matchInRound} of {prog.matchupsInRound}

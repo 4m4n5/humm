@@ -131,19 +131,19 @@ export default function ManageAwardCategoriesScreen() {
         ) : null}
 
         <View className="gap-y-3">
-          <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">active</Text>
+          <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">active</Text>
           {enabledRows.length === 0 ? (
             <Text className="text-[13px] text-hum-muted">add a category below</Text>
           ) : null}
           {enabledRows.map((row) => (
             <View
               key={row.id}
-              className="gap-y-3 rounded-[20px] border border-hum-border/16 bg-hum-card px-4 py-4"
+              className="gap-y-3 rounded-[20px] border border-hum-border/18 bg-hum-card px-4 py-4"
             >
               {editingId === row.id ? (
                 <>
                   <TextInput
-                    className="rounded-[20px] border border-hum-border/16 bg-hum-surface/70 px-4 py-3 text-[15px] text-hum-text"
+                    className="rounded-[20px] border border-hum-border/18 bg-hum-surface/70 px-4 py-3 text-[15px] text-hum-text"
                     placeholder="emoji"
                     placeholderTextColor={theme.dim}
                     value={draftEmoji}
@@ -170,7 +170,7 @@ export default function ManageAwardCategoriesScreen() {
                   <View className="flex-row flex-wrap gap-2">
                     <TouchableOpacity
                       onPress={() => startEdit(row)}
-                      className="rounded-full border border-hum-border/16 px-4 py-2"
+                      className="rounded-full border border-hum-border/18 px-4 py-2"
                       disabled={!!busy}
                       accessibilityRole="button"
                       accessibilityLabel={`Edit ${row.label}`}
@@ -201,11 +201,11 @@ export default function ManageAwardCategoriesScreen() {
 
         {pausedRows.length > 0 ? (
           <View className="gap-y-3">
-            <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">paused</Text>
+            <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">paused</Text>
             {pausedRows.map((row) => (
               <View
                 key={row.id}
-                className="flex-row items-center gap-3 rounded-[18px] border border-dashed border-hum-border/16 bg-hum-surface/25 px-4 py-4"
+                className="flex-row items-center gap-3 rounded-[18px] border border-dashed border-hum-border/18 bg-hum-surface/25 px-4 py-4"
               >
                 <Text className="text-2xl opacity-80">{row.emoji}</Text>
                 <Text className="min-w-0 flex-1 text-[15px] font-medium text-hum-muted">{row.label}</Text>
@@ -224,11 +224,11 @@ export default function ManageAwardCategoriesScreen() {
           </View>
         ) : null}
 
-        <View className="gap-y-3 rounded-[20px] border border-hum-border/16 bg-hum-surface/28 px-4 py-5">
-          <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">new category</Text>
+        <View className="gap-y-3 rounded-[20px] border border-hum-border/18 bg-hum-surface/28 px-4 py-5">
+          <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">new category</Text>
           <Text className="text-[12px] text-hum-dim">pick an emoji and a short name (e.g. “best road trip”)</Text>
           <TextInput
-            className="rounded-[20px] border border-hum-border/16 bg-hum-card px-4 py-3 text-[15px] text-hum-text"
+            className="rounded-[20px] border border-hum-border/18 bg-hum-card px-4 py-3 text-[15px] text-hum-text"
             placeholder="emoji"
             placeholderTextColor={theme.dim}
             value={newEmoji}

@@ -131,11 +131,11 @@ export default function CeremonyCalendarScreen() {
         <SeasonTimelinePanels ceremony={ceremony} now={now} />
 
         {/* Nominations */}
-        <View className="mt-3 rounded-[22px] border border-hum-border/16 bg-hum-card px-5 py-5">
+        <View className="mt-3 rounded-[22px] border border-hum-border/18 bg-hum-card px-5 py-5">
           <View className="flex-row items-end justify-between gap-4">
             <View>
               <Text
-                className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
+                className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
                 maxFontSizeMultiplier={1.15}
               >
                 nominations
@@ -165,7 +165,7 @@ export default function CeremonyCalendarScreen() {
           </View>
 
           {couple ? (
-            <View className="mt-6 border-t border-hum-border/16 pt-6">
+            <View className="mt-6 border-t border-hum-border/18 pt-6">
               <SeasonStatsInfographic nominations={nominations} couple={couple} profile={profile} partnerProfile={partnerProfile} />
             </View>
           ) : null}
@@ -174,7 +174,7 @@ export default function CeremonyCalendarScreen() {
         {/* Milestones */}
         <View className="px-1">
           <Text
-            className="mb-3 text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
+            className="mb-3 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
             maxFontSizeMultiplier={1.15}
           >
             milestones
@@ -215,7 +215,7 @@ export default function CeremonyCalendarScreen() {
 
         {/* Reminders */}
         {Platform.OS !== 'web' ? (
-          <View className="flex-row items-center justify-between rounded-[18px] border border-hum-border/16 bg-hum-card px-4 py-3.5">
+          <View className="flex-row items-center justify-between rounded-[18px] border border-hum-border/18 bg-hum-card px-4 py-3.5">
             <View className="flex-row items-center gap-3 pr-2">
               <Ionicons name="notifications-outline" size={20} color={theme.dim} />
               <View>

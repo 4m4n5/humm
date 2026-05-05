@@ -251,7 +251,7 @@ export default function NominateScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View className="gap-y-3">
-          <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">nominee</Text>
+          <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">nominee</Text>
           <View className="flex-row flex-wrap gap-2">
             {(
               [
@@ -288,7 +288,7 @@ export default function NominateScreen() {
         <Input label="title" placeholder="what happened" value={title} onChangeText={setTitle} />
 
         <View className="gap-y-2">
-          <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">story</Text>
+          <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">story</Text>
           <TextInput
             className="min-h-[120px] rounded-[20px] border border-hum-border/18 bg-hum-surface/65 px-4 py-3.5 text-[14px] font-light leading-[22px] text-hum-text"
             placeholder="the moment"

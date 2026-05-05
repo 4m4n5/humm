@@ -420,7 +420,7 @@ export default function ReasonsScreen() {
               <View className="flex-row items-start justify-between gap-3">
                 <View className="min-w-0 flex-1 pt-0.5">
                   <Text
-                    className="text-[11px] font-medium uppercase tracking-[0.26em] text-hum-bloom/60"
+                    className="text-[11px] font-medium uppercase tracking-[0.18em] text-hum-bloom/60"
                     maxFontSizeMultiplier={1.2}
                   >
                     {reasonsVoice.rewardCardsTitle}
@@ -466,7 +466,7 @@ export default function ReasonsScreen() {
                     </Text>
                     {partnerWrote(r) ? (
                       <Text
-                        className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-bloom/50"
+                        className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-bloom/50"
                         maxFontSizeMultiplier={1.25}
                       >
                         from {partnerName}
@@ -495,7 +495,7 @@ export default function ReasonsScreen() {
             >
               {aboutMe.length}
             </Text>
-            <Text className="px-1 text-center text-[9px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+            <Text className="px-1 text-center text-[9px] font-medium uppercase tracking-[0.18em] text-hum-dim">
               about you
             </Text>
           </View>
@@ -506,16 +506,16 @@ export default function ReasonsScreen() {
             >
               {byMe.length}
             </Text>
-            <Text className="px-1 text-center text-[9px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+            <Text className="px-1 text-center text-[9px] font-medium uppercase tracking-[0.18em] text-hum-dim">
               by you
             </Text>
           </View>
         </View>
 
         {myUid && partnerId ? (
-          <View className="gap-y-3 rounded-[24px] border border-hum-border/18 bg-hum-card/85 px-5 py-5">
+          <View className="gap-y-3 rounded-[24px] border border-hum-border/18 bg-hum-card px-5 py-5">
             <Text
-              className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
+              className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
               maxFontSizeMultiplier={1.2}
             >
               {reasonsVoice.listForPartnerEyebrow(partnerName)}

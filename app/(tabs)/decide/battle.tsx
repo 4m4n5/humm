@@ -79,7 +79,7 @@ export default function BattleScreen() {
         showsVerticalScrollIndicator={false}
       >
         {!partnerLinked ? (
-          <View className="rounded-[24px] border border-hum-border/30 bg-hum-card/90 px-5 py-7">
+          <View className="rounded-[24px] border border-hum-border/18 bg-hum-card px-5 py-7">
             <Text className="text-center text-4xl">⚔️</Text>
             <Text
               className="mt-4 text-center text-[15px] font-medium text-hum-text"
@@ -147,7 +147,7 @@ export default function BattleScreen() {
             </View>
 
             <Text
-              className="px-1 text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
+              className="px-1 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
               maxFontSizeMultiplier={1.25}
               numberOfLines={1}
             >
@@ -164,23 +164,24 @@ export default function BattleScreen() {
                   <TouchableOpacity
                     key={c.id}
                     onPress={() => setCategory(c.id)}
-                    className={`rounded-full border px-4 py-2.5 ${
+                    className={`flex-row items-center gap-x-2 rounded-full border px-5 py-2.5 ${
                       selected
-                        ? 'border-hum-primary/50 bg-hum-primary/15'
-                        : 'border-hum-border/30 bg-hum-surface/40'
+                        ? 'border-hum-primary/25 bg-hum-primary'
+                        : 'border-hum-border/18 bg-hum-card/80'
                     }`}
                     accessibilityRole="button"
                     accessibilityState={{ selected }}
                     accessibilityLabel={`${c.label} category${selected ? ', selected' : ''}`}
                     activeOpacity={0.88}
                   >
+                    <Text className="text-base">{c.emoji}</Text>
                     <Text
-                      className={`text-[13px] font-medium ${
-                        selected ? 'text-hum-text' : 'text-hum-muted'
+                      className={`text-[14px] font-medium tracking-wide ${
+                        selected ? 'text-hum-ink' : 'text-hum-muted'
                       }`}
                       numberOfLines={1}
                     >
-                      {c.emoji} {c.label.toLowerCase()}
+                      {c.label.toLowerCase()}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -196,14 +197,6 @@ export default function BattleScreen() {
             />
           </>
         )}
-
-        <Button
-          label="back to choose"
-          onPress={() => router.back()}
-          variant="secondary"
-          size="lg"
-          className="mt-4"
-        />
       </ScrollView>
     </SafeAreaView>
   );

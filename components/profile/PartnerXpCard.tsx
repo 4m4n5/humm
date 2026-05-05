@@ -64,13 +64,13 @@ export function PartnerXpCard({ partner, loading }: Props) {
         </View>
         <View className="items-end gap-y-0.5">
           <Text className="text-[20px] font-light text-hum-primary/90">{partner.xp ?? 0}</Text>
-          <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">xp</Text>
+          <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">xp</Text>
         </View>
       </View>
 
       {level.nextLevelXp ? (
         <View className="gap-y-2">
-          <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">
+          <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
             level {level.level}
           </Text>
           <View className="h-[6px] overflow-hidden rounded-full bg-hum-border/30">

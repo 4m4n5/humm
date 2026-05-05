@@ -18,5 +18,12 @@
         "distribution": "store"
       }
     }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "ascAppId": "6763845513"
+      }
+    }
   }
 }

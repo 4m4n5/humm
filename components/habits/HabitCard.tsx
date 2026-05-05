@@ -60,7 +60,7 @@ function ParticipantPill({
       className={`flex-1 flex-row items-center gap-2.5 rounded-[16px] border px-3 py-2.5 ${
         checked
           ? 'border-hum-secondary/35 bg-hum-secondary/10'
-          : 'border-hum-border/16 bg-hum-bg/30'
+          : 'border-hum-border/18 bg-hum-bg/30'
       }`}
     >
       <View

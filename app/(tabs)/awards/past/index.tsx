@@ -65,7 +65,7 @@ export default function PastCeremoniesScreen() {
             <TouchableOpacity
               key={c.id}
               onPress={() => router.push(`/awards/past/${c.id}`)}
-              className="rounded-[18px] border border-hum-border/16 bg-hum-card px-4 py-3.5 active:opacity-88"
+              className="rounded-[18px] border border-hum-border/18 bg-hum-card px-4 py-3.5 active:opacity-88"
               activeOpacity={0.88}
               accessibilityRole="button"
               accessibilityLabel={`Past season ended ${formatPeriodEnd(c)}, ${winnerCount} winner${winnerCount !== 1 ? 's' : ''}`}

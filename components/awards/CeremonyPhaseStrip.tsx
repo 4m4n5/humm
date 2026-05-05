@@ -54,7 +54,7 @@ export function CeremonyPhaseStrip(props: {
                 </Text>
               </View>
               <Text
-                className="text-center text-[10px] font-medium uppercase leading-[13px] tracking-[0.26em]"
+                className="text-center text-[10px] font-medium uppercase leading-[13px] tracking-[0.18em]"
                 style={{
                   color: on ? theme.gold : done ? theme.muted : `${theme.dim}66`,
                 }}

@@ -303,7 +303,7 @@ export default function QuickSpin() {
           ) : null}
         </View>
 
-        <View>
+        <View className="gap-y-5">
         {/* Spin area */}
         <View className="min-h-[220px] items-center justify-center gap-y-6 rounded-[24px] border border-hum-border/18 bg-hum-card p-10">
           {spinState === 'idle' && (
@@ -379,7 +379,7 @@ export default function QuickSpin() {
         <View className="gap-y-4">
           <View className="flex-row items-center justify-between">
             <Text
-              className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
+              className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
               numberOfLines={1}
             >
               {currentCat.label} · your list
@@ -429,7 +429,7 @@ export default function QuickSpin() {
           )}
 
           {categoryOptions.length === 0 ? (
-            <View className="items-center gap-4 rounded-[20px] border border-dashed border-hum-border/20 py-8 px-4">
+            <View className="items-center gap-4 rounded-[20px] border border-dashed border-hum-border/18 py-8 px-4">
               <Text
                 className="text-center text-[14px] font-light text-hum-muted"
                 maxFontSizeMultiplier={1.4}
@@ -451,7 +451,7 @@ export default function QuickSpin() {
                   </Text>
                   {isVetoed && (
                     <Text
-                      className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
+                      className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
                       numberOfLines={1}
                     >
                       vetoed

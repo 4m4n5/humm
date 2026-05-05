@@ -182,7 +182,7 @@ export function CoinFlip({ optionA, optionB, winningLabel, onFinish }: Props) {
       <View className="items-center px-4" accessibilityLabel="tie breaker spinning">
         <View className={`items-center gap-y-6 ${SPIN_SURFACE}`}>
           <Text
-            className="text-center text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
+            className="text-center text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
             maxFontSizeMultiplier={1.2}
           >
             spinning

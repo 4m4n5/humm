@@ -157,7 +157,7 @@ export default function BattleLobbyScreen() {
             onChangeText={setNewText}
             placeholder="add an option…"
             placeholderTextColor={`${theme.dim}aa`}
-            className="min-h-[52px] flex-1 rounded-[20px] border border-hum-border/30 bg-hum-surface/45 px-4 py-3 text-[16px] text-hum-text"
+            className="min-h-[52px] flex-1 rounded-[20px] border border-hum-border/18 bg-hum-surface/80 px-4 py-3 text-[16px] text-hum-text"
             onSubmitEditing={handleAdd}
             returnKeyType="done"
             maxFontSizeMultiplier={1.35}
@@ -186,7 +186,7 @@ export default function BattleLobbyScreen() {
               return (
                 <View
                   key={label}
-                  className="flex-row items-center justify-between rounded-[20px] border border-hum-border/30 bg-hum-card/90 px-4 py-3.5"
+                  className="flex-row items-center justify-between rounded-[20px] border border-hum-border/18 bg-hum-card px-4 py-3.5"
                 >
                   <View className="flex-1 pr-3">
                     <Text
@@ -197,7 +197,7 @@ export default function BattleLobbyScreen() {
                       {label}
                     </Text>
                     <Text
-                      className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim"
+                      className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
                       maxFontSizeMultiplier={1.25}
                       numberOfLines={1}
                     >

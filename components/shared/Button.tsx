@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   TouchableOpacity,
   Text,
@@ -6,7 +6,9 @@ import {
   TouchableOpacityProps,
   ViewStyle,
   StyleProp,
+  GestureResponderEvent,
 } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { theme } from '@/constants/theme';
 import { primaryButtonShadow } from '@/constants/elevation';
 
@@ -25,8 +27,20 @@ export function Button({
   disabled,
   className,
   style,
+  onPress,
   ...rest
 }: ButtonProps) {
+  const handlePress = useCallback(
+    (e: GestureResponderEvent) => {
+      if (variant === 'primary') {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+      } else if (variant === 'danger') {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+      }
+      onPress?.(e);
+    },
+    [onPress, variant],
+  );
   const base = 'items-center justify-center rounded-full';
 
   const sizeClasses = {
@@ -37,7 +51,7 @@ export function Button({
 
   const variantClasses = {
     primary: 'bg-hum-primary',
-    secondary: 'border border-hum-border/16 bg-hum-card/55',
+    secondary: 'border border-hum-border/18 bg-hum-card/55',
     ghost: 'bg-transparent',
     danger: 'border border-red-900/35 bg-red-950/18',
   }[variant];
@@ -66,6 +80,7 @@ export function Button({
       style={[shadowStyle, style]}
       accessibilityRole="button"
       accessibilityState={{ disabled: !!(disabled || loading), busy: !!loading }}
+      onPress={handlePress}
       {...rest}
     >
       {loading ? (
@@ -75,7 +90,7 @@ export function Button({
         />
       ) : (
         <Text
-          className={`${textClasses} ${textSize} text-center tracking-wide`}
+          className={`${textClasses} ${textSize} text-center tracking-[-0.005em]`}
           numberOfLines={2}
         >
           {label}
