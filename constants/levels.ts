@@ -21,6 +21,22 @@ export const XP_REWARDS = {
   reason_written: 10,
   /** First reason of a local day that bumps the couple’s reasons streak — both partners */
   reason_streak_day: 2,
+  /** Mood: first log of the local day per user. */
+  mood_first_log_today: 2,
+  /** Mood: both partners logged today (granted to both, once per dayKey). */
+  mood_in_sync_today: 3,
+  /** Mood: both partners picked the same sticker today (stacks with in_sync). */
+  mood_match_today: 2,
+  /** Habits v2: you checked your side of a shared daily */
+  habit_self_daily: 3,
+  /** Habits v2: a shared daily row became both-done today */
+  habit_joint_daily: 5,
+  /** Habits v2: you completed your side of a shared weekly (once per week) */
+  habit_self_weekly: 5,
+  /** Habits v2: a shared weekly row became both-done for the week */
+  habit_joint_weekly: 8,
+  /** Daily streak crossed 7 / 14 / 30 / 60 / 90 (personal or joint ladder in trigger) */
+  habit_streak_milestone: 15,
 } as const;
 
 export function getLevelForXp(xp: number): { level: number; name: string; minXp: number; nextLevelXp: number | null } {

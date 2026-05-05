@@ -1,0 +1,51 @@
+// Fragment to MERGE into your existing `firestore.rules` (Firebase Console or deploy).
+// Required for in-app account deletion (Option A: client-side deletes).
+//
+// Adjust paths if your rules use different helpers. `isCoupleMember` reads the couple
+// document id from `resource.data.coupleId` on subordinate docs.
+
+// --- helpers (merge once) ---
+// function isCoupleMember(coupleId) {
+//   let c = get(/databases/$(database)/documents/couples/$(coupleId)).data;
+//   return request.auth != null
+//     && (c.user1Id == request.auth.uid || c.user2Id == request.auth.uid);
+// }
+
+// --- users/{userId} — add alongside your existing user rules ---
+// allow delete: if request.auth != null && request.auth.uid == userId;
+//
+// Partner unlink when the other account deletes themselves (only null link fields):
+// allow update: if request.auth != null
+//   && request.auth.uid != userId
+//   && resource.data.partnerId == request.auth.uid
+//   && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['partnerId', 'coupleId'])
+//   && request.resource.data.partnerId == null
+//   && request.resource.data.coupleId == null;
+
+// --- couple-scoped collections: extend each match with delete ---
+// match /nominations/{docId} {
+//   allow delete: if resource.data.coupleId != null && isCoupleMember(resource.data.coupleId);
+// }
+// match /ceremonies/{docId} {
+//   allow delete: if resource.data.coupleId != null && isCoupleMember(resource.data.coupleId);
+// }
+// match /decisions/{docId} {
+//   allow delete: if resource.data.coupleId != null && isCoupleMember(resource.data.coupleId);
+// }
+// match /reasons/{docId} {
+//   allow delete: if resource.data.coupleId != null && isCoupleMember(resource.data.coupleId);
+// }
+// match /battles/{docId} {
+//   allow delete: if resource.data.coupleId != null && isCoupleMember(resource.data.coupleId);
+// }
+
+// --- decisionOptions: doc id equals coupleId ---
+// match /decisionOptions/{coupleId} {
+//   allow delete: if isCoupleMember(coupleId);
+// }
+
+// --- couples ---
+// match /couples/{coupleId} {
+//   allow delete: if resource.data.user1Id == request.auth.uid
+//     || resource.data.user2Id == request.auth.uid;
+// }

@@ -6,7 +6,7 @@ Single reference for **App Store Connect** metadata, URLs, privacy, review, and 
 
 **Operator (listed on hosted pages):** Aman Shrivastava · **Support email:** `aman.srivastava999@gmail.com` · **Policy/support pages last updated:** April 25, 2026 (`docs/store/`).
 
-**Binary source of truth:** [`app.json`](../app.json) — name, version, iOS bundle ID, build number, orientation, dark UI, plugins (Firebase client, `expo-image-picker`, `expo-notifications`).
+**Binary source of truth:** [`app.json`](../app.json) — name, version, iOS bundle ID, build number, orientation, dark UI, plugins (`expo-router`, `expo-font`, `expo-image-picker`, `expo-notifications`). Firebase is wired via **`EXPO_PUBLIC_*`** env vars at runtime, not an `app.json` plugin.
 
 ---
 

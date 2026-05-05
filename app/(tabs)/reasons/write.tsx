@@ -9,7 +9,6 @@ import { useAuthStore } from '@/lib/stores/authStore';
 import { useReasonStore } from '@/lib/stores/reasonStore';
 import { useReasonsRewardStore } from '@/lib/stores/reasonsRewardStore';
 import { theme } from '@/constants/theme';
-import { reasonsVoice } from '@/constants/hummVoice';
 
 /** Enough for a sentence or two; field stays short so save stays on screen. */
 const MAX_CHARS = 240;
@@ -61,22 +60,13 @@ export default function WriteReasonScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg" edges={['top', 'bottom']}>
-      <ScreenHeader
-        title="for them"
-        subtitle={reasonsVoice.screenSubtitle}
-      />
+      <ScreenHeader title="for them" />
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 8 : 0}
       >
         <View className="px-6 pb-5 pt-4" style={{ gap: 12 }}>
-          <Text
-            className="text-[13px] font-light leading-[19px] text-hum-muted"
-            maxFontSizeMultiplier={1.35}
-          >
-            one clear sentence is plenty
-          </Text>
           <TextInput
             className="min-h-[48px] max-h-[88px] rounded-[20px] border border-hum-border/30 bg-hum-surface/80 px-4 py-3 text-[16px] font-light leading-[22px] text-hum-text"
             placeholder="what you love, appreciate, or want them to remember"

@@ -23,6 +23,16 @@ export const WEEKLY_CHALLENGE_POOL: ChallengePoolEntry[] = [
     description: 'you both write a reason this week',
     kind: 'both_reason',
   },
+  {
+    id: 'mood',
+    description: 'you both log a mood on at least 3 days this week',
+    kind: 'both_mood_three_days',
+  },
+  {
+    id: 'habit_week',
+    description: 'every day this week, all shared daily habits are both-done',
+    kind: 'both_habit_allday',
+  },
 ];
 
 function hashString(s: string): number {

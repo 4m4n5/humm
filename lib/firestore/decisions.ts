@@ -35,13 +35,20 @@ export function subscribeToOptions(
   coupleId: string,
   callback: (opts: Record<DecisionCategory, DecisionOption[]>) => void,
 ) {
-  return onSnapshot(optionsDoc(coupleId), (snap) => {
-    if (!snap.exists()) {
+  return onSnapshot(
+    optionsDoc(coupleId),
+    (snap) => {
+      if (!snap.exists()) {
+        callback({ food: [], activity: [], movie: [], other: [] });
+      } else {
+        callback(snap.data() as Record<DecisionCategory, DecisionOption[]>);
+      }
+    },
+    (err) => {
+      console.warn('[decisions] subscribeToOptions', err.code, err.message);
       callback({ food: [], activity: [], movie: [], other: [] });
-    } else {
-      callback(snap.data() as Record<DecisionCategory, DecisionOption[]>);
-    }
-  });
+    },
+  );
 }
 
 export async function saveOptions(
@@ -93,9 +100,16 @@ export function subscribeToRecentDecisions(
     orderBy('createdAt', 'desc'),
     limit(count),
   );
-  return onSnapshot(q, (snap) => {
-    callback(snap.docs.map((d) => d.data() as Decision));
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      callback(snap.docs.map((d) => d.data() as Decision));
+    },
+    (err) => {
+      console.warn('[decisions] subscribeToRecentDecisions', err.code, err.message);
+      callback([]);
+    },
+  );
 }
 
 /** Total saved decisions for the couple (Quick Spin + battle). */

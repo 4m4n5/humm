@@ -243,10 +243,7 @@ export default function NominateScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <ScreenHeader
-        title={isEdit ? 'edit nomination' : 'new nomination'}
-        subtitle="add stories"
-      />
+      <ScreenHeader title={isEdit ? 'edit nomination' : 'new nomination'} />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}
@@ -288,13 +285,13 @@ export default function NominateScreen() {
           </View>
         </View>
 
-        <Input label="title" placeholder="what happened?" value={title} onChangeText={setTitle} />
+        <Input label="title" placeholder="what happened" value={title} onChangeText={setTitle} />
 
         <View className="gap-y-2">
           <Text className="text-[10px] font-medium uppercase tracking-[0.26em] text-hum-dim">story</Text>
           <TextInput
             className="min-h-[120px] rounded-[18px] border border-hum-border/16 bg-hum-surface/65 px-4 py-3.5 text-[14px] font-light leading-[22px] text-hum-text"
-            placeholder="the details you’ll want to remember…"
+            placeholder="the moment"
             placeholderTextColor={theme.dim}
             value={description}
             onChangeText={setDescription}
@@ -303,12 +300,7 @@ export default function NominateScreen() {
           />
         </View>
 
-        <Button
-          label={isEdit ? 'save changes' : 'save nomination'}
-          onPress={handleSubmit}
-          loading={saving}
-          size="lg"
-        />
+        <Button label="save" onPress={handleSubmit} loading={saving} size="lg" />
       </ScrollView>
     </SafeAreaView>
   );

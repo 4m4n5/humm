@@ -1,0 +1,51 @@
+// MERGE these `match` blocks inside your existing:
+//   rules_version = '2';
+//   service cloud.firestore {
+//     match /databases/{database}/documents {
+//       ... your helpers (e.g. isCoupleMember) ...
+//       >>> paste habits + habitCheckins blocks here <<<
+//     }
+//   }
+//
+// Fix for “Missing permissions” when tapping your cell the first time today:
+// `toggleDailyCheckin` calls `getDoc` before `setDoc`. If `allow read` only checks
+// `resource.data.coupleId`, reads on a non-existent check-in doc fail (empty resource).
+// Use separate `allow get` (with `!exists(...)`) and `allow list` as below.
+//
+// isCoupleMember: see `firestore.account-deletion.rules` (couples/{id}.user1Id / user2Id).
+
+match /habits/{docId} {
+  allow read: if request.auth != null
+    && resource.data.coupleId is string
+    && isCoupleMember(resource.data.coupleId);
+  allow create: if request.auth != null
+    && request.resource.data.coupleId is string
+    && isCoupleMember(request.resource.data.coupleId)
+    && request.resource.data.createdBy == request.auth.uid;
+  allow update, delete: if request.auth != null
+    && resource.data.coupleId is string
+    && isCoupleMember(resource.data.coupleId);
+}
+
+match /habitCheckins/{docId} {
+  allow list: if request.auth != null
+    && resource.data.coupleId is string
+    && isCoupleMember(resource.data.coupleId);
+
+  allow get: if request.auth != null && (
+      !exists(/databases/$(database)/documents/habitCheckins/$(docId))
+      || (
+        resource.data.coupleId is string
+        && isCoupleMember(resource.data.coupleId)
+      )
+    );
+
+  allow create: if request.auth != null
+    && request.resource.data.coupleId is string
+    && isCoupleMember(request.resource.data.coupleId)
+    && request.resource.data.uid == request.auth.uid;
+
+  allow delete: if request.auth != null
+    && resource.data.coupleId is string
+    && isCoupleMember(resource.data.coupleId);
+}

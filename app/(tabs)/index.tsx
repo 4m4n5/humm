@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { router, Href } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/lib/stores/authStore';
+import { usePartnerName } from '@/lib/usePartnerName';
+import { useMoodStore } from '@/lib/stores/moodStore';
+import { MoodHomeRow } from '@/components/mood/MoodHomeRow';
 import { ScreenTitle } from '@/components/shared/ScreenTitle';
 import { theme } from '@/constants/theme';
 import { scrollContentStandard } from '@/constants/screenLayout';
@@ -102,6 +105,22 @@ function TileGrid() {
 
 export default function Home() {
   const { profile } = useAuthStore();
+  const partnerName = usePartnerName();
+  const myToday = useMoodStore((s) => s.myToday);
+  const partnerToday = useMoodStore((s) => s.partnerToday);
+  const initMood = useMoodStore((s) => s.init);
+
+  const coupleId = profile?.coupleId ?? '';
+  const myUid = profile?.uid ?? '';
+  const partnerId = profile?.partnerId ?? '';
+  const myFirst = (profile?.displayName ?? 'you').split(' ')[0] ?? 'you';
+  const partnerFirst = partnerName.split(' ')[0] ?? 'partner';
+  const partnerLinked = !!partnerId && !!coupleId;
+
+  useEffect(() => {
+    if (!coupleId || !myUid || !partnerId) return;
+    return initMood(coupleId, myUid, partnerId);
+  }, [coupleId, myUid, partnerId, initMood]);
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
@@ -115,6 +134,15 @@ export default function Home() {
           subtitle="choose where to start"
           titleNumberOfLines={1}
         />
+
+        {partnerLinked && (
+          <MoodHomeRow
+            myEntry={myToday}
+            partnerEntry={partnerToday}
+            myLabel={myFirst}
+            partnerLabel={partnerFirst}
+          />
+        )}
 
         <TileGrid />
 

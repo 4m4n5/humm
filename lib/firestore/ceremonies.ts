@@ -74,9 +74,16 @@ export function subscribeToCeremony(
   id: string,
   callback: (ceremony: Ceremony | null) => void,
 ) {
-  return onSnapshot(ceremonyDoc(id), (snap) => {
-    callback(snap.exists() ? (snap.data() as Ceremony) : null);
-  });
+  return onSnapshot(
+    ceremonyDoc(id),
+    (snap) => {
+      callback(snap.exists() ? (snap.data() as Ceremony) : null);
+    },
+    (err) => {
+      console.warn('[ceremonies] subscribeToCeremony', id, err.code, err.message);
+      callback(null);
+    },
+  );
 }
 
 /** Completed ceremonies for this couple, newest period end first. */
@@ -85,13 +92,20 @@ export function subscribeToPastCeremonies(
   callback: (ceremonies: Ceremony[]) => void,
 ) {
   const q = query(ceremoniesCol(), where('coupleId', '==', coupleId));
-  return onSnapshot(q, (snap) => {
-    const list = snap.docs
-      .map((d) => d.data() as Ceremony)
-      .filter((c) => c.status === 'complete')
-      .sort((a, b) => periodEndMs(b) - periodEndMs(a));
-    callback(list);
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      const list = snap.docs
+        .map((d) => d.data() as Ceremony)
+        .filter((c) => c.status === 'complete')
+        .sort((a, b) => periodEndMs(b) - periodEndMs(a));
+      callback(list);
+    },
+    (err) => {
+      console.warn('[ceremonies] subscribeToPastCeremonies', err.code, err.message);
+      callback([]);
+    },
+  );
 }
 
 /** Ensures the couple has a valid active ceremony document (for existing couples too). */

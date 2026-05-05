@@ -2,11 +2,13 @@
 
 This file is the **entry point** for anyone (human or agent) working on the repo. Read it before changing code.
 
+**Deep onboarding:** [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md) — full route map, Firestore ownership table, rules fragments, Cloud Functions triggers.
+
 ---
 
 ## What this app is
 
-**Hum - rituals** (`com.humtum.app`, Expo slug `humm`) is a **private app for two people** (the owners and their partner). In-app navigation copy stays **lowercase** where this doc says so; auth hero uses the full store name.
+**Hum - rituals** (`com.humtum.app`, Expo **`slug`** `humm` in `app.json`, npm package name `humtum`) is a **private app for two people** (the owners and their partner). In-app navigation copy stays **lowercase** where this doc says so; auth hero uses the full store name.
 
 Goals:
 
@@ -14,6 +16,8 @@ Goals:
 - Support a **twice-yearly** relationship “award ceremony”: **nominations + full ceremony cycle** — product **nominate · align · cheer**; Firestore **`nominating` → `deliberating` → `voting` → `complete`** (see [CEREMONY_TERMINOLOGY.md](./CEREMONY_TERMINOLOGY.md)). **Nomination photos** still deferred.
 - **Gamification** — per-user **XP/level** + **badges** on profile, soft **stats** band (saves, seasons, spin streak). Badge evaluators batch **`mergeBadges`** per user where possible to limit Firestore writes. **Weekly challenge** pool is three symmetric goals (`constants/challenges.ts`). Couple **streaks** + **weekly challenge** on `couples/*` mostly under the hood (still grant XP). Code: `lib/firestore/gamification.ts`, `lib/gamificationTriggers.ts`, `lib/gamificationBadges.ts`, `lib/firestore/coupleGamification.ts`, `components/gamification/GamificationToastHost.tsx`. **`paparazzi`** not auto-awarded until photos exist.
 - **Reasons** — write reasons you love your partner; **draw three random** reasons about you (text only for now).
+- **Mood** — lightweight quadrant stickers per day (`moodEntries`), mirrored with partner on home + mood tab; server push when partner logs (`functions`).
+- **Habits** — shared or personal daily/weekly check-ins (`habits`, `habitCheckins`) with streak semantics on `couples`.
 
 Tone: warm, playful, musical metaphor (humming together). Prefer **lowercase** labels in navigation and many headings unless a proper noun needs caps.
 
@@ -23,11 +27,11 @@ Tone: warm, playful, musical metaphor (humming together). Prefer **lowercase** l
 
 | Layer | Choice |
 |--------|--------|
-| App | **Expo SDK 54** (React Native + **Expo Router** file-based routes); **expo-notifications** for local award-season reminders (see `lib/ceremonyReminders.ts`) |
+| App | **Expo SDK 54** (React Native + **Expo Router** file-based routes); **expo-notifications** — local award-window reminders (`lib/ceremonyReminders.ts`) + Expo push token → Firestore (`lib/registerExpoPushToken.ts`); server pushes via **Firebase Functions** + Expo Push API (`functions/src/`) |
 | Why SDK 54? | **Expo Go from the iOS App Store** supports SDK 54. SDK 55 on iPhone requires TestFlight or a dev build. |
 | Styling | **NativeWind v4** (Tailwind). Tokens: `hum` in [`tailwind.config.js`](../tailwind.config.js); raw hex for icons/spinners: [`constants/theme.ts`](../constants/theme.ts) — **keep in sync**. UX direction: [`docs/DESIGN.md`](./DESIGN.md). |
 | State | **Zustand** (`lib/stores/*`); local UI prefs (spin haptics, ceremony reminder toggle + scheduled season id) in `uiPreferencesStore.ts` (AsyncStorage); **Battle** live session in `battleStore` (Firestore `battles/{id}` via `couples.activeBattleId`) |
-| Backend | **Firebase**: Auth (email/password), **Firestore** (users, couples, ceremonies, nominations, reasons, decisions, options, **battles**). **Storage is not initialized** in code (Spark plan / optional Phase 2). |
+| Backend | **Firebase**: Auth (email/password), **Firestore** (users, couples, ceremonies, nominations, reasons, decisions, **`decisionOptions`** top-level docs, **battles**, **`habits`**, **`habitCheckins`**, **`moodEntries`**). **Storage is not initialized** in code (Spark plan / optional Phase 2). **Cloud Functions** in `functions/` for partner pushes.
 | Android release | **EAS Build**: `eas.json` — **`preview`** → shareable **APK**; **`production`** → Play **AAB**. Icon `assets/icon.png`. Set `EXPO_PUBLIC_*` on EAS (not only local `.env`). See [SETUP.md § 6](../SETUP.md). |
 
 ---
@@ -36,25 +40,32 @@ Tone: warm, playful, musical metaphor (humming together). Prefer **lowercase** l
 
 ```
 app/
-  _layout.tsx           # Auth gate: sign-in → link partner → tabs
+  _layout.tsx           # Firebase env complete → lazy AppRoot
   (auth)/               # sign-in, sign-up, link-partner
-  (tabs)/               # home, decide/*, awards, reasons, profile
+  (tabs)/               # home, mood/*, decide/*, awards/*, reasons/*, habits/*, profile/*
 components/shared/      # Button, Input, Card, ScreenTitle, ScreenHeader
 components/battle/      # BracketProgress, CoinFlip (battle mode)
-constants/              # categories, levels, badges, hummVoice (awards + reasons copy), theme (hex)
+components/mood/        # MoodTodayHero, MoodGrid, WeekStrip, MoodChip, MoodHomeRow, …
+constants/              # categories, levels, badges, moodStickers, hummVoice, theme (hex), elevation
 lib/
   firebase.ts           # App, Auth, Firestore init
-  stores/               # authStore, decisionStore, nominationsStore, reasonStore, battleStore
-  firestore/            # users, couples, ceremonies, nominations, reasons, decisions, battles
+  registerExpoPushToken.ts
+  stores/               # authStore, decisionStore, nominationsStore, reasonStore, battleStore, habitStore, moodStore
+  firestore/            # users, couples, ceremonies, nominations, reasons, decisions (incl. decisionOptions docs), battles, habits & habitCheckins, moodEntries
   battleLogic.ts        # Pure bracket builder + matchup helpers (no Firestore)
   ceremonyCalendar.ts   # Season milestones + H1/H2 copy helpers
   ceremonyReminders.ts  # Local notification schedule/cancel for award window
+  gamificationTriggers.ts  # After-write XP/badges (incl. mood, habits)
 types/index.ts          # Shared TypeScript models
+functions/src/          # Cloud Functions v2 — Expo push on mood/reasons/nominations/battle/decision/couple challenge
+firestore.*.rules       # Fragments (mood, habits, account-deletion) — merge in Console
 docs/
   AGENTS.md                 # This file
+  DEVELOPER_GUIDE.md        # Routes, collections, rules workflow, functions
   APPS_AND_FEATURES.md      # Living brainstorm with the owners
   CEREMONY_TERMINOLOGY.md   # Awards: product names vs Firestore status / legacy APIs
   DESIGN.md                 # UI / UX direction and refinement ideas
+  FIRESTORE_MOOD_RULES.md   # Mood rules deployment notes
 ```
 
 ---
@@ -62,13 +73,13 @@ docs/
 ## Environment
 
 - Copy `.env.example` → `.env` (gitignored). All Firebase keys must be prefixed with `EXPO_PUBLIC_` for Expo.
-- **Firestore:** Composite indexes live in [`firestore.indexes.json`](../firestore.indexes.json) — deploy with `firebase deploy --only firestore:indexes` when queries change. **`battles`** collection must be allowed in security rules for the couple’s two user IDs (same scoping pattern as `decisions` / `ceremonies`). **`nominations`** uses `coupleId` + `ceremonyId` (see `lib/firestore/nominations.ts`). **`decisions`** uses `coupleId` + `mode` for battle badge counts (`grantBattleCompletionRewards`); also `coupleId` + `category` for Foodie / Night In counts. **`reasons`:** `coupleId` + `authorId` for reason badges. **`ceremonies`:** `coupleId` + `status` for completed-season counts. **`couples`:** allow writes to optional `streaks` and `weeklyChallenge` for the two partner UIDs (same as other couple fields). There is no `firestore.rules` file in-repo — rules live in Firebase Console or your deploy pipeline; keep them aligned with these fields. **`react-native-reanimated`:** keep the Babel plugin last in `babel.config.js` (Expo / navigator stack). Awards **cheer** walkthrough (`reveal.tsx`) uses RN `Animated` only so Expo Go won’t crash on Reanimated worklets at import time.
+- **Firestore:** Composite indexes live in [`firestore.indexes.json`](../firestore.indexes.json) — deploy with `npm run deploy:indexes` when queries change. **`battles`** collection must be allowed in security rules for the couple’s two user IDs (same scoping pattern as `decisions` / `ceremonies`). **`nominations`** uses `coupleId` + `ceremonyId` (see `lib/firestore/nominations.ts`). **`decisions`** uses `coupleId` + `mode` for battle badge counts (`grantBattleCompletionRewards`); also `coupleId` + `category` for Foodie / Night In counts. **`reasons`:** `coupleId` + `authorId` for reason badges. **`ceremonies`:** `coupleId` + `status` for completed-season counts. **`couples`:** allow writes to optional `streaks`, `weeklyChallenge`, habit streak fields, mood streak fields for the two partner UIDs. **`moodEntries`** / **`habits`** / **`habitCheckins`:** merge fragments [`firestore.mood.rules`](../firestore.mood.rules), [`firestore.habits.rules`](../firestore.habits.rules); see [FIRESTORE_MOOD_RULES.md](./FIRESTORE_MOOD_RULES.md). There is no full `firestore.rules` in-repo — rules live in Firebase Console or your deploy pipeline. For **account deletion** (client-side wipes), merge the commented fragment in [`firestore.account-deletion.rules`](../firestore.account-deletion.rules) so deletes and partner-unlink updates are permitted. **`react-native-reanimated`:** keep the Babel plugin last in `babel.config.js` (Expo / navigator stack). Awards **cheer** walkthrough (`reveal.tsx`) uses RN `Animated` only so Expo Go won’t crash on Reanimated worklets at import time.
 
 ---
 
 ## Conventions
 
-1. **Dependencies**: Use `npx expo install <pkg>` for anything tied to the Expo SDK (including `react`, `react-dom`, `react-native`). See `.cursor/rules/expo-setup.mdc`.
+1. **Dependencies**: Use `npx expo install <pkg>` for anything tied to the Expo SDK (including `react`, `react-dom`, `react-native`). Align versions with [SETUP.md](../SETUP.md) / Expo SDK 54 release notes if installs drift.
 2. **Path alias**: `@/` → project root (from `tsconfig.json`).
 3. **Firebase Auth on native**: `lib/firebase.ts` uses `require('firebase/auth')` for `getReactNativePersistence` + AsyncStorage.
 4. **Metro**: `metro.config.js` adds `'cjs'` to `sourceExts` for Firebase.
@@ -91,7 +102,9 @@ docs/
 | **Awards**: nomination photos | Not started |
 | **Reasons**: write + draw 3 random (text) | Done (v1) |
 | **Reasons**: optional media on reasons | Not started |
-| Push notifications, Cloud Functions | Not started |
+| **Mood** — quadrant stickers, daily entries (`moodEntries`), home row + tab UI, partner feed, gamification hooks | Done |
+| **Habits** — shared/personal daily & weekly, check-ins, couple streak fields | Done |
+| Push notifications | **Partially shipped** — client token + preferences (`profile/notification-settings`); **Cloud Functions** send Expo pushes on mood/reason/nomination/battle/quickspin/challenge |
 | Firebase Storage (photos) | Deferred (Blaze plan) |
 
 **Future idea (documented in blueprint):** collaborative Quick Spin — partner sees or confirms spin; currently spins are local UX + saved outcome in Firestore.
@@ -100,6 +113,7 @@ docs/
 
 ## Where to look next
 
+- **Routes, collections, rules fragments, functions**: [`./DEVELOPER_GUIDE.md`](./DEVELOPER_GUIDE.md)
 - **Deep product + data model + costs + phases**: [`../BLUEPRINT.md`](../BLUEPRINT.md)
 - **Award ceremony naming (product vs code)**: [`./CEREMONY_TERMINOLOGY.md`](./CEREMONY_TERMINOLOGY.md)
 - **Setup on a machine**: [`../SETUP.md`](../SETUP.md)

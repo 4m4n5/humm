@@ -46,8 +46,9 @@ export const useDecisionStore = create<DecisionState>((set, get) => ({
       set({ history });
     });
 
-    // Seed default options if empty
-    seedDefaultOptions(coupleId, get);
+    void seedDefaultOptions(coupleId, get).catch((e) =>
+      console.warn('[decisions] seedDefaultOptions', e),
+    );
 
     return () => {
       unsubOpts();

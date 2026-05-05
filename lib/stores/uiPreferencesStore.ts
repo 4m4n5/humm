@@ -12,6 +12,12 @@ type State = {
   ceremonyReminderScheduledForId: string | null;
   setCeremonyLocalRemindersEnabled: (value: boolean) => void;
   setCeremonyReminderScheduledForId: (id: string | null) => void;
+  /** One-shot migration: legacy moodSticker moved to moodEntries collection */
+  moodMigrated: boolean;
+  setMoodMigrated: (v: boolean) => void;
+  /** Push notification permission prompt shown once */
+  pushPromptShown: boolean;
+  setPushPromptShown: (v: boolean) => void;
 };
 
 export const useUiPreferencesStore = create<State>()(
@@ -25,6 +31,10 @@ export const useUiPreferencesStore = create<State>()(
         set({ ceremonyLocalRemindersEnabled }),
       setCeremonyReminderScheduledForId: (ceremonyReminderScheduledForId) =>
         set({ ceremonyReminderScheduledForId }),
+      moodMigrated: false,
+      setMoodMigrated: (moodMigrated) => set({ moodMigrated }),
+      pushPromptShown: false,
+      setPushPromptShown: (pushPromptShown) => set({ pushPromptShown }),
     }),
     {
       name: 'humtum-ui-prefs',

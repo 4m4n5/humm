@@ -58,11 +58,18 @@ export function subscribeToNominations(
     where('coupleId', '==', coupleId),
     where('ceremonyId', '==', ceremonyId),
   );
-  return onSnapshot(q, (snap) => {
-    const items = snap.docs.map((d) => d.data() as Nomination);
-    items.sort((a, b) => createdAtMs(b) - createdAtMs(a));
-    callback(items);
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      const items = snap.docs.map((d) => d.data() as Nomination);
+      items.sort((a, b) => createdAtMs(b) - createdAtMs(a));
+      callback(items);
+    },
+    (err) => {
+      console.warn('[nominations] subscribeToNominations', err.code, err.message);
+      callback([]);
+    },
+  );
 }
 
 /**
@@ -73,11 +80,18 @@ export function subscribeToNominationsForCouple(
   callback: (items: Nomination[]) => void,
 ) {
   const q = query(nominationsCol(), where('coupleId', '==', coupleId));
-  return onSnapshot(q, (snap) => {
-    const items = snap.docs.map((d) => d.data() as Nomination);
-    items.sort((a, b) => createdAtMs(b) - createdAtMs(a));
-    callback(items);
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      const items = snap.docs.map((d) => d.data() as Nomination);
+      items.sort((a, b) => createdAtMs(b) - createdAtMs(a));
+      callback(items);
+    },
+    (err) => {
+      console.warn('[nominations] subscribeToNominationsForCouple', err.code, err.message);
+      callback([]);
+    },
+  );
 }
 
 export function nominationsForCategory(

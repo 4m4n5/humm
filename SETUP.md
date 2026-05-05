@@ -116,7 +116,7 @@ The repo includes **`eas.json`** with a **`preview`** profile that outputs an **
    npm run eas:env:list
    ```
 
-   **Or use the website:** [expo.dev](https://expo.dev) → sign in → **Projects** → **Hum - rituals** (slug `humtum`) → **Environment variables** (in the left sidebar). Add each name from `.env.example` manually and assign them to **Preview** (and **Production** later if you use that profile). Names must match exactly, including the `EXPO_PUBLIC_` prefix.
+   **Or use the website:** [expo.dev](https://expo.dev) → sign in → **Projects** → **Hum - rituals** — Expo **slug** is **`humm`** (`app.json`; dashboard URL path uses this). Open **Environment variables** in the sidebar. Add each name from `.env.example` manually and assign them to **Preview** (and **Production** later if you use that profile). Names must match exactly, including the `EXPO_PUBLIC_` prefix.
 
    **Important:** If variables only exist under **Production** but you build with **`preview`**, the APK will not see them — use **`preview`** for `npm run build:android:apk`.
 
@@ -165,6 +165,33 @@ Default project id is set in `.firebaserc` (`humm-f31c7`). If yours differs, run
 | Collection | Fields |
 |------------|--------|
 | `decisions` | `coupleId` Ascending, `createdAt` Descending |
+| `moodEntries` | `coupleId` Ascending, `dayKey` Descending |
+
+---
+
+## 7. Firestore security rules (fragments in repo)
+
+There is **no** single deployable `firestore.rules` file checked in. Instead you merge **fragments** into the Firebase Console (or your own rules pipeline):
+
+| Fragment file | Purpose |
+|----------------|---------|
+| `firestore.mood.rules` | `moodEntries` — helpers + `match`; needed for today-doc listeners (`get` when missing) and feed **`list`** |
+| `firestore.habits.rules` | `habits` + `habitCheckins` |
+| `firestore.account-deletion.rules` | Patterns for account deletion / unlink flows |
+
+Step-by-step for mood: **[docs/FIRESTORE_MOOD_RULES.md](./docs/FIRESTORE_MOOD_RULES.md)**. Avoid defining helpers like `isCoupleMember` twice across pasted fragments.
+
+---
+
+## 8. Cloud Functions (Expo push)
+
+`firebase.json` points **`functions`** at the **`functions/`** folder (Firebase Functions v2 + **`expo-server-sdk`**).
+
+1. Enable Blaze if required by your Firebase project for outbound/network Functions usage (Firebase quota docs supersede this note).
+2. From **`functions/`**: `npm install`, then `npm run deploy` (runs `tsc` + `firebase deploy --only functions`).
+3. Use the **same** Firebase project as `.firebaserc` / your Expo env (`EXPO_PUBLIC_FIREBASE_PROJECT_ID`).
+
+Triggers cover mood writes, new reasons/nominations/battles, quick-spin decisions, and weekly challenge completion on **`couples`**. Token reads **`users/{uid}.fcmToken`** (Expo push token).
 
 ---
 

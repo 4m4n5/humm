@@ -1,11 +1,11 @@
 # Hum - rituals — App Blueprint
 
 > **Status:** Living spec — Phase 1 partially implemented in-app; this document remains the source of truth for data models, costs, and long-term roadmap.  
-> **App name (stores):** **Hum - rituals** · **Bundle / package:** `com.humtum.app` · **Expo slug:** `humtum` · **URL scheme:** `humtum://`  
+> **App name (stores):** **Hum - rituals** · **Bundle / package:** `com.humtum.app` · **Expo slug (`app.json`):** `humm` · **npm package name:** `humtum` · **URL scheme:** `humtum://`  
 > **Audience:** Exactly two users — a private couple app  
 > **Platforms:** iOS · Android · Web (single codebase)
 
-**See also:** [docs/AGENTS.md](./docs/AGENTS.md) (repo map & agent context) · [docs/APPS_AND_FEATURES.md](./docs/APPS_AND_FEATURES.md) (brainstorm / backlog) · [docs/CEREMONY_TERMINOLOGY.md](./docs/CEREMONY_TERMINOLOGY.md) (award ceremony: **nominate · align · cheer** vs `deliberating` in Firestore)
+**See also:** [docs/AGENTS.md](./docs/AGENTS.md) (repo map & agent context) · [docs/DEVELOPER_GUIDE.md](./docs/DEVELOPER_GUIDE.md) (routes & Firestore ownership) · [docs/APPS_AND_FEATURES.md](./docs/APPS_AND_FEATURES.md) (brainstorm / backlog) · [docs/CEREMONY_TERMINOLOGY.md](./docs/CEREMONY_TERMINOLOGY.md) (award ceremony: **nominate · align · cheer** vs `deliberating` in Firestore)
 
 ---
 
@@ -33,7 +33,9 @@
 |---|---|
 | App Name (stores / home screen) | **Hum - rituals** |
 | Bundle ID (iOS) / applicationId (Android) | `com.humtum.app` |
-| Project folder (local) | often still `humm` on disk; npm package name is `humtum` |
+| Expo slug (`app.json`) | `humm` |
+| npm package name (`package.json`) | `humtum` |
+| Project folder (local) | often still `humm` on disk |
 | Users | Exactly 2 (you + your wife) |
 | Nature | Private, invite-only, no public listing needed |
 | Primary Language | TypeScript |
@@ -125,19 +127,21 @@ users/{userId}
   avatarUrl:        string | null
   partnerId:        string | null        // other user's ID
   coupleId:         string | null        // shared couple document ID
-  fcmToken:         string | null        // push notification token
+  fcmToken:         string | null        // Expo push token (field name legacy); see registerExpoPushToken
+  notificationPreferences?: { reasons, mood, nominations, battles, decisions } // optional per-feature push toggles
   xp:               number
   level:            number
   badges:           string[]             // badge IDs earned
   createdAt:        Timestamp
 
-couple/{coupleId}
-  user1Id:          string
-  user2Id:          string
-  inviteCode:       string               // used to link two accounts
+couples/{coupleId}
+  user1Id:          string               // linker first (see createCouple)
+  user2Id:          string               // partner when linked
   createdAt:        Timestamp
   activeCeremonyId: string | null
   activeBattleId:   string | null        // in-progress battle session doc (if any)
+  // Optional habit/mood aggregates — see types.Couple (streaks, weeklyChallenge, dailyStreaks, jointDailyStreak, habitsModelVersion, bothLoggedDayStreak, …)
+  // Invite codes live on users/* — not on couples
 
 battles/{battleId}
   coupleId, category, status: 'collecting' | 'battling' | 'complete'
@@ -147,17 +151,17 @@ battles/{battleId}
 decisions/{decisionId}
   coupleId:         string
   category:         'food' | 'activity' | 'movie' | 'other'
-  mode:             'quickspin' | 'battle' | 'weighted'
-  options:          string[]             // list of options entered
-  result:           string               // winning option
-  vetoedBy:         string[]             // userIds who used veto
+  mode:             'quickspin' | 'battle'
+  options:          string[]
+  result:           string
+  vetoedOptions:    string[]             // labels vetoed during Quick Spin (see types.Decision)
   createdAt:        Timestamp
+  createdByUserId?: string               // who saved (Quick Spin); battles omit or legacy
 
-decisionOptions/{coupleId}/options/{category}
-  items: [
-    { label: string, tags: string[], lastPickedAt: Timestamp | null }
-  ]
-  // Persistent option lists per category, used for Quick Spin and weighted history
+decisionOptions/{coupleId}
+  // Single doc per couple — fields keyed by category (food, activity, movie, other)
+  // Each value: DecisionOption[] { id, label, tags[], lastPickedAt }
+  // lib/firestore/decisions.ts — optionsDoc(coupleId)
 
 nominations/{nominationId}
   coupleId:         string
@@ -197,25 +201,29 @@ reasons/{reasonId}
   mediaType:        'photo' | 'video' | null
   createdAt:        Timestamp
 
-gamification/{coupleId}
-  xpLog: [
-    { userId: string, amount: number, reason: string, earnedAt: Timestamp }
-  ]
-  streaks: {
-    decisionStreak:     number
-    nominationStreak:   number           // nominations per month streak
-    ceremonyStreak:     number           // ceremonies completed on time
-    lastDecisionDate:   Timestamp | null
-    lastNominationDate: Timestamp | null
-  }
-  weeklyChallenge: {
-    id:           string
-    description:  string
-    issuedAt:     Timestamp
-    expiresAt:    Timestamp
-    completedBy:  string[]              // userIds who completed
-    coupleReward: number                // XP awarded when both complete
-  } | null
+moodEntries/{docId}
+  // docId = `${coupleId}_${uid}_${dayKey}` (local calendar day key)
+  coupleId, uid, dayKey, weekKey
+  current: { stickerId, emoji, label, quadrant, at }
+  timeline: [...]                     // intraday history (capped in client)
+  changeCount, createdAt, updatedAt
+
+habits/{habitId}
+  coupleId, createdBy, title, emoji
+  cadence: 'daily' | 'weekly'
+  scope: 'shared' | 'personal'
+  weeklyStartWeekKey?, archived
+  // XP idempotency fields — see types.Habit
+  createdAt: Timestamp
+
+habitCheckins/{checkinId}
+  habitId, coupleId, uid, cadence
+  dayKey? | weekKey?
+  createdAt: Timestamp
+
+// Gamification (shipped shape — no separate gamification/{id} collection):
+// - XP, level, badges: fields on users/{userId} — lib/firestore/gamification.ts
+// - Couple streaks + weeklyChallenge + habit/mood streak fields: on couples/{coupleId} — types.Couple, lib/firestore/coupleGamification.ts
 ```
 
 ### AwardCategory Enum
@@ -238,11 +246,11 @@ type AwardCategory =
 match /users/{userId} {
   allow read, write: if request.auth.uid == userId;
 }
-match /couple/{coupleId} {
+match /couples/{coupleId} {
   allow read, write: if request.auth.uid in [resource.data.user1Id, resource.data.user2Id];
 }
 match /nominations/{nominationId} {
-  allow read, write: if isCoupleчлен(resource.data.coupleId);
+  allow read, write: if isCoupleMember(resource.data.coupleId);
 }
 // ... similar for decisions, ceremonies, gamification
 ```
@@ -628,72 +636,57 @@ The feature name on screen: **"reasons"** — always lowercase, keeping the warm
 
 ## 9. Navigation Structure
 
+Actual tab order matches **`app/(tabs)/_layout.tsx`**. Nested stacks live under each tab folder.
+
 ```
 App Shell (authenticated)
 │
-├── Tab 1: Home
-│   ├── Couple level + XP progress bar
-│   ├── Active streak indicators
-│   ├── Active weekly challenge card
-│   ├── Ceremony countdown / status card
-│   │   (e.g., "Award season opens in 43 days" or "Alignment open!")
-│   └── Recent decisions (last 3)
+├── Tab: home (app/(tabs)/index.tsx)
+│   ├── Hero shortcuts + tile grid (decide / awards / reasons / habits entry points)
+│   ├── Mood summary row (MoodHomeRow) when partner linked
+│   └── Profile shortcut row
 │
-├── Tab 2: Decide
-│   ├── Quick Spin
-│   │   ├── Category selector
-│   │   ├── Options list (add/remove items)
-│   │   ├── Spin animation + veto controls
-│   │   └── Result screen → Maps deep-link
-│   ├── Battle Mode
-│   │   ├── Options entry (both partners)
-│   │   ├── Bracket matchups (real-time)
-│   │   └── Winner announced
+├── Tab: mood (app/(tabs)/mood/*)
+│   ├── Today hero + week strip + intraday trail + history feed
+│   └── Log / picker screen → saves moodEntries
+│
+├── Tab: decide (app/(tabs)/decide/*)
+│   ├── Hub → Quick Spin | Battle | History
+│   ├── Quick Spin — categories, options, spin, veto, save
+│   ├── Battle — lobby → vote → result (Firestore battles/*)
 │   └── History
-│       └── Scrollable log of past decisions
 │
-├── Tab 3: Awards
-│   ├── Nominate (add new nomination)
-│   │   └── Nomination form
-│   ├── Nominations Browser
-│   │   ├── Filter by category / nominee
-│   │   └── Nomination cards grid
-│   ├── Ceremony
-│   │   ├── [Nominate] Status + progress by category
-│   │   ├── [Align — private] Submit/view picks (`deliberating`)
-│   │   ├── [Align — sync] Overlap + resolution (`voting`)
-│   │   └── [Cheer] Animated walkthrough, then complete
-│   └── Past Ceremonies
-│       └── Trophy Case + ceremony archives
+├── Tab: awards (app/(tabs)/awards/*)
+│   ├── Hub + ceremony calendar
+│   ├── Nominate, browse by category, alignment / overlap / resolve / cheer (reveal)
+│   └── Past seasons archive
 │
-├── Tab 4: reasons
-│   ├── "why they love you" — shuffle 3 random reasons card view
-│   ├── Write a reason (add new)
-│   ├── All reasons written about you (scrollable)
-│   └── Reasons you've written (scrollable)
+├── Tab: reasons (app/(tabs)/reasons/*)
+│   ├── Draw three random about you + write flow
+│   └── Lists / empty states
 │
-├── Tab 5: Profile
-│   ├── Your profile (avatar, name, XP, level)
-│   ├── Partner profile (read-only)
-│   ├── Badges grid (yours + partner's)
-│   ├── Couple stats (total decisions, nominations, etc.)
-│   └── Settings
-│       ├── Notifications preferences
-│       ├── Ceremony date adjustment
-│       ├── Theme / appearance
-│       └── Account management
+├── Tab: habits (app/(tabs)/habits/*)
+│   └── List + create habit (shared or personal; daily or weekly)
 │
-└── Auth Screens (unauthenticated)
-    ├── Welcome / Sign Up
-    ├── Sign In
-    └── Couple Linking (invite code flow)
+├── Tab: you / profile (app/(tabs)/profile/*)
+│   ├── XP, badges, soft stats, invite code (until linked), sign out
+│   ├── Notification settings (push toggles)
+│   └── Account deletion flow
+│
+└── Auth (app/(auth)/*)
+    ├── Sign In / Sign Up
+    └── Link partner (invite code)
 ```
 
 ---
 
-## 9. Notifications & Scheduling
+## 10. Notifications & Scheduling
 
-All scheduling handled via **Firebase Cloud Functions** (cron jobs + Firestore triggers).
+**Implemented in this repo:** **Local** ceremony-window reminders (`lib/ceremonyReminders.ts` + `uiPreferencesStore`). **Expo push token** stored as `users.fcmToken`. **Cloud Functions** (`functions/src/`) send partner-facing pushes on selected Firestore events (mood entry sticker change, new reason, new nomination, new battle, quick-spin decision save, weekly challenge XP granted). Users opt out per surface via **`notificationPreferences`** (`reasons`, `mood`, `nominations`, `battles`, `decisions`).
+
+The sections below describe the **full product vision** for scheduled nudges; many cron-style rows are **not** implemented as recurring Cloud Scheduler jobs yet.
+
+All scheduling (when implemented) is intended to run via **Firebase Cloud Functions** (cron jobs + Firestore triggers).
 
 ### Scheduled Notifications
 
@@ -712,15 +705,15 @@ All scheduling handled via **Firebase Cloud Functions** (cron jobs + Firestore t
 | Reason nudge | 14 days with no new reason written | "When did you last tell them why?" |
 | Level up | When couple XP crosses a threshold | "You leveled up to [level name]! 🎉" |
 
-### Notification Channels
-- **FCM (Android)** — Firebase Cloud Messaging directly
-- **APNs (iOS)** — via Firebase Cloud Messaging with APNs integration
-- **Web Push** — via FCM Web SDK
-- Notification preferences stored per user; each type can be individually toggled
+### Notification Channels (reference)
+
+- **Expo Push API** — used by Cloud Functions in-repo (`expo-server-sdk`) with tokens from the Expo notification service
+- **FCM / APNs** — still relevant for native delivery chains under Expo’s hood; client code does not integrate FCM SDK directly
+- Notification preferences stored per user; each feature flag can disable outbound pushes from Functions
 
 ---
 
-## 10. Cost Analysis
+## 11. Cost Analysis
 
 ### Distribution Strategy
 
@@ -793,7 +786,7 @@ The app will cost ~$0 to operate given 2 users. Firebase free tier has 1GB Fires
 
 ---
 
-## 11. Development Phases
+## 12. Development Phases
 
 ### Phase 1 — Foundation + Decision Engine (Weeks 1–2)
 
@@ -909,89 +902,23 @@ All data is scoped under a `coupleId`. Firestore security rules enforce that onl
 **Real-time vs. pull:**
 Nominations, ceremony status, alignment picks (stored while `deliberating` / `voting`), and gamification all use `onSnapshot` listeners. This means Partner A submitting private picks immediately syncs to Partner B in the app without any refresh. This is the primary reason Firebase/Firestore was chosen over a traditional REST API.
 
-**No server:**
-Cloud Functions are used only for scheduled reminders and triggered notifications — not for data fetching. The client reads/writes Firestore directly. This keeps the architecture simple and eliminates the need to maintain any server infrastructure.
+**No traditional backend:**
+The client reads/writes Firestore directly for couple data. **Cloud Functions** handle selected **push** triggers (`functions/src/`); they are not on the hot path for fetching nominations or ceremony state.
 
 **Ceremony state machine:**
-The ceremony lifecycle is a strict state machine (`nominating` → `deliberating` → `voting` → `complete`). In product copy this is **nominate → align → cheer**; **`deliberating`** is only the private-picks slice of **align**. Transitions are triggered by Cloud Functions (time-based) or by the app (e.g. both partners submitted picks). Invalid transitions are rejected by Firestore security rules. See [docs/CEREMONY_TERMINOLOGY.md](./docs/CEREMONY_TERMINOLOGY.md).
+The ceremony lifecycle is a strict state machine (`nominating` → `deliberating` → `voting` → `complete`). In product copy this is **nominate → align → cheer**; **`deliberating`** is only the private-picks slice of **align**. Transitions are enforced in app logic and Firestore rules; **scheduled** ceremony pushes may be added via Functions later (local reminders exist today). See [docs/CEREMONY_TERMINOLOGY.md](./docs/CEREMONY_TERMINOLOGY.md).
 
 **Invite code flow:**
-Since there are exactly 2 users, the couple-linking flow is: User A signs up → gets a 6-character invite code → shares it with User B (text, copy-paste, etc.) → User B enters it during onboarding → both are linked. The invite code document expires after 48 hours.
+Since there are exactly 2 users, the couple-linking flow is: User A signs up → gets an invite code on their profile → shares it with User B → User B enters it during onboarding → both are linked (`createCouple`, then `linkPartners`). Codes are stored on **`users/{uid}.inviteCode`**, not on `couples/*`.
 
 ---
 
-## Appendix: Folder Structure (Proposed)
+## Appendix: Source layout
 
-```
-hum/
-├── app/                          # Expo Router pages
-│   ├── (auth)/
-│   │   ├── sign-in.tsx
-│   │   ├── sign-up.tsx
-│   │   └── link-partner.tsx
-│   ├── (tabs)/
-│   │   ├── index.tsx             # Home
-│   │   ├── decide/
-│   │   │   ├── index.tsx         # Decide home
-│   │   │   ├── quick-spin.tsx
-│   │   │   ├── battle.tsx
-│   │   │   ├── battle-lobby.tsx
-│   │   │   ├── battle-vote.tsx
-│   │   │   ├── battle-result.tsx
-│   │   │   └── history.tsx
-│   │   ├── awards/
-│   │   │   ├── index.tsx         # Awards home / ceremony status
-│   │   │   ├── nominate.tsx
-│   │   │   ├── nominations.tsx
-│   │   │   ├── deliberate.tsx   # private picks UI; route name legacy (product: alignment)
-│   │   │   ├── ceremony.tsx
-│   │   │   └── past.tsx
-│   │   ├── reasons/
-│   │   │   ├── index.tsx         # Write + draw three about you
-│   │   │   └── write.tsx         # Add a reason
-│   │   └── profile/
-│   │       ├── index.tsx
-│   │       └── settings.tsx
-│   └── _layout.tsx
-├── components/                   # Reusable UI components
-│   ├── decisions/
-│   ├── awards/
-│   ├── gamification/
-│   └── shared/
-├── lib/
-│   ├── firebase.ts               # Firebase init
-│   ├── firestore/                # Collection helpers
-│   │   ├── users.ts
-│   │   ├── decisions.ts
-│   │   ├── nominations.ts
-│   │   ├── ceremonies.ts
-│   │   ├── reasons.ts
-│   │   └── gamification.ts
-│   └── stores/                   # Zustand stores
-│       ├── authStore.ts
-│       ├── decisionStore.ts
-│       ├── ceremonyStore.ts
-│       └── reasonsStore.ts
-├── functions/                    # Firebase Cloud Functions
-│   ├── src/
-│   │   ├── notifications.ts      # Scheduled notification triggers
-│   │   ├── ceremonies.ts         # Ceremony lifecycle automation
-│   │   └── challenges.ts         # Weekly challenge generation
-│   └── package.json
-├── constants/
-│   ├── categories.ts             # Award categories enum + display names
-│   ├── badges.ts                 # Badge definitions
-│   └── levels.ts                 # XP level thresholds
-├── assets/
-├── BLUEPRINT.md                  # This document
-├── README.md
-├── app.json                      # Expo config
-├── package.json
-└── tsconfig.json
-```
+Early drafts listed a **proposed** folder tree here; it drifted from the real repo.
+
+**Current map:** see **[docs/DEVELOPER_GUIDE.md](./docs/DEVELOPER_GUIDE.md)** (§2 directory map, §3 navigation) and **[docs/AGENTS.md](./docs/AGENTS.md)** (repo map). Local project folder name is typically **`humm`**.
 
 ---
 
-*Blueprint version 1.0 — written April 2026*  
-*Store listing: Hum - rituals · In-app copy stays mostly lowercase where noted.*  
-*Next step: Run `Phase 1` implementation starting with Expo project initialization*
+*Blueprint — living spec · Store listing: Hum - rituals · In-app copy stays mostly lowercase where noted.*

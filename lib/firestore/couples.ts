@@ -55,12 +55,19 @@ export function subscribeToCouple(
   id: string,
   callback: (couple: Couple | null) => void,
 ) {
-  return onSnapshot(coupleDoc(id), (snap) => {
-    if (!snap.exists()) {
+  return onSnapshot(
+    coupleDoc(id),
+    (snap) => {
+      if (!snap.exists()) {
+        callback(null);
+        return;
+      }
+      const withG = mergeCoupleGamificationDefaults(coupleFromSnapshot(id, snap.data()!));
+      callback(withG ? mergeCoupleAwardCategoryDefaults(withG) : null);
+    },
+    (err) => {
+      console.warn('[couples] subscribeToCouple', id, err.code, err.message);
       callback(null);
-      return;
-    }
-    const withG = mergeCoupleGamificationDefaults(coupleFromSnapshot(id, snap.data()!));
-    callback(withG ? mergeCoupleAwardCategoryDefaults(withG) : null);
-  });
+    },
+  );
 }

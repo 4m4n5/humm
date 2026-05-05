@@ -9,6 +9,7 @@ import { useDecisionStore } from '@/lib/stores/decisionStore';
 import { useNominationsStore } from '@/lib/stores/nominationsStore';
 import { useReasonStore } from '@/lib/stores/reasonStore';
 import { useBattleStore } from '@/lib/stores/battleStore';
+import { useHabitStore } from '@/lib/stores/habitStore';
 import { theme } from '@/constants/theme';
 import {
   TAB_BAR_PADDING_BOTTOM_BASE,
@@ -44,17 +45,21 @@ export default function TabsLayout() {
     const u2 = useNominationsStore.getState().init(profile.coupleId, profile.uid);
     const u3 = useReasonStore.getState().init(profile.coupleId);
     const u4 = useBattleStore.getState().init(profile.coupleId);
+    const u5 = useHabitStore.getState().init(profile.coupleId);
     return () => {
       u1();
       u2();
       u3();
       u4();
+      u5();
     };
   }, [profile?.coupleId, profile?.uid]);
 
   useEffect(() => {
     if (!profile?.coupleId) return;
-    void ensureWeeklyChallengeRotated(profile.coupleId);
+    void ensureWeeklyChallengeRotated(profile.coupleId).catch((e) =>
+      console.warn('[tabs] ensureWeeklyChallengeRotated', e),
+    );
   }, [profile?.coupleId]);
 
   return (
@@ -83,6 +88,21 @@ export default function TabsLayout() {
           tabBarAccessibilityLabel: 'home tab',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home-outline" size={size - 1} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="mood"
+        listeners={{ tabPress: tabHaptic }}
+        options={{
+          title: 'mood',
+          tabBarAccessibilityLabel: 'mood tab',
+          tabBarIcon: ({ color, focused, size }) => (
+            <Ionicons
+              name="heart-half-outline"
+              size={size - 1}
+              color={focused ? theme.petal : color}
+            />
           ),
         }}
       />
@@ -116,6 +136,21 @@ export default function TabsLayout() {
           tabBarAccessibilityLabel: 'reasons tab',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="heart-outline" size={size - 1} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="habits"
+        listeners={{ tabPress: tabHaptic }}
+        options={{
+          title: 'habits',
+          tabBarAccessibilityLabel: 'habits tab',
+          tabBarIcon: ({ color, focused, size }) => (
+            <Ionicons
+              name="checkbox-outline"
+              size={size - 1}
+              color={focused ? theme.secondary : color}
+            />
           ),
         }}
       />

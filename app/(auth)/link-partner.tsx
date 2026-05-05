@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -14,12 +14,20 @@ import { useAuthStore } from '@/lib/stores/authStore';
 import { Input } from '@/components/shared/Input';
 import { Button } from '@/components/shared/Button';
 import { AUTH_SCREEN_PADDING_TOP } from '@/constants/screenLayout';
+import { repairHalfLinkedProfile } from '@/lib/firestore/users';
 
 export default function LinkPartner() {
   const { profile, linkPartner, signOut, error, clearError } = useAuthStore();
   const [partnerCode, setPartnerCode] = useState('');
   const [linking, setLinking] = useState(false);
   const [tab, setTab] = useState<'share' | 'enter'>('share');
+
+  useEffect(() => {
+    if (!profile?.uid || profile.coupleId) return;
+    void repairHalfLinkedProfile(profile.uid).catch((e) =>
+      console.warn('[link-partner] repair check failed', e),
+    );
+  }, [profile?.uid, profile?.coupleId]);
 
   async function handleShareCode() {
     if (!profile?.inviteCode) return;

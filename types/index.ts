@@ -24,6 +24,56 @@ export interface UserProfile {
   reasonPartnerCountAtLastDraw?: number;
   /** @deprecated Legacy field; prefer `reasonPartnerCountAtLastDraw` (still read for old docs). */
   becausePartnerReasonCountAtLastDraw?: number;
+  /** @deprecated Legacy field; migrated to `moodEntries` collection. Kept for migration read. */
+  moodSticker?: { id: string; emoji: string; label: string; updatedAt: Timestamp } | null;
+  /** @deprecated Migrated to `moodEntries`. */
+  moodUpdateCount?: number;
+  /** Per-feature push notification preferences (null = all enabled). */
+  notificationPreferences?: NotificationPreferences | null;
+}
+
+export interface NotificationPreferences {
+  reasons: boolean;
+  mood: boolean;
+  nominations: boolean;
+  battles: boolean;
+  decisions: boolean;
+}
+
+// ─── Mood Entries ───────────────────────────────────────────────────────────
+
+export type MoodQuadrant =
+  | 'pleasantHigh'
+  | 'pleasantLow'
+  | 'unpleasantHigh'
+  | 'unpleasantLow';
+
+export interface MoodStickerOption {
+  id: string;
+  emoji: string;
+  label: string;
+  quadrant: MoodQuadrant;
+}
+
+export interface MoodTimelinePoint {
+  stickerId: string;
+  emoji: string;
+  label: string;
+  quadrant: MoodQuadrant;
+  at: Timestamp;
+}
+
+export interface MoodEntry {
+  id: string;
+  coupleId: string;
+  uid: string;
+  dayKey: string;
+  weekKey: string;
+  current: MoodTimelinePoint;
+  timeline: MoodTimelinePoint[];
+  changeCount: number;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
 }
 
 // ─── Couple ─────────────────────────────────────────────────────────────────
@@ -31,7 +81,12 @@ export interface UserProfile {
 /** ISO local date key for streak day boundaries, e.g. 2026-04-05 */
 export type DayKeyString = string;
 
-export type WeeklyChallengeKind = 'both_nomination' | 'both_quickspin' | 'both_reason';
+export type WeeklyChallengeKind =
+  | 'both_nomination'
+  | 'both_quickspin'
+  | 'both_reason'
+  | 'both_mood_three_days'
+  | 'both_habit_allday';
 
 export interface CoupleStreaksState {
   decisionStreak: number;
@@ -51,6 +106,18 @@ export interface CoupleWeeklyChallengeState {
   description: string;
   completedBy: string[];
   xpGranted: boolean;
+  /**
+   * For `both_habit_allday`: local day keys (YYYY-MM-DD) in the challenge week where both
+   * partners completed every habit scheduled for them that day.
+   */
+  habitJointDayKeysThisWeek?: string[];
+}
+
+/** Per-user daily completion streak (shared + personal dailies owed that day). */
+export interface CoupleDailyStreakRow {
+  currentStreak: number;
+  longestStreak: number;
+  lastCompletedDayKey: string | null;
 }
 
 export interface Couple {
@@ -68,6 +135,56 @@ export interface Couple {
   /** Optional; merged with defaults when read */
   streaks?: CoupleStreaksState;
   weeklyChallenge?: CoupleWeeklyChallengeState | null;
+  /** Habits v2: 2 after legacy purge. Omitted = not migrated yet. */
+  habitsModelVersion?: number;
+  /** uid → daily streak (shared + personal dailies owed). */
+  dailyStreaks?: Record<string, CoupleDailyStreakRow>;
+  /** Consecutive local days every shared daily was both-done */
+  jointDailyStreak?: number;
+  lastJointDailyDayKey?: string | null;
+  /** Mood: consecutive days both partners logged a mood entry. */
+  bothLoggedDayStreak?: number;
+  lastBothLoggedDayKey?: string | null;
+}
+
+// ─── Habits v2 (partner habits) ───────────────────────────────────────────
+
+export type HabitCadence = 'daily' | 'weekly';
+export type HabitScope = 'shared' | 'personal';
+
+export interface Habit {
+  id: string;
+  coupleId: string;
+  createdBy: string;
+  title: string;
+  emoji: string;
+  cadence: HabitCadence;
+  scope: HabitScope;
+  /** Monday key of first week this weekly habit counts (next week after create). */
+  weeklyStartWeekKey?: string | null;
+  /**
+   * XP idempotency for shared habits (Firestore). Prevents duplicate self/joint grants after
+   * undo + re-check the same calendar day or week. Cleared when the habit is edited.
+   */
+  lastJointDailyBonusDayKey?: string | null;
+  lastSelfDailyXpByUid?: Record<string, string>;
+  lastJointWeeklyBonusWeekKey?: string | null;
+  lastSelfWeeklyXpByUid?: Record<string, string>;
+  createdAt: Timestamp;
+  archived: boolean;
+}
+
+export interface HabitCheckin {
+  id: string;
+  habitId: string;
+  coupleId: string;
+  uid: string;
+  cadence: HabitCadence;
+  /** Present when cadence === 'daily' */
+  dayKey?: string;
+  /** Present when cadence === 'weekly' */
+  weekKey?: string;
+  createdAt: Timestamp;
 }
 
 // ─── Decisions ──────────────────────────────────────────────────────────────

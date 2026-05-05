@@ -95,7 +95,10 @@ export default function CeremonyCalendarScreen() {
         Alert.alert('notifications off', 'flip them on in settings for pre-close nudges');
         return;
       }
-      if (profile?.uid) void registerExpoPushToken(profile.uid);
+      if (profile?.uid)
+        void registerExpoPushToken(profile.uid).catch((e) =>
+          console.warn('[ceremony-calendar] registerExpoPushToken', e),
+        );
       await scheduleCeremonySeasonReminders(ceremony);
       setCeremonyLocalRemindersEnabled(true);
       setCeremonyReminderScheduledForId(ceremony.id);

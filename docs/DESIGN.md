@@ -2,7 +2,24 @@
 
 **Purpose:** Direction for layout, motion, and polish — **not** a second theme system. Colors live in `tailwind.config.js` + `constants/theme.ts` (keep them in sync).
 
-**Related:** [`AGENTS.md`](./AGENTS.md) (stack & conventions), [`APPS_AND_FEATURES.md`](./APPS_AND_FEATURES.md) (product).
+**Related:** [`AGENTS.md`](./AGENTS.md) (stack & conventions), [`APPS_AND_FEATURES.md`](./APPS_AND_FEATURES.md) (product), [`DEVELOPER_GUIDE.md`](./DEVELOPER_GUIDE.md) (where mood/habits components live).
+
+---
+
+## Mood tab — UI conventions (current)
+
+Aligned with **balanced density** + **subtle motion**; avoids heavy “boxed quadrant” cards in favor of **pill** chips and soft shells.
+
+| Pattern | Where |
+|---------|--------|
+| **`rounded-[28px]`** outer shells | `MoodTodayHero`, week strip container, day cards on mood index, `MoodMirrorMoment` |
+| **`rounded-full` pills** | Horizontal quadrant picker (`MoodGrid`), `MoodChip`, habit-adjacent `SectionLabel` usage on mood index |
+| **Floating emoji** | Hero shows large emoji without an inner tray; empty states use dashed **`rounded-full`** + icon |
+| **Week dots** | Circular dots; **today** uses a ring — not square wells |
+| **`cardShadow` / elevation** | Import from [`constants/elevation.ts`](../constants/elevation.ts) for depth consistent with home tiles where applicable |
+| **Home mood row** | `MoodHomeRow` — **no** outer card wrapper; two pressable pill regions + light **`active:opacity-88`** |
+
+**Constants:** sticker definitions + quadrant blurbs live in [`constants/moodStickers.ts`](../constants/moodStickers.ts) (`QuadrantMeta`: `label`, `blurb` — blurbs support a11y hints on the picker).
 
 ---
 

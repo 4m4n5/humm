@@ -131,6 +131,23 @@ export const BADGES: BadgeDefinition[] = [
   ...REASONS_STREAK_DAY_BADGES.map(tierToDef),
   ...REASONS_LINE_COUNT_BADGES.map(tierToDef),
   { id: 'dedicated', name: 'dedicated', description: 'at least 1 reason a month for 3 months', emoji: '💌' },
+
+  // Mood (v2)
+  { id: 'mood_open', name: 'mood open', description: 'logged your first mood', emoji: '🌸' },
+  { id: 'mood_seen', name: 'mood seen', description: 'saw your partner\u2019s mood for the first time', emoji: '👀' },
+  { id: 'mood_duet_3', name: 'mood duet', description: '3 days you both logged a mood', emoji: '🎶' },
+  { id: 'mood_duet_25', name: 'mood marathon', description: '25 days you both logged a mood', emoji: '🏅' },
+  { id: 'mood_twin_first', name: 'mood twin', description: 'first day you both picked the same mood', emoji: '🪞' },
+  { id: 'mood_rainbow_self', name: 'full spectrum', description: 'logged all 4 mood quadrants at least once', emoji: '🌈' },
+
+  // Partner habits
+  { id: 'first_habit', name: 'creature of habit', description: 'created your first habit', emoji: '📌' },
+  { id: 'first_checkin', name: 'day one', description: 'first habit check-in', emoji: '✅' },
+  { id: 'habit_week', name: 'one week strong', description: '7-day personal habit streak', emoji: '🔥' },
+  { id: 'habit_month', name: 'monthly grind', description: '30-day personal habit streak', emoji: '💪' },
+  { id: 'habit_quarter', name: 'unstoppable rhythm', description: '90-day personal habit streak', emoji: '⚡' },
+  { id: 'habit_pair_week', name: "sync'd week", description: '7-day joint habit streak', emoji: '🤝' },
+  { id: 'habit_pair_month', name: "sync'd month", description: '30-day joint daily streak', emoji: '💞' },
 ];
 
 export function getBadge(id: string): BadgeDefinition | undefined {

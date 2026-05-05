@@ -39,11 +39,18 @@ export function subscribeToReasons(
   callback: (items: Reason[]) => void,
 ) {
   const q = query(reasonsCol(), where('coupleId', '==', coupleId));
-  return onSnapshot(q, (snap) => {
-    const items = snap.docs.map((d) => d.data() as Reason);
-    items.sort((a, b) => createdAtMs(b) - createdAtMs(a));
-    callback(items);
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      const items = snap.docs.map((d) => d.data() as Reason);
+      items.sort((a, b) => createdAtMs(b) - createdAtMs(a));
+      callback(items);
+    },
+    (err) => {
+      console.warn('[reasons] subscribeToReasons', err.code, err.message);
+      callback([]);
+    },
+  );
 }
 
 export function reasonsAboutUser(reasons: Reason[], aboutUserId: string): Reason[] {

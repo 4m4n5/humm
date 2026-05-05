@@ -1,0 +1,93 @@
+// MERGE inside:
+//   rules_version = '2';
+//   service cloud.firestore {
+//     match /databases/{database}/documents {
+//       ... signedIn, isCoupleMember ...
+//
+//       >>> paste MOOD HELPERS + moodEntries match below <<<
+//     }
+//   }
+//
+// Why: `onSnapshot` on today's doc runs before the first `setDoc`. For a missing
+// document, `resource` is empty — rules that only check `resource.data.*` deny the
+// listener (“Missing or insufficient permissions”) even when writes would succeed.
+// Same pattern as `habitCheckins`: separate `allow get` (with `!exists`) vs `allow list`.
+//
+// Doc id must match app code: `${coupleId}_${uid}_${dayKey}` with coupleId = uid1_uid2
+// and dayKey = YYYY-MM-DD (hyphens), so splitting on `_` yields exactly 4 parts.
+
+function moodEntryDocIdWellFormed(docId) {
+  let p = docId.split('_');
+  return p.size() == 4 && p[3].matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$');
+}
+
+function moodEntryCoupleIdFromDocId(docId) {
+  let p = docId.split('_');
+  return p[0] + '_' + p[1];
+}
+
+function moodEntryUidFromDocId(docId) {
+  return docId.split('_')[2];
+}
+
+function moodEntryDayKeyFromDocId(docId) {
+  return docId.split('_')[3];
+}
+
+function moodEntryPathAllowedWhenMissing(docId) {
+  return moodEntryDocIdWellFormed(docId)
+    && isCoupleMember(moodEntryCoupleIdFromDocId(docId))
+    && (
+      moodEntryUidFromDocId(docId) == request.auth.uid
+      || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.partnerId
+        == moodEntryUidFromDocId(docId)
+    );
+}
+
+// Collection queries (`where('coupleId')` + `orderBy('dayKey')`) are evaluated with
+// “rules are not filters”: extra constraints tied to `docId` (path vs fields) can make
+// Firestore reject the whole listener if they aren’t guaranteed by the query. Keep
+// `allow list` aligned with `habitCheckins`: couple membership only; enforce path ↔︎
+// fields on `get` / `create` / `update`.
+
+function moodEntryResourceMatchesDocId(docId) {
+  return moodEntryDocIdWellFormed(docId)
+    && resource.data.coupleId == moodEntryCoupleIdFromDocId(docId)
+    && resource.data.uid == moodEntryUidFromDocId(docId)
+    && resource.data.dayKey == moodEntryDayKeyFromDocId(docId)
+    && (!resource.data.keys().hasAny(['id']) || resource.data.id == docId);
+}
+
+match /moodEntries/{docId} {
+  allow list: if signedIn()
+    && resource.data.coupleId is string
+    && isCoupleMember(resource.data.coupleId);
+
+  allow get: if signedIn() && (
+      (
+        !exists(/databases/$(database)/documents/moodEntries/$(docId))
+        && moodEntryPathAllowedWhenMissing(docId)
+      )
+      || (
+        resource.data.coupleId is string
+        && isCoupleMember(resource.data.coupleId)
+        && moodEntryResourceMatchesDocId(docId)
+      )
+    );
+
+  allow create: if signedIn()
+    && moodEntryDocIdWellFormed(docId)
+    && isCoupleMember(moodEntryCoupleIdFromDocId(docId))
+    && request.resource.data.uid == request.auth.uid
+    && request.resource.data.coupleId == moodEntryCoupleIdFromDocId(docId)
+    && request.resource.data.dayKey == moodEntryDayKeyFromDocId(docId)
+    && request.resource.data.id == docId;
+
+  allow update: if signedIn()
+    && moodEntryResourceMatchesDocId(docId)
+    && resource.data.uid == request.auth.uid
+    && request.resource.data.uid == resource.data.uid
+    && request.resource.data.dayKey == resource.data.dayKey;
+
+  allow delete: if false;
+}

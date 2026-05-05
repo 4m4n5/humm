@@ -178,9 +178,7 @@ export default function Awards() {
 
             {total > 0 || periodHint ? (
               <Text className="text-[12px] font-light tabular-nums leading-[18px] text-hum-dim">
-                {total > 0 ? `${total} in the jar` : ''}
-                {total > 0 && periodHint ? ' · ' : ''}
-                {periodHint ?? ''}
+                {`${total > 0 ? `${total} in the jar` : ''}${total > 0 && periodHint ? ' · ' : ''}${periodHint ?? ''}`}
               </Text>
             ) : null}
 

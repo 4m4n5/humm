@@ -5,8 +5,12 @@ import {
   signOut as firebaseSignOut,
   onAuthStateChanged,
   User as FirebaseUser,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  deleteUser,
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import { deleteMyAccountFirestoreData } from '@/lib/firestore/accountDeletion';
 import {
   createUserProfile,
   getUserProfile,
@@ -32,6 +36,7 @@ interface AuthState {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, displayName: string) => Promise<void>;
   signOut: () => Promise<void>;
+  deleteAccount: (password: string) => Promise<void>;
   linkPartner: (code: string) => Promise<void>;
   clearError: () => void;
 }
@@ -45,20 +50,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   error: null,
 
   init: () => {
-    const unsub = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        set({ firebaseUser: user });
-        // Subscribe to real-time profile updates
-        if (profileUnsub) profileUnsub();
-        profileUnsub = subscribeToUserProfile(user.uid, (profile) => {
-          set({ profile, isLoading: false });
-        });
-      } else {
-        if (profileUnsub) {
-          profileUnsub();
-          profileUnsub = null;
+    const unsub = onAuthStateChanged(auth, (user) => {
+      try {
+        if (user) {
+          set({ firebaseUser: user });
+          // Subscribe to real-time profile updates
+          if (profileUnsub) profileUnsub();
+          profileUnsub = subscribeToUserProfile(user.uid, (profile) => {
+            set({ profile, isLoading: false });
+          });
+        } else {
+          if (profileUnsub) {
+            profileUnsub();
+            profileUnsub = null;
+          }
+          set({ firebaseUser: null, profile: null, isLoading: false });
         }
-        set({ firebaseUser: null, profile: null, isLoading: false });
+      } catch (e) {
+        console.warn('[auth] onAuthStateChanged handler', e);
+        set({ isLoading: false });
       }
     });
     return unsub;
@@ -88,6 +98,46 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   signOut: async () => {
     await firebaseSignOut(auth);
+  },
+
+  deleteAccount: async (password: string) => {
+    set({ isLoading: true, error: null });
+    const u = get().firebaseUser;
+    if (!u) {
+      set({ error: 'not signed in', isLoading: false });
+      throw new Error('not signed in');
+    }
+    const email = u.email;
+    if (!email) {
+      set({ error: 'this account has no email on file — contact support', isLoading: false });
+      throw new Error('no email');
+    }
+    try {
+      const cred = EmailAuthProvider.credential(email, password);
+      await reauthenticateWithCredential(u, cred);
+      await deleteMyAccountFirestoreData(u.uid);
+      await deleteUser(u);
+      set({ isLoading: false });
+    } catch (e: unknown) {
+      const code = typeof e === 'object' && e !== null && 'code' in e ? String((e as { code?: string }).code) : '';
+      if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+        set({ error: 'wrong password — try again', isLoading: false });
+      } else if (code === 'auth/network-request-failed') {
+        set({ error: 'network hiccup — check connection', isLoading: false });
+      } else if (code === 'auth/too-many-requests') {
+        set({ error: 'too many tries — wait a bit, then retry', isLoading: false });
+      } else if (code === 'auth/requires-recent-login') {
+        set({ error: 'sign in again, then retry delete', isLoading: false });
+      } else if (code === 'permission-denied') {
+        set({
+          error: 'couldn’t complete delete (server rules) — try again or contact support',
+          isLoading: false,
+        });
+      } else {
+        set({ error: 'couldn’t delete account — try again', isLoading: false });
+      }
+      throw e;
+    }
   },
 
   linkPartner: async (code: string) => {

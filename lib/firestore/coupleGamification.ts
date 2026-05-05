@@ -1,7 +1,7 @@
 import { getDoc, updateDoc } from 'firebase/firestore';
 import type { Couple, CoupleStreaksState, CoupleWeeklyChallengeState, WeeklyChallengeKind } from '@/types';
 import { coupleDoc } from '@/lib/firestore/couples';
-import { localDayKey, localWeekKey, previousLocalDayKey } from '@/lib/dateKeys';
+import { localDayKey, localWeekKey, previousLocalDayKey, weekLocalDayKeysFromMonday } from '@/lib/dateKeys';
 import { pickChallengeForWeek } from '@/constants/challenges';
 import { grantXp, type GrantXpResult } from '@/lib/firestore/gamification';
 import { XP_REWARDS } from '@/constants/levels';
@@ -169,6 +169,45 @@ export async function recordWeeklyChallengeProgress(
   } else {
     await updateDoc(ref, {
       weeklyChallenge: { ...wc, completedBy },
+    });
+  }
+}
+
+/**
+ * When the weekly challenge is `both_habit_allday`, records a local calendar day where **every**
+ * shared **daily** habit was both-done (same semantics as the Habits v2 board). Grants weekly XP
+ * once all seven local days in the challenge week have such a joint-complete day.
+ */
+export async function recordHabitWeeklyChallengeJointDay(
+  coupleId: string,
+  jointDayKey: string,
+): Promise<void> {
+  await ensureWeeklyChallengeRotated(coupleId);
+  const ref = coupleDoc(coupleId);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return;
+  const c = snap.data() as Couple;
+  const wc = c.weeklyChallenge;
+  if (!wc || wc.xpGranted || wc.kind !== 'both_habit_allday') return;
+
+  const weekDays = weekLocalDayKeysFromMonday(wc.weekKey);
+  if (!weekDays.includes(jointDayKey)) return;
+
+  const prev = new Set(wc.habitJointDayKeysThisWeek ?? []);
+  prev.add(jointDayKey);
+  const habitJointDayKeysThisWeek = Array.from(prev).sort();
+
+  const coversFullWeek = weekDays.every((dk) => habitJointDayKeysThisWeek.includes(dk));
+  if (coversFullWeek) {
+    const a = await grantXp(c.user1Id, XP_REWARDS.weekly_challenge_completed);
+    const b = await grantXp(c.user2Id, XP_REWARDS.weekly_challenge_completed);
+    enqueueGamificationToasts([a, b], []);
+    await updateDoc(ref, {
+      weeklyChallenge: { ...wc, habitJointDayKeysThisWeek, xpGranted: true },
+    });
+  } else {
+    await updateDoc(ref, {
+      weeklyChallenge: { ...wc, habitJointDayKeysThisWeek },
     });
   }
 }

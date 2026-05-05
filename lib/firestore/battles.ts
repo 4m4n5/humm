@@ -41,9 +41,16 @@ export function subscribeToBattle(
   id: string,
   callback: (battle: BattleSession | null) => void,
 ) {
-  return onSnapshot(battleDoc(id), (snap) => {
-    callback(snap.exists() ? (snap.data() as BattleSession) : null);
-  });
+  return onSnapshot(
+    battleDoc(id),
+    (snap) => {
+      callback(snap.exists() ? (snap.data() as BattleSession) : null);
+    },
+    (err) => {
+      console.warn('[battles] subscribeToBattle', id, err.code, err.message);
+      callback(null);
+    },
+  );
 }
 
 function normalizeBattleFromSnap(data: BattleSession): BattleSession {

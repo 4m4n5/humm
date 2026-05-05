@@ -1,4 +1,6 @@
-import { query, where, getCountFromServer, getDocs } from 'firebase/firestore';
+import { query, where, getCountFromServer, getDocs, getDoc } from 'firebase/firestore';
+import { userDoc } from '@/lib/firestore/users';
+import { localDayKey } from '@/lib/dateKeys';
 import { isUserAuthoredNomination } from '@/lib/nominationSeeded';
 import { tallyAuthoredNominatorNominee } from '@/lib/nominationStats';
 import { decisionsCol } from '@/lib/firestore/decisions';
@@ -20,7 +22,7 @@ import {
   REASONS_STREAK_DAY_BADGES,
 } from '@/constants/reasonsBadgeTiers';
 import { ALL_DECISIONS_COUPLE_TIERS, QUICKSPIN_COUPLE_TIERS } from '@/constants/decideBadgeTiers';
-import type { Ceremony, Nomination, Reason } from '@/types';
+import type { Ceremony, Nomination, Reason, UserProfile } from '@/types';
 
 function winBadgeIdForCategory(cat: string): string {
   return `won_${cat}`;
@@ -61,9 +63,28 @@ function aggregateCategoryWinsByUid(
   return acc;
 }
 
+/** Writes partner profile badges from one device — needs rules allowing partner `badges` updates. */
+async function mergeBadgesSafe(uid: string, ids: string[]): Promise<string[]> {
+  if (ids.length === 0) return [];
+  try {
+    return await mergeBadges(uid, ids);
+  } catch (e) {
+    const code = typeof e === 'object' && e !== null && 'code' in e ? String((e as { code?: string }).code) : '';
+    if (code === 'permission-denied') {
+      console.warn(
+        '[badges] mergeBadges permission denied — ensure partner can receive `badges` updates (see Firestore users rule):',
+        uid,
+      );
+    } else {
+      console.warn('[badges] mergeBadges failed:', uid, e);
+    }
+    return [];
+  }
+}
+
 async function grantToBoth(uidA: string, uidB: string, badgeIds: string[]): Promise<string[]> {
-  const a = await mergeBadges(uidA, badgeIds);
-  const b = await mergeBadges(uidB, badgeIds);
+  const a = await mergeBadgesSafe(uidA, badgeIds);
+  const b = await mergeBadgesSafe(uidB, badgeIds);
   return [...new Set([...a, ...b])];
 }
 
@@ -348,3 +369,84 @@ export async function evaluateCeremonyCompleteBadges(
 
   return [...new Set(unlocked)];
 }
+
+const HABIT_PERSONAL_STREAK_BADGES: { min: number; id: string }[] = [
+  { min: 7, id: 'habit_week' },
+  { min: 30, id: 'habit_month' },
+  { min: 90, id: 'habit_quarter' },
+];
+
+/** Personal + joint habit streak thresholds (idempotent via mergeBadges / grantToBoth). */
+export async function evaluateHabitStreakBadges(
+  uidA: string,
+  uidB: string,
+  streakA: number,
+  streakB: number,
+  jointStreak: number,
+): Promise<string[]> {
+  const unlocked: string[] = [];
+  const packs: [string, number][] = [
+    [uidA, streakA],
+    [uidB, streakB],
+  ];
+  for (const [uid, s] of packs) {
+    const ids: string[] = [];
+    for (const { min, id } of HABIT_PERSONAL_STREAK_BADGES) {
+      if (s >= min) ids.push(id);
+    }
+    if (ids.length) unlocked.push(...(await mergeBadgesSafe(uid, ids)));
+  }
+  if (jointStreak >= 7) unlocked.push(...(await grantToBoth(uidA, uidB, ['habit_pair_week'])));
+  if (jointStreak >= 30) unlocked.push(...(await grantToBoth(uidA, uidB, ['habit_pair_month'])));
+  return [...new Set(unlocked)];
+}
+
+/**
+ * Mood v2 badges. Evaluates after each mood entry write.
+ */
+export async function evaluateNewMoodBadges(
+  actingUid: string,
+  partnerUid: string | null,
+  isFirstEver: boolean,
+  bothLoggedToday: boolean,
+  bothMatchToday: boolean,
+  actingQuadrants: Set<string>,
+  bothLoggedDayCount: number,
+): Promise<string[]> {
+  const unlocked: string[] = [];
+
+  const authorIds: string[] = [];
+  if (isFirstEver) authorIds.push('mood_open');
+  if (actingQuadrants.size >= 4) authorIds.push('mood_rainbow_self');
+  if (authorIds.length) {
+    unlocked.push(...(await mergeBadges(actingUid, authorIds)));
+  }
+
+  if (!partnerUid) return [...new Set(unlocked)];
+
+  if (bothLoggedToday) {
+    unlocked.push(...(await grantToBoth(actingUid, partnerUid, ['mood_seen'])));
+  }
+  if (bothLoggedDayCount >= 3) {
+    unlocked.push(...(await grantToBoth(actingUid, partnerUid, ['mood_duet_3'])));
+  }
+  if (bothLoggedDayCount >= 25) {
+    unlocked.push(...(await grantToBoth(actingUid, partnerUid, ['mood_duet_25'])));
+  }
+  if (bothMatchToday) {
+    unlocked.push(...(await grantToBoth(actingUid, partnerUid, ['mood_twin_first'])));
+  }
+
+  return [...new Set(unlocked)];
+}
+
+export async function evaluateFirstHabitBadge(actingUid: string, isFirstHabit: boolean): Promise<string[]> {
+  if (!isFirstHabit) return [];
+  return mergeBadges(actingUid, ['first_habit']);
+}
+
+export async function evaluateFirstCheckinBadge(actingUid: string, isFirstCheckin: boolean): Promise<string[]> {
+  if (!isFirstCheckin) return [];
+  return mergeBadges(actingUid, ['first_checkin']);
+}
+

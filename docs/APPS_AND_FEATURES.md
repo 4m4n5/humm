@@ -2,7 +2,7 @@
 
 **Purpose:** One place for **you + agents** to capture what exists, what’s next, and raw ideas. Keep it conversational; use checkboxes and short bullets.
 
-**Related:** Technical detail lives in `[BLUEPRINT.md](../BLUEPRINT.md)`. Agent onboarding: `[AGENTS.md](./AGENTS.md)`. **Award naming (nominate · align · cheer vs `deliberating`):** `[CEREMONY_TERMINOLOGY.md](./CEREMONY_TERMINOLOGY.md)`. **UI / UX notes:** `[DESIGN.md](./DESIGN.md)`.
+**Related:** Technical detail lives in `[BLUEPRINT.md](../BLUEPRINT.md)`. Agent onboarding: `[AGENTS.md](./AGENTS.md)`. Architecture map: `[DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)`. **Award naming (nominate · align · cheer vs `deliberating`):** `[CEREMONY_TERMINOLOGY.md](./CEREMONY_TERMINOLOGY.md)`. **UI / UX notes:** `[DESIGN.md](./DESIGN.md)`.
 
 ---
 
@@ -30,6 +30,9 @@
 - **Awards polish** — three-step phase strip (nominate · align · cheer), haptics on key steps, **+30 XP** on private-picks submit (grant id `deliberation_picks_submitted`), **+200 XP** (+ badges: opening night / full agreement / overtime) on season wrap, celebration overlay after cheer; **+20 XP** when a contested category first locks in resolution
 - **Ceremony calendar** — Awards → **season calendar**: compact **H1/H2** context, **nomination stats** + CTA to the awards hub, **two-phase** bar (nominating vs final **alignment window**, last 14 days before close), milestone rail + optional **local** reminders (alignment window start & ~3d) via `expo-notifications` + `uiPreferencesStore` (`ceremony-calendar.tsx`, `ceremonyCalendar.ts`, `ceremonyReminders.ts`)
 - **Quick spin result haptics** — success haptic when the wheel lands; preference defaults on in `uiPreferencesStore` (persisted locally; no profile toggle)
+- **Mood** — `moodEntries` collection (doc id `${coupleId}_${uid}_${dayKey}`); intraday timeline with cap; **home** `MoodHomeRow` + **mood tab** hero/week strip/history; quadrant meta + horizontal pill picker in `MoodGrid`; **`subscribeToCoupleMoodFeed`** needs composite index + permissive **`allow list`** rules ([`FIRESTORE_MOOD_RULES.md`](./FIRESTORE_MOOD_RULES.md)); Cloud Function **`onMoodEntryWritten`** notifies partner (respects `notificationPreferences.mood`)
+- **Habits** — `habits` + `habitCheckins`; shared vs personal; daily/weekly cadences; couple streak fields (`dailyStreaks`, `jointDailyStreak`, etc.); merge **`firestore.habits.rules`**
+- **Push (server)** — Expo token on `users.fcmToken`; toggles in **profile → notification settings** (`notificationPreferences`); Firebase Functions in `functions/src/` (mood, reasons, nominations, battles, quickspin decisions, weekly challenge completion)
 
 ---
 
@@ -38,7 +41,7 @@
 *Add dates or notes as you like.*
 
 - Gamification follow-ups — tune copy/thresholds; partner-visible XP numbers; `paparazzi` when photos ship; optional **shared** couple XP (currently per-user only)
-- **Push reminders** — server-driven ceremony nudges (Cloud Functions + FCM); local pings shipped above
+- **Push reminders** — broaden coverage (scheduled ceremony nudges vs today’s local-only path); **FCM** naming is legacy — pushes use **Expo Push API** server-side
 - **Collaborative spin** — partner sees live spin or confirms result (nice-to-have)
 - Sound/haptics on spin result (toggle in settings) — shipped for quick spin; broader sound later
 

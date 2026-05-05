@@ -86,7 +86,7 @@ export function SeasonCompleteOverlay(props: {
           className="mt-3 text-center text-[15px] font-light leading-[22px] text-hum-muted"
           maxFontSizeMultiplier={1.35}
         >
-          +{xpEach} xp each · tap through
+          {`+${xpEach} xp each · tap through`}
         </Text>
       </Animated.View>
     </Pressable>

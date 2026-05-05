@@ -167,7 +167,7 @@ export default function Profile() {
                   level {level.level}
                 </Text>
                 <Text className="text-[11px] text-hum-muted">
-                  {profile?.xp ?? 0} / {level.nextLevelXp}
+                  {`${profile?.xp ?? 0} / ${level.nextLevelXp}`}
                 </Text>
               </View>
               <View className="h-1 overflow-hidden rounded-full bg-hum-surface">
@@ -177,10 +177,11 @@ export default function Profile() {
                 />
               </View>
               <Text className="text-[12px] font-light text-hum-dim">
-                {level.nextLevelXp - (profile?.xp ?? 0)} xp until {getLevelForXp(level.nextLevelXp).name}
+                {`${level.nextLevelXp - (profile?.xp ?? 0)} xp until ${getLevelForXp(level.nextLevelXp).name}`}
               </Text>
             </View>
           )}
+
         </Card>
 
         {profile?.partnerId ? (
@@ -213,7 +214,7 @@ export default function Profile() {
                 className="text-[11px] font-light tabular-nums text-hum-muted"
                 maxFontSizeMultiplier={1.25}
               >
-                {profile?.badges?.length} unlocked
+                {`${profile?.badges?.length ?? 0} unlocked`}
               </Text>
             ) : null}
           </View>
@@ -241,7 +242,7 @@ export default function Profile() {
                       className="text-[11px] font-light tabular-nums text-hum-dim"
                       maxFontSizeMultiplier={1.25}
                     >
-                      {(partnerProfile.badges?.length ?? 0)} unlocked
+                      {`${partnerProfile.badges?.length ?? 0} unlocked`}
                     </Text>
                   ) : partnerProfileLoading ? (
                     <Text
@@ -310,6 +311,16 @@ export default function Profile() {
           accessibilityLabel="sign out"
         >
           <Text className="text-[14px] font-medium tracking-wide text-hum-muted">sign out</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="items-center rounded-full border border-red-500/35 py-3.5 active:opacity-88"
+          onPress={() => router.push('/profile/delete-account')}
+          activeOpacity={0.88}
+          accessibilityRole="button"
+          accessibilityLabel="delete account"
+        >
+          <Text className="text-[14px] font-medium tracking-wide text-red-400/90">delete account</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
