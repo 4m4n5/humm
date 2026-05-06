@@ -40,12 +40,12 @@ function MoodRow({
     <View
       className={`h-12 w-12 items-center justify-center rounded-xl border border-dashed ${
         pressable
-          ? 'border-hum-primary/45 bg-hum-primary/[0.06]'
+          ? 'border-hum-bloom/45 bg-hum-bloom/[0.06]'
           : 'border-hum-border/30 bg-hum-bg/40'
       }`}
     >
       {pressable ? (
-        <Ionicons name="add" size={20} color={theme.primary} />
+        <Ionicons name="add" size={20} color={theme.bloom} />
       ) : (
         <Text className="text-[16px] opacity-30" allowFontScaling={false}>
           ✦
@@ -96,7 +96,7 @@ function MoodRow({
         </Text>
       </View>
       <Text
-        className={`text-[11px] font-light leading-[15px] ${pressable ? 'text-hum-primary/75' : 'text-hum-dim/55'}`}
+        className={`text-[11px] font-light leading-[15px] ${pressable ? 'text-hum-bloom/75' : 'text-hum-dim/55'}`}
         numberOfLines={1}
       >
         {pressable ? 'tap to check in' : 'waiting on them'}
@@ -139,7 +139,7 @@ export function MoodTodayHero({
   return (
     <View
       className={`overflow-hidden rounded-[22px] border bg-hum-card ${
-        inSync ? 'border-hum-primary/20' : 'border-hum-secondary/20'
+        inSync ? 'border-hum-bloom/45' : 'border-hum-bloom/30'
       }`}
       style={cardShadow}
     >

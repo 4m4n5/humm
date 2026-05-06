@@ -111,13 +111,13 @@ export function IntradayTrail({ timeline, ownerLabel, compact = false }: Props) 
               <View
                 key={i}
                 className={`flex-row items-center gap-3 rounded-[22px] border bg-hum-card px-3.5 py-3 ${
-                  i === 0 ? 'border-hum-secondary/40' : 'border-hum-border/18'
+                  i === 0 ? 'border-hum-bloom/40' : 'border-hum-border/18'
                 }`}
                 style={i === 0 ? cardShadow : undefined}
               >
                 <View
                   className={`h-10 w-10 items-center justify-center rounded-xl ${
-                    i === 0 ? 'bg-hum-secondary/18' : 'bg-hum-bg/55'
+                    i === 0 ? 'bg-hum-bloom/18' : 'bg-hum-bg/55'
                   }`}
                 >
                   <Text className="text-[20px]" allowFontScaling={false}>

@@ -46,14 +46,24 @@ export function AnimatedNumber({
 
     if (value === toRef.current) return;
 
+    const delta = Math.abs(value - toRef.current);
     fromRef.current = display;
     toRef.current = value;
+
+    // For tiny changes (±1) skip the per-frame tween — the visual payoff is
+    // negligible and the rAF loop contends with particle showers for JS time.
+    if (delta <= 1) {
+      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+      setDisplay(value);
+      return;
+    }
+
     startRef.current = Date.now();
 
     const tick = () => {
       const elapsed = Date.now() - startRef.current;
       const t = Math.min(elapsed / duration, 1);
-      // ease-out cubic — feels alive but settles softly
       const eased = 1 - Math.pow(1 - t, 3);
       const next = Math.round(
         fromRef.current + (toRef.current - fromRef.current) * eased,

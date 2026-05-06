@@ -126,19 +126,19 @@ function cellClasses(cell: Cell): { bg: string; border: string } {
   }
   if (cell.bothAll) {
     return {
-      bg: 'bg-hum-primary/65',
-      border: cell.isToday ? 'border-hum-primary' : 'border-transparent',
+      bg: 'bg-hum-crimson/75',
+      border: cell.isToday ? 'border-hum-crimson' : 'border-transparent',
     };
   }
   let bg: string;
   if (cell.combinedPct === 0) bg = 'bg-hum-surface/20';
-  else if (cell.combinedPct < 0.34) bg = 'bg-hum-secondary/20';
-  else if (cell.combinedPct < 0.67) bg = 'bg-hum-secondary/40';
-  else if (cell.combinedPct < 1) bg = 'bg-hum-secondary/60';
-  else bg = 'bg-hum-secondary/82';
+  else if (cell.combinedPct < 0.34) bg = 'bg-hum-primary/20';
+  else if (cell.combinedPct < 0.67) bg = 'bg-hum-primary/40';
+  else if (cell.combinedPct < 1) bg = 'bg-hum-primary/60';
+  else bg = 'bg-hum-primary/82';
   return {
     bg,
-    border: cell.isToday ? 'border-hum-secondary' : 'border-transparent',
+    border: cell.isToday ? 'border-hum-primary' : 'border-transparent',
   };
 }
 
@@ -219,15 +219,15 @@ export function HabitsAdherenceLog(props: Props) {
               less
             </Text>
             <LegendDot bg="bg-hum-surface/25" />
-            <LegendDot bg="bg-hum-secondary/25" />
-            <LegendDot bg="bg-hum-secondary/45" />
-            <LegendDot bg="bg-hum-secondary/70" />
+            <LegendDot bg="bg-hum-primary/25" />
+            <LegendDot bg="bg-hum-primary/45" />
+            <LegendDot bg="bg-hum-primary/70" />
             <Text className="ml-0.5 text-[9px] font-light text-hum-dim/40" allowFontScaling={false}>
               more
             </Text>
           </View>
           <View className="flex-row items-center gap-x-[2.5px]">
-            <LegendDot bg="bg-hum-primary/65" />
+            <LegendDot bg="bg-hum-crimson/75" />
             <Text className="ml-0.5 text-[9px] font-light text-hum-dim/40" allowFontScaling={false}>
               both done
             </Text>

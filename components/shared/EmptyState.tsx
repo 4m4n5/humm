@@ -4,6 +4,8 @@ import { Button } from '@/components/shared/Button';
 
 type Props = {
   icon?: string;
+  /** Tailwind class for the icon glyph color, e.g. `text-hum-bloom/70`. Defaults to primary tint. */
+  iconClassName?: string;
   title: string;
   description: string;
   primaryAction?: { label: string; onPress: () => void };
@@ -12,7 +14,14 @@ type Props = {
 };
 
 /** Empty list / zero state with optional single CTA. */
-export function EmptyState({ icon, title, description, primaryAction, className }: Props) {
+export function EmptyState({
+  icon,
+  iconClassName,
+  title,
+  description,
+  primaryAction,
+  className,
+}: Props) {
   return (
     <View
       className={`items-center px-6 py-10 ${className ?? ''}`}
@@ -20,8 +29,11 @@ export function EmptyState({ icon, title, description, primaryAction, className 
     >
       {icon ? (
         <Text
-          className="mb-5 text-[44px] font-extralight leading-none text-hum-primary/70"
+          className={`mb-5 text-[44px] font-extralight leading-none ${
+            iconClassName ?? 'text-hum-primary/70'
+          }`}
           maxFontSizeMultiplier={1.3}
+          allowFontScaling={false}
         >
           {icon}
         </Text>

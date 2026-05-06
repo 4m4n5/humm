@@ -33,7 +33,7 @@ export default function PastCeremoniesScreen() {
   if (!profile?.coupleId) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-hum-bg px-8">
-        <Text className="text-center text-hum-muted">link with your person to see past seasons</Text>
+        <Text className="text-center text-[13px] text-hum-muted">link your partner first</Text>
       </SafeAreaView>
     );
   }

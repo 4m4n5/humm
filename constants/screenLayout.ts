@@ -6,10 +6,11 @@ import type { ViewStyle } from 'react-native';
  */
 
 /**
- * Extra top inset below the safe area for `ScreenTitle` / `ScreenHeader` now that eyebrow lines are gone.
- * Keeps the first headline from sitting tight under the status bar (NativeWind: pt-5).
+ * Extra top inset below the safe area for `ScreenTitle` / `ScreenHeader`.
+ * 28pt mirrors the Apple HIG large-title navigation rhythm — enough to
+ * breathe without wasting vertical real estate.
  */
-export const HEADER_BLOCK_PADDING_TOP = 20;
+export const HEADER_BLOCK_PADDING_TOP = 28;
 
 /**
  * Auth sign-in / sign-up / link-partner — top inset below safe area (aligned with header rhythm, slightly more air than tabs).

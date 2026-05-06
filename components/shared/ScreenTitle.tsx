@@ -26,7 +26,7 @@ export function ScreenTitle({ title, titleNumberOfLines }: Props) {
   );
 
   return (
-    <View className="pb-6" style={{ paddingTop: HEADER_BLOCK_PADDING_TOP }}>
+    <View className="pb-7" style={{ paddingTop: HEADER_BLOCK_PADDING_TOP }}>
       {titleIsDevanagari ? (
         <View className="-mb-1.5 pt-1.5">{titleEl}</View>
       ) : (

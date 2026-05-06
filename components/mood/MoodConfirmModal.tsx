@@ -69,7 +69,7 @@ export function MoodConfirmModal({
         <Pressable
           onPress={(e) => e.stopPropagation()}
           accessibilityViewIsModal
-          className="w-full max-w-[360px] overflow-hidden rounded-[28px] border border-hum-secondary/30"
+          className="w-full max-w-[360px] overflow-hidden rounded-[28px] border border-hum-bloom/30"
           style={cardShadow}
         >
           <BlurView
@@ -148,7 +148,7 @@ function StickerPreview({
         } ${
           dim
             ? 'border-hum-border/30 bg-hum-bg/40'
-            : 'border-hum-secondary/40 bg-hum-secondary/18'
+            : 'border-hum-bloom/40 bg-hum-bloom/18'
         }`}
       >
         <Text className={large ? 'text-[36px]' : 'text-[28px]'} allowFontScaling={false}>

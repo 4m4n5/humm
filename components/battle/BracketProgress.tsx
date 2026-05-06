@@ -40,7 +40,7 @@ function PulseDot({ active }: { active: boolean }) {
   return (
     <Animated.View
       style={{ opacity: o }}
-      className="h-2.5 w-2.5 rounded-full bg-hum-primary"
+      className="h-2.5 w-2.5 rounded-full bg-hum-spark"
     />
   );
 }

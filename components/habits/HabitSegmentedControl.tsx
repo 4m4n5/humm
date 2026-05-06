@@ -27,7 +27,7 @@ export function HabitSegmentedControl({ value, onChange }: Props) {
             }}
             accessibilityRole="tab"
             accessibilityState={{ selected: on }}
-            className={`rounded-full px-3.5 py-[7px] ${on ? 'bg-hum-secondary/20' : ''}`}
+            className={`rounded-full px-3.5 py-[7px] ${on ? 'bg-hum-primary/20' : ''}`}
           >
             <Text
               className={`text-[12px] tracking-wide ${

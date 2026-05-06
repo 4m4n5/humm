@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ScreenHeader } from '@/components/shared/ScreenHeader';
+import { Button } from '@/components/shared/Button';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { SeasonStatsInfographic, SeasonTimelinePanels } from '@/components/awards/SeasonCalendarPanels';
 import { useNominationsStore } from '@/lib/stores/nominationsStore';
@@ -187,7 +188,7 @@ export default function CeremonyCalendarScreen() {
                 <View className="mr-3 w-5 items-center">
                   <View
                     className={`h-2.5 w-2.5 rounded-full ${
-                      past ? 'bg-hum-dim/35' : 'border border-hum-primary/35 bg-hum-card'
+                      past ? 'bg-hum-dim/35' : 'border border-hum-gold/35 bg-hum-card'
                     }`}
                   />
                   {!isLast ? <View className="w-px bg-hum-border/20" style={{ height: 24 }} /> : null}
@@ -198,7 +199,7 @@ export default function CeremonyCalendarScreen() {
                       {m.title}
                     </Text>
                     <Text
-                      className={`text-[12px] ${past ? 'text-hum-dim' : 'text-hum-primary'}`}
+                      className={`text-[12px] ${past ? 'text-hum-dim' : 'text-hum-gold'}`}
                       maxFontSizeMultiplier={1.2}
                     >
                       {formatRelativeDay(m.at)}
@@ -231,21 +232,20 @@ export default function CeremonyCalendarScreen() {
               value={ceremonyLocalRemindersEnabled}
               onValueChange={(v) => void onToggleReminders(v)}
               disabled={reminderBusy}
-              trackColor={{ false: '#2E293899', true: `${theme.primary}CC` }}
+              trackColor={{ false: '#2E293899', true: `${theme.gold}CC` }}
               thumbColor={Platform.OS === 'android' ? theme.surface : undefined}
               accessibilityLabel="remind before season closes"
             />
           </View>
         ) : null}
 
-        <TouchableOpacity
+        <Button
+          label="back"
+          variant="ghost"
+          size="md"
           onPress={() => router.back()}
-          accessibilityRole="button"
           accessibilityLabel="back to awards"
-          activeOpacity={0.88}
-        >
-          <Text className="text-center text-[14px] font-medium text-hum-muted">← awards</Text>
-        </TouchableOpacity>
+        />
       </ScrollView>
     </SafeAreaView>
   );

@@ -52,7 +52,7 @@ export default function OverlapScreen() {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-hum-bg px-8">
         <Text className="mb-4 text-center text-[14px] text-hum-muted">after both submit picks</Text>
-        <Button label="back to awards" onPress={() => router.back()} />
+        <Button label="back to awards" onPress={() => router.back()} variant="ghost" size="md" />
       </SafeAreaView>
     );
   }
@@ -155,7 +155,7 @@ export default function OverlapScreen() {
           <Button label="sync split picks" onPress={() => router.push('/awards/resolve')} size="lg" />
         ) : null}
 
-        <Button label="back" onPress={() => router.back()} variant="secondary" size="lg" />
+        <Button label="back" onPress={() => router.back()} variant="ghost" size="md" />
       </ScrollView>
     </SafeAreaView>
   );

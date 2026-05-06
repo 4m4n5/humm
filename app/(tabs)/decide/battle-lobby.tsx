@@ -143,9 +143,8 @@ export default function BattleLobbyScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <Text className="text-[14px] font-light leading-[22px] text-hum-muted" maxFontSizeMultiplier={1.3}>
-          Both of you add ideas to the pool. You need at least four before you can lock in. Remove only
-          what you added.
+        <Text className="text-[13px] font-light leading-[20px] text-hum-muted" maxFontSizeMultiplier={1.3}>
+          both add ideas · four minimum to lock in
         </Text>
 
         <View className="flex-row gap-2">
@@ -153,8 +152,8 @@ export default function BattleLobbyScreen() {
             value={newText}
             onChangeText={setNewText}
             placeholder="add an option…"
-            placeholderTextColor={`${theme.dim}aa`}
-            className="min-h-[52px] flex-1 rounded-[20px] border border-hum-border/18 bg-hum-surface/80 px-4 py-3 text-[16px] text-hum-text"
+            placeholderTextColor={theme.dim}
+            className="min-h-[52px] flex-1 rounded-[18px] border border-hum-border/18 bg-hum-surface/80 px-4 py-3 text-[16px] text-hum-text"
             onSubmitEditing={handleAdd}
             returnKeyType="done"
             maxFontSizeMultiplier={1.35}
@@ -173,9 +172,14 @@ export default function BattleLobbyScreen() {
 
         <View className="gap-y-2">
           {battle.options.length === 0 ? (
-            <Text className="py-6 text-center text-[14px] text-hum-dim" maxFontSizeMultiplier={1.3}>
-              Nothing here yet — drop your first pick.
-            </Text>
+            <View className="items-center rounded-[18px] border border-dashed border-hum-border/18 px-4 py-8">
+              <Text
+                className="text-center text-[14px] font-light text-hum-muted"
+                maxFontSizeMultiplier={1.4}
+              >
+                nothing here yet — drop your first pick.
+              </Text>
+            </View>
           ) : (
             battle.options.map((label) => {
               const who = contributorLabel(battle.optionsByUser ?? {}, label, uid);
@@ -183,7 +187,7 @@ export default function BattleLobbyScreen() {
               return (
                 <View
                   key={label}
-                  className="flex-row items-center justify-between rounded-[20px] border border-hum-border/18 bg-hum-card px-4 py-3.5"
+                  className="flex-row items-center justify-between rounded-[18px] border border-hum-border/18 bg-hum-card px-4 py-3.5"
                 >
                   <View className="flex-1 pr-3">
                     <Text
@@ -245,7 +249,7 @@ export default function BattleLobbyScreen() {
           </Animated.Text>
         ) : null}
 
-        <Button label="back" onPress={() => router.back()} variant="secondary" size="md" />
+        <Button label="back" onPress={() => router.back()} variant="ghost" size="md" />
       </ScrollView>
     </SafeAreaView>
   );

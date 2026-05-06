@@ -196,7 +196,7 @@ export default function NotificationSettingsScreen() {
           partner activity
         </Text>
         <View
-          className="overflow-hidden rounded-[20px] border border-hum-border/18 bg-hum-card"
+          className="overflow-hidden rounded-[22px] border border-hum-border/18 bg-hum-card"
           style={cardShadow}
         >
           {ACTIVITY_ORDER.map((key, idx) => {
@@ -217,7 +217,7 @@ export default function NotificationSettingsScreen() {
                 <Switch
                   value={activity[key]}
                   onValueChange={() => toggleActivity(key)}
-                  trackColor={{ false: theme.border, true: theme.secondary }}
+                  trackColor={{ false: theme.border, true: theme.primary }}
                   disabled={saving}
                 />
               </View>
@@ -230,7 +230,7 @@ export default function NotificationSettingsScreen() {
           daily reminders
         </Text>
         <View
-          className="overflow-hidden rounded-[20px] border border-hum-border/18 bg-hum-card"
+          className="overflow-hidden rounded-[22px] border border-hum-border/18 bg-hum-card"
           style={cardShadow}
         >
           <ReminderRow
@@ -296,7 +296,7 @@ function ReminderRow(props: {
         <Switch
           value={props.cfg.enabled && !props.disabled}
           onValueChange={props.onToggle}
-          trackColor={{ false: theme.border, true: theme.secondary }}
+          trackColor={{ false: theme.border, true: theme.primary }}
           disabled={props.disabled}
         />
       </View>
@@ -307,7 +307,7 @@ function ReminderRow(props: {
           accessibilityLabel={`change ${props.label} time, currently ${formatTimeForDisplay(
             props.cfg.localTime,
           )}`}
-          className="mt-3 flex-row items-center justify-between rounded-[12px] border border-hum-secondary/20 bg-hum-bg px-3 py-2.5 active:opacity-70"
+          className="mt-3 flex-row items-center justify-between rounded-[12px] border border-hum-primary/20 bg-hum-bg px-3 py-2.5 active:opacity-70"
         >
           <Text className="text-[12.5px] font-light text-hum-muted">at</Text>
           <Text className="text-[14px] font-medium tabular-nums text-hum-text">
@@ -365,20 +365,20 @@ function TimePickerModal(props: {
                   accessibilityRole="button"
                   accessibilityState={{ selected }}
                   className={`flex-row items-center justify-between rounded-[10px] px-3 py-3 ${
-                    selected ? 'bg-hum-secondary/10' : ''
+                    selected ? 'bg-hum-primary/10' : ''
                   }`}
                 >
                   <Text
                     className={`text-[15px] tabular-nums ${
                       selected
-                        ? 'font-semibold text-hum-secondary'
+                        ? 'font-semibold text-hum-primary'
                         : 'font-light text-hum-text'
                     }`}
                   >
                     {formatTimeForDisplay(slot)}
                   </Text>
                   {selected ? (
-                    <Text className="text-[11px] font-medium text-hum-secondary">selected</Text>
+                    <Text className="text-[11px] font-medium text-hum-primary">selected</Text>
                   ) : null}
                 </Pressable>
               );

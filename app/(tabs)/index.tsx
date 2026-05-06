@@ -8,16 +8,15 @@ import { usePartnerName } from '@/lib/usePartnerName';
 import { useMoodStore } from '@/lib/stores/moodStore';
 import { MoodHomeRow } from '@/components/mood/MoodHomeRow';
 import { ScreenTitle } from '@/components/shared/ScreenTitle';
-import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { theme } from '@/constants/theme';
 import { cardShadow } from '@/constants/elevation';
+import { scrollContentStandard } from '@/constants/screenLayout';
 
 type FeatureTile = {
   key: string;
   icon: React.ComponentProps<typeof Ionicons>['name'];
   iconColor: string;
   title: string;
-  blurb: string;
   href: Href;
   a11y: string;
   borderClass: string;
@@ -34,46 +33,42 @@ const MAIN_TILES: FeatureTile[] = [
   {
     key: 'decide',
     icon: 'sparkles-outline',
-    iconColor: theme.primary,
+    iconColor: theme.spark,
     title: 'decide',
-    blurb: 'spin or battle',
     href: '/decide',
-    a11y: 'decide — quick spin or battle mode',
-    borderClass: 'border-hum-primary/20',
-    iconBgClass: 'bg-hum-primary/12',
+    a11y: 'decide',
+    borderClass: 'border-hum-spark/35',
+    iconBgClass: 'bg-hum-spark/14',
   },
   {
     key: 'habits',
     icon: 'checkbox-outline',
-    iconColor: theme.secondary,
+    iconColor: theme.sage,
     title: 'habits',
-    blurb: 'small wins, same rhythm',
     href: '/habits',
-    a11y: 'habits — daily and weekly check-ins',
-    borderClass: 'border-hum-secondary/20',
-    iconBgClass: 'bg-hum-secondary/12',
+    a11y: 'habits',
+    borderClass: 'border-hum-sage/35',
+    iconBgClass: 'bg-hum-sage/14',
   },
   {
     key: 'reasons',
     icon: 'heart-outline',
-    iconColor: theme.petal,
+    iconColor: theme.crimson,
     title: 'reasons',
-    blurb: 'write one, read three',
     href: '/reasons',
-    a11y: 'reasons — write one, read three',
-    borderClass: 'border-hum-petal/20',
-    iconBgClass: 'bg-hum-petal/12',
+    a11y: 'reasons',
+    borderClass: 'border-hum-crimson/35',
+    iconBgClass: 'bg-hum-crimson/14',
   },
   {
     key: 'awards',
     icon: 'trophy-outline',
     iconColor: theme.gold,
     title: 'awards',
-    blurb: 'nominate, align, cheer',
     href: '/awards',
-    a11y: 'awards — nominate, align, cheer',
-    borderClass: 'border-hum-gold/20',
-    iconBgClass: 'bg-hum-gold/12',
+    a11y: 'awards',
+    borderClass: 'border-hum-gold/35',
+    iconBgClass: 'bg-hum-gold/14',
   },
 ];
 
@@ -90,32 +85,24 @@ function TileGrid() {
           {pair.map((t) => (
             <TouchableOpacity
               key={t.key}
-              className={`min-h-[152px] flex-1 justify-between gap-y-3 rounded-[24px] border bg-hum-card p-4 active:opacity-88 ${t.borderClass}`}
+              className={`h-[140px] flex-1 justify-between rounded-[22px] border bg-hum-card p-5 active:opacity-90 ${t.borderClass}`}
               style={cardShadow}
               onPress={() => router.push(t.href)}
-              activeOpacity={0.88}
+              activeOpacity={0.9}
               accessibilityRole="button"
               accessibilityLabel={t.a11y}
             >
               <View
-                className={`h-11 w-11 items-center justify-center rounded-2xl ${t.iconBgClass}`}
+                className={`h-12 w-12 items-center justify-center rounded-2xl ${t.iconBgClass}`}
               >
-                <Ionicons name={t.icon} size={20} color={t.iconColor} />
+                <Ionicons name={t.icon} size={22} color={t.iconColor} />
               </View>
-              <View className="min-w-0 flex-1 gap-y-1">
-                <Text
-                  className="text-[15px] font-medium leading-[20px] tracking-tight text-hum-text"
-                  maxFontSizeMultiplier={1.3}
-                >
-                  {t.title}
-                </Text>
-                <Text
-                  className="text-[12px] font-light leading-[18px] text-hum-muted"
-                  maxFontSizeMultiplier={1.35}
-                >
-                  {t.blurb}
-                </Text>
-              </View>
+              <Text
+                className="text-[17px] font-medium leading-[22px] tracking-[-0.01em] text-hum-text"
+                maxFontSizeMultiplier={1.3}
+              >
+                {t.title}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -138,10 +125,9 @@ export default function Home() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <AmbientGlow tone="petal" />
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 4, paddingBottom: 36 }}
+        contentContainerStyle={scrollContentStandard}
         showsVerticalScrollIndicator={false}
       >
         <ScreenTitle
@@ -152,23 +138,23 @@ export default function Home() {
         {partnerLinked && (
           <Pressable
             onPress={() => router.push('/mood')}
-            className="mt-5 gap-y-4 rounded-[22px] bg-hum-card px-5 py-5 active:opacity-88"
-            style={[cardShadow, { borderWidth: 1, borderColor: 'rgba(212,160,160,0.15)' }]}
+            className="gap-y-4 rounded-[22px] border border-hum-bloom/35 bg-hum-card px-5 py-5 active:opacity-88"
+            style={cardShadow}
             accessibilityRole="button"
             accessibilityLabel="open mood"
             accessibilityHint="see history and check-ins"
           >
             <View className="flex-row items-center gap-x-3">
-              <View className="h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-hum-petal/12">
-                <Ionicons name="heart-half-outline" size={20} color={theme.petal} />
+              <View className="h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-hum-bloom/14">
+                <Ionicons name="heart-half-outline" size={22} color={theme.bloom} />
               </View>
               <Text
-                className="min-w-0 flex-1 text-[14px] font-medium leading-[18px] tracking-tight text-hum-text"
-                maxFontSizeMultiplier={1.25}
+                className="min-w-0 flex-1 text-[17px] font-medium leading-[22px] tracking-[-0.01em] text-hum-text"
+                maxFontSizeMultiplier={1.3}
               >
                 mood
               </Text>
-              <Ionicons name="chevron-forward" size={16} color={theme.dim} style={{ opacity: 0.55 }} />
+              <Ionicons name="chevron-forward" size={16} color={theme.dim} style={{ opacity: 0.5 }} />
             </View>
             <MoodHomeRow
               myEntry={myToday}
@@ -179,24 +165,22 @@ export default function Home() {
           </Pressable>
         )}
 
-        <View className="mt-5">
-          <TileGrid />
-        </View>
+        <TileGrid />
 
         <Pressable
           onPress={() => router.push('/profile')}
-          className="mt-5 flex-row items-center gap-x-3 rounded-[22px] border border-hum-border/18 bg-hum-card px-5 py-4 active:opacity-88"
+          className="flex-row items-center gap-x-3 rounded-[22px] border border-hum-primary/35 bg-hum-card px-5 py-4 active:opacity-88"
           style={cardShadow}
           accessibilityRole="button"
           accessibilityLabel="profile and settings"
           accessibilityHint="xp, badges, and relationship cred"
         >
-          <View className="h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-hum-primary/10">
-            <Ionicons name="person-outline" size={20} color={theme.primary} />
+          <View className="h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-hum-primary/14">
+            <Ionicons name="person-outline" size={22} color={theme.primary} />
           </View>
           <Text
-            className="min-w-0 flex-1 text-[14px] font-medium leading-[18px] tracking-tight text-hum-text"
-            maxFontSizeMultiplier={1.25}
+            className="min-w-0 flex-1 text-[17px] font-medium leading-[22px] tracking-[-0.01em] text-hum-text"
+            maxFontSizeMultiplier={1.3}
           >
             you
           </Text>
@@ -204,7 +188,7 @@ export default function Home() {
             name="chevron-forward"
             size={16}
             color={theme.dim}
-            style={{ opacity: 0.55 }}
+            style={{ opacity: 0.5 }}
           />
         </Pressable>
       </ScrollView>

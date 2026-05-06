@@ -48,7 +48,7 @@ export function MoodChip({
       <View
         className={`flex-1 flex-row items-center justify-center rounded-full ${s.px} ${s.py} ${s.gap} ${
           embedded
-            ? 'border border-dashed border-hum-petal/28 bg-hum-petal/[0.04]'
+            ? 'border border-dashed border-hum-bloom/28 bg-hum-bloom/[0.04]'
             : 'border border-dashed border-hum-border/28 bg-hum-surface/20'
         } ${className ?? ''}`}
         accessibilityRole="text"
@@ -72,8 +72,8 @@ export function MoodChip({
     <View
       className={`flex-1 flex-row items-center justify-center rounded-full ${s.px} ${s.py} ${s.gap} ${
         embedded
-          ? 'bg-hum-petal/[0.12]'
-          : 'border border-hum-petal/20 bg-hum-card/90'
+          ? 'bg-hum-bloom/[0.12]'
+          : 'border border-hum-bloom/20 bg-hum-card/90'
       } ${className ?? ''}`}
       accessibilityRole="text"
       accessibilityLabel={`${ownerLabel}: ${entry.current.label}`}

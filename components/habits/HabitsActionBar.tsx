@@ -17,7 +17,10 @@ type Props = {
 };
 
 function AnimatedProgressBar({ pct, allDone }: { pct: number; allDone: boolean }) {
-  const width = useRef(new Animated.Value(pct)).current;
+  // Use scaleX + native driver so the progress bar never competes with the
+  // emoji shower for JS-thread time. The bar is full-width but scaled
+  // horizontally from the left edge (transformOrigin left).
+  const scale = useRef(new Animated.Value(pct)).current;
   const glow = useRef(new Animated.Value(0)).current;
   const prevPct = useRef(pct);
 
@@ -25,11 +28,11 @@ function AnimatedProgressBar({ pct, allDone }: { pct: number; allDone: boolean }
     const growing = pct > prevPct.current;
     prevPct.current = pct;
 
-    Animated.spring(width, {
-      toValue: pct,
+    Animated.spring(scale, {
+      toValue: Math.max(pct, 0.001),
       friction: 8,
       tension: 60,
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start();
 
     if (growing && pct > 0) {
@@ -37,7 +40,7 @@ function AnimatedProgressBar({ pct, allDone }: { pct: number; allDone: boolean }
       Animated.timing(glow, {
         toValue: 0,
         duration: 800,
-        useNativeDriver: false,
+        useNativeDriver: true,
       }).start();
 
       if (allDone) {
@@ -46,37 +49,28 @@ function AnimatedProgressBar({ pct, allDone }: { pct: number; allDone: boolean }
         void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       }
     }
-  }, [pct, allDone, width, glow]);
-
-  const barColor = width.interpolate({
-    inputRange: [0, 1],
-    outputRange: [theme.secondary + 'D9', theme.secondary],
-    extrapolate: 'clamp',
-  });
-
-  const glowOpacity = glow.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 0.35],
-  });
+  }, [pct, allDone, scale, glow]);
 
   return (
     <View className="relative h-[6px] flex-1 overflow-hidden rounded-full bg-hum-border/30">
       <Animated.View
-        className="absolute inset-y-0 left-0 rounded-full"
+        className="absolute inset-y-0 left-0 right-0 rounded-full"
         style={{
-          width: width.interpolate({
-            inputRange: [0, 1],
-            outputRange: ['0%', '100%'],
-          }),
-          backgroundColor: barColor,
+          backgroundColor: theme.primary,
+          transform: [{ scaleX: scale }],
+          // Scale from the left edge so 0 → 1 fills left-to-right.
+          transformOrigin: 'left center',
         }}
       />
       <Animated.View
         pointerEvents="none"
         className="absolute inset-0 rounded-full"
         style={{
-          backgroundColor: theme.secondary,
-          opacity: glowOpacity,
+          backgroundColor: theme.primary,
+          opacity: glow.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 0.35],
+          }),
         }}
       />
     </View>
@@ -107,13 +101,13 @@ export function HabitsActionBar({
               value={doneCount}
               duration={420}
               className={`text-[11px] font-medium tabular-nums ${
-                allDone ? 'text-hum-secondary' : 'text-hum-dim'
+                allDone ? 'text-hum-primary' : 'text-hum-dim'
               }`}
               allowFontScaling={false}
             />
             <Text
               className={`text-[11px] font-medium tabular-nums ${
-                allDone ? 'text-hum-secondary' : 'text-hum-dim'
+                allDone ? 'text-hum-primary' : 'text-hum-dim'
               }`}
               allowFontScaling={false}
             >
@@ -126,7 +120,7 @@ export function HabitsActionBar({
       )}
 
       {jointStreak > 0 ? (
-        <View className="flex-row items-center gap-1 rounded-full border border-hum-secondary/20 bg-hum-secondary/10 px-2.5 py-1">
+        <View className="flex-row items-center gap-1 rounded-full border border-hum-primary/20 bg-hum-primary/10 px-2.5 py-1">
           <Text className="text-[12px]" allowFontScaling={false}>
             🔥
           </Text>
@@ -145,7 +139,7 @@ export function HabitsActionBar({
         hitSlop={10}
         className="h-9 w-9 items-center justify-center rounded-full border border-hum-border/18 bg-hum-card/60"
       >
-        <Ionicons name="add" size={20} color={theme.secondary} />
+        <Ionicons name="add" size={20} color={theme.primary} />
       </Pressable>
     </View>
   );

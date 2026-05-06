@@ -265,7 +265,7 @@ export default function QuickSpin() {
                 className={`flex-row items-center gap-x-2 rounded-full border px-5 py-2.5 ${
                   category === cat.id
                     ? 'border-hum-primary/25 bg-hum-primary'
-                    : 'border-hum-border/18 bg-hum-card/80'
+                    : 'border-hum-border/18 bg-hum-card/70'
                 }`}
                 accessibilityRole="button"
                 accessibilityLabel={`category ${cat.label}`}
@@ -273,7 +273,7 @@ export default function QuickSpin() {
               >
                 <Text className="text-base">{cat.emoji}</Text>
                 <Text
-                  className={`text-[14px] font-medium tracking-wide ${
+                  className={`text-[13px] font-medium tracking-wide ${
                     category === cat.id ? 'text-hum-ink' : 'text-hum-muted'
                   }`}
                   numberOfLines={1}
@@ -297,27 +297,28 @@ export default function QuickSpin() {
             <Text
               className="mt-1 text-[12px] font-light text-hum-muted"
               maxFontSizeMultiplier={1.35}
+              numberOfLines={1}
             >
-              veto used — one more spin from what’s left.
+              veto used · one more spin
             </Text>
           ) : null}
         </View>
 
         <View className="gap-y-5">
         {/* Spin area */}
-        <View className="min-h-[220px] items-center justify-center gap-y-6 rounded-[24px] border border-hum-border/18 bg-hum-card p-10">
+        <View className="min-h-[220px] items-center justify-center gap-y-6 rounded-[22px] border border-hum-border/18 bg-hum-card p-10">
           {spinState === 'idle' && (
             <>
               <Text className="text-5xl opacity-90">{currentCat.emoji}</Text>
               <Text className="px-4 text-center text-[14px] font-light leading-5 text-hum-muted">
                 {availableOptions.length === 0
-                  ? 'add a few options below, then spin when you’re ready'
-                  : `${availableOptions.length} option${availableOptions.length !== 1 ? 's' : ''} ready when you are`}
+                  ? 'add options below · then spin'
+                  : `${availableOptions.length} option${availableOptions.length !== 1 ? 's' : ''} · ready to spin`}
               </Text>
               {vetoUsed && (
                 <View className="rounded-full border border-hum-border/18 bg-hum-surface/50 px-5 py-2">
                   <Text className="text-center text-[12px] font-light text-hum-muted">
-                    one veto used — spin again from what’s left
+                    veto used · spin again
                   </Text>
                 </View>
               )}
@@ -341,7 +342,7 @@ export default function QuickSpin() {
               eyebrow="perhaps"
               label={result}
               resultAnim={resultAnim}
-              footnote={`tap “let’s do it!” to save this pick\nor use your veto once for another spin`}
+              footnote={vetoUsed ? 'tap save · this is the pick' : 'tap save · or veto once'}
             />
           )}
         </View>
@@ -394,10 +395,10 @@ export default function QuickSpin() {
               <Ionicons
                 name={showAddInput ? 'close' : 'add'}
                 size={18}
-                color={theme.primary}
+                color={theme.spark}
               />
               <Text
-                className="text-xs font-medium tracking-wide text-hum-primary"
+                className="text-xs font-medium tracking-wide text-hum-spark"
                 numberOfLines={1}
               >
                 {showAddInput ? 'close' : 'add'}
@@ -408,8 +409,8 @@ export default function QuickSpin() {
           {showAddInput && (
             <View className="flex-row gap-3">
               <TextInput
-                className="flex-1 rounded-[20px] border border-hum-border/18 bg-hum-surface/80 px-4 py-3.5 text-[16px] text-hum-text"
-                placeholder="something you’d both say yes to…"
+                className="flex-1 rounded-[18px] border border-hum-border/18 bg-hum-surface/80 px-4 py-3.5 text-[16px] text-hum-text"
+                placeholder="add an option…"
                 placeholderTextColor={theme.dim}
                 value={newOptionText}
                 onChangeText={setNewOptionText}
@@ -429,14 +430,15 @@ export default function QuickSpin() {
           )}
 
           {categoryOptions.length === 0 ? (
-            <View className="items-center gap-4 rounded-[20px] border border-dashed border-hum-border/18 py-8 px-4">
+            <View className="items-center gap-4 rounded-[18px] border border-dashed border-hum-border/18 py-8 px-4">
               <Text
                 className="text-center text-[14px] font-light text-hum-muted"
                 maxFontSizeMultiplier={1.4}
+                numberOfLines={1}
               >
-                empty list — toss in what you’re choosing between.
+                empty list · add a few
               </Text>
-              <Button label="add your first option" onPress={() => setShowAddInput(true)} size="md" />
+              <Button label="add first option" onPress={() => setShowAddInput(true)} size="md" />
             </View>
           ) : (
             categoryOptions.map((opt) => {
@@ -444,7 +446,7 @@ export default function QuickSpin() {
               return (
                 <View
                   key={opt.id}
-                  className={`flex-row items-center gap-x-3 rounded-[20px] border border-hum-border/18 bg-hum-card px-4 py-3.5 ${isVetoed ? 'opacity-35' : ''}`}
+                  className={`flex-row items-center gap-x-3 rounded-[18px] border border-hum-border/18 bg-hum-card px-4 py-3.5 ${isVetoed ? 'opacity-35' : ''}`}
                 >
                   <Text className="flex-1 text-[15px] font-light text-hum-text" numberOfLines={1}>
                     {opt.label}

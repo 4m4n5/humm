@@ -68,12 +68,12 @@ function StickerPill({
       accessibilityState={{ selected, busy: saving, disabled: interactionLocked }}
       className={`flex-row items-center gap-2 rounded-full border px-3.5 py-2.5 ${
         selected
-          ? 'border-hum-secondary/45 bg-hum-secondary/18'
+          ? 'border-hum-bloom/45 bg-hum-bloom/18'
           : 'border-hum-border/18 bg-hum-card'
       } ${showGloballyDimmed ? 'opacity-40' : ''}`}
     >
       {saving ? (
-        <ActivityIndicator size="small" color={theme.secondary} />
+        <ActivityIndicator size="small" color={theme.bloom} />
       ) : (
         <Animated.View style={{ transform: [{ scale: bloom }] }}>
           <Text className="text-[18px] leading-[20px]" allowFontScaling={false}>

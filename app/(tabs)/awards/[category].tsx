@@ -95,7 +95,7 @@ export default function AwardCategoryScreen() {
               >
                 <View className="min-w-0 flex-1 gap-y-2">
                   <View className="flex-row flex-wrap items-center gap-x-2 gap-y-1">
-                    <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-primary">
+                    <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-gold">
                       {nomineeShortLabel(n.nomineeId, profile, couple, partnerName)}
                     </Text>
                     <Text className="text-hum-dim text-xs">·</Text>
@@ -120,7 +120,7 @@ export default function AwardCategoryScreen() {
                     accessibilityRole="button"
                     accessibilityLabel={`edit nomination ${n.title}`}
                   >
-                    <Text className="text-[12px] font-semibold text-hum-primary">edit</Text>
+                    <Text className="text-[12px] font-semibold text-hum-gold">edit</Text>
                   </TouchableOpacity>
                 ) : null}
               </View>

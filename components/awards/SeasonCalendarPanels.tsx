@@ -139,7 +139,7 @@ export function CategoryNominationChart(props: {
                     style={{
                       width: `${w}%`,
                       minWidth: n > 0 ? 6 : 0,
-                      backgroundColor: hot ? theme.secondary : theme.primary,
+                      backgroundColor: hot ? theme.secondary : theme.gold,
                       opacity: n === 0 ? 0.12 : 0.72,
                     }}
                   />
@@ -229,7 +229,7 @@ export function PartnerNominationSplit(props: {
       {total > 0 ? (
         <View className="mt-3 h-[5px] w-full flex-row overflow-hidden rounded-full" style={{ backgroundColor: `${theme.border}44` }}>
           {props.mine > 0 ? (
-            <View style={{ width: `${(props.mine / total) * 100}%`, backgroundColor: theme.primary, minWidth: 4 }} />
+            <View style={{ width: `${(props.mine / total) * 100}%`, backgroundColor: theme.gold, minWidth: 4 }} />
           ) : null}
           {props.partner > 0 ? (
             <View style={{ width: `${(props.partner / total) * 100}%`, backgroundColor: theme.secondary, minWidth: 4 }} />

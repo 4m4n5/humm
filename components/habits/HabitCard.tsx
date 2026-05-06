@@ -88,14 +88,14 @@ function ParticipantPill({
       accessibilityLabel={`${label}${checked ? ' done' : ' not done'}`}
       className={`flex-1 flex-row items-center gap-2.5 rounded-[16px] border px-3 py-2.5 ${
         checked
-          ? 'border-hum-secondary/35 bg-hum-secondary/10'
+          ? 'border-hum-primary/35 bg-hum-primary/10'
           : 'border-hum-border/18 bg-hum-bg/30'
       }`}
     >
       <Animated.View
         className={`h-[26px] w-[26px] items-center justify-center rounded-full ${
           checked
-            ? 'bg-hum-secondary/45'
+            ? 'bg-hum-primary/45'
             : 'border border-hum-border/25 bg-hum-card/50'
         }`}
         style={{ transform: [{ scale }] }}
@@ -195,13 +195,13 @@ function AnimatedEmojiTile({ emoji, completed, bothJustCompleted }: {
           right: -4,
           bottom: -4,
           borderRadius: 16,
-          backgroundColor: theme.secondary,
+          backgroundColor: theme.primary,
           opacity: Animated.multiply(glow, new Animated.Value(0.25)),
         }}
       />
       <Animated.View
         className={`h-10 w-10 items-center justify-center rounded-xl ${
-          completed ? 'bg-hum-secondary/18' : 'bg-hum-bg/55'
+          completed ? 'bg-hum-primary/18' : 'bg-hum-bg/55'
         }`}
         style={{ transform: [{ scale: bounce }] }}
       >
@@ -243,7 +243,7 @@ function BloomingCheck({ checked }: { checked: boolean }) {
     <Animated.View
       className={`h-[30px] w-[30px] items-center justify-center rounded-full ${
         checked
-          ? 'bg-hum-secondary/45'
+          ? 'bg-hum-primary/45'
           : 'border-[1.5px] border-hum-border/25 bg-hum-bg/35'
       }`}
       style={{ transform: [{ scale }] }}
@@ -325,9 +325,9 @@ export function HabitCard({
 
   const cardBaseClass = `overflow-hidden rounded-[22px] border ${
     both
-      ? 'border-hum-secondary/45 bg-hum-card'
+      ? 'border-hum-primary/45 bg-hum-card'
       : completed
-        ? 'border-hum-secondary/30 bg-hum-card'
+        ? 'border-hum-primary/30 bg-hum-card'
         : 'border-hum-border/18 bg-hum-card'
   } ${inactive ? 'opacity-55' : ''}`;
 

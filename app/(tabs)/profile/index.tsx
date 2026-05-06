@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Alert, TextInput } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Alert, TextInput, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { getLevelForXp } from '@/constants/levels';
 import { Card } from '@/components/shared/Card';
+import { Button } from '@/components/shared/Button';
 import { theme } from '@/constants/theme';
+import { cardShadow } from '@/constants/elevation';
 import { updateUserProfile, subscribeToUserProfile } from '@/lib/firestore/users';
 import { ScreenTitle } from '@/components/shared/ScreenTitle';
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber';
@@ -73,7 +75,7 @@ export default function Profile() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <AmbientGlow tone="petal" />
+      <AmbientGlow tone="primary" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}
@@ -84,9 +86,9 @@ export default function Profile() {
 
         <Card className="gap-y-5">
           <View className="flex-row items-center gap-x-4">
-            <View className="h-16 w-16 items-center justify-center rounded-full border border-hum-petal/20 bg-hum-petal/8">
+            <View className="h-16 w-16 items-center justify-center rounded-full border border-hum-primary/20 bg-hum-primary/8">
               <Text
-                className="text-[22px] font-light text-hum-petal"
+                className="text-[22px] font-light text-hum-primary"
                 maxFontSizeMultiplier={1.2}
               >
                 {profile?.displayName?.[0]?.toUpperCase() ?? '?'}
@@ -116,7 +118,10 @@ export default function Profile() {
                     }}
                     placeholderTextColor={theme.dim}
                   />
-                  <TouchableOpacity
+                  <Button
+                    label="save"
+                    variant="primary"
+                    size="sm"
                     onPress={async () => {
                       const trimmed = nameDraft.trim();
                       if (!trimmed || !profile) return;
@@ -127,13 +132,8 @@ export default function Profile() {
                         Alert.alert('couldn’t save', 'check connection, try again');
                       }
                     }}
-                    accessibilityRole="button"
                     accessibilityLabel="Save display name"
-                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                    activeOpacity={0.88}
-                  >
-                    <Text className="text-[14px] font-semibold text-hum-primary">save</Text>
-                  </TouchableOpacity>
+                  />
                 </View>
               ) : (
                 <TouchableOpacity
@@ -292,7 +292,7 @@ export default function Profile() {
               className="text-center text-[13px] font-light text-hum-muted"
               maxFontSizeMultiplier={1.35}
             >
-              peek at a few you haven’t earned yet
+              peek at a few locked
             </Text>
           </TouchableOpacity>
         </View>
@@ -306,30 +306,51 @@ export default function Profile() {
               {profile.inviteCode}
             </Text>
             <Text className="text-[13px] font-light leading-5 text-hum-muted">
-              the phrase that links your accounts — share it once, in private.
+              share once · in private
             </Text>
           </Card>
         ) : null}
 
-        <TouchableOpacity
-          className="items-center rounded-full border border-hum-border/18 bg-hum-card/55 py-3.5 active:opacity-88"
-          onPress={handleSignOut}
-          activeOpacity={0.88}
-          accessibilityRole="button"
-          accessibilityLabel="sign out"
-        >
-          <Text className="text-[14px] font-medium tracking-wide text-hum-muted">sign out</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          className="items-center rounded-full border border-red-900/30 bg-red-950/12 py-3.5 active:opacity-88"
-          onPress={() => router.push('/profile/delete-account')}
-          activeOpacity={0.88}
-          accessibilityRole="button"
-          accessibilityLabel="delete account"
-        >
-          <Text className="text-[14px] font-medium tracking-wide text-red-400/80">delete account</Text>
-        </TouchableOpacity>
+        <View className="gap-y-3">
+          <Pressable
+            onPress={() => router.push('/profile/notification-settings')}
+            className="flex-row items-center gap-x-3 rounded-[22px] border border-hum-border/18 bg-hum-card px-5 py-4 active:opacity-88"
+            style={cardShadow}
+            accessibilityRole="button"
+            accessibilityLabel="notifications"
+            accessibilityHint="manage push notification preferences and daily reminders"
+          >
+            <View className="h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-hum-secondary/14">
+              <Ionicons name="notifications-outline" size={22} color={theme.secondary} />
+            </View>
+            <Text
+              className="min-w-0 flex-1 text-[17px] font-medium leading-[22px] tracking-[-0.01em] text-hum-text"
+              maxFontSizeMultiplier={1.3}
+            >
+              notifications
+            </Text>
+            <Ionicons
+              name="chevron-forward"
+              size={16}
+              color={theme.dim}
+              style={{ opacity: 0.5 }}
+            />
+          </Pressable>
+          <Button
+            label="sign out"
+            variant="secondary"
+            size="lg"
+            onPress={handleSignOut}
+            accessibilityLabel="sign out"
+          />
+          <Button
+            label="delete account"
+            variant="danger"
+            size="lg"
+            onPress={() => router.push('/profile/delete-account')}
+            accessibilityLabel="delete account"
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

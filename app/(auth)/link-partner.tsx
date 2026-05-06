@@ -69,7 +69,7 @@ export default function LinkPartner() {
           keyboardDismissMode="on-drag"
         >
           <View
-            className="flex-1 gap-y-9 px-6 pb-10"
+            className="flex-1 gap-y-10 px-6 pb-10"
             style={{ paddingTop: AUTH_SCREEN_PADDING_TOP }}
           >
             <View className="items-center gap-y-3">
@@ -86,10 +86,10 @@ export default function LinkPartner() {
                 link with your person
               </Text>
               <Text
-                className="max-w-[280px] text-center text-[14px] font-light leading-[22px] text-hum-muted"
+                className="max-w-[280px] text-center text-[13px] font-light leading-[20px] text-hum-muted"
                 maxFontSizeMultiplier={1.35}
               >
-                one shares a code. the other types it in. that’s the whole ritual.
+                one shares · the other types
               </Text>
             </View>
 
@@ -144,8 +144,8 @@ export default function LinkPartner() {
 
                 <Button label="share code" onPress={handleShareCode} size="lg" className="w-full" />
 
-                <Text className="max-w-[280px] text-center text-[13px] font-light leading-[22px] text-hum-dim">
-                  send it through whatever you already use to say goodnight.
+                <Text className="max-w-[280px] text-center text-[12px] font-light leading-[18px] text-hum-dim">
+                  send through anything you already use
                 </Text>
               </View>
             ) : (
@@ -161,7 +161,7 @@ export default function LinkPartner() {
 
                 {error ? (
                   <Text
-                    className="text-center text-[14px] leading-5 text-red-400/90"
+                    className="text-center text-[14px] leading-[22px] text-red-400/90"
                     accessibilityLiveRegion="polite"
                   >
                     {error}

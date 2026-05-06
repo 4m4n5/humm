@@ -39,7 +39,7 @@ export default function ResolveScreen() {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-hum-bg px-8">
         <Text className="mb-4 text-center text-[14px] text-hum-muted">wrong phase</Text>
-        <Button label="back to awards" onPress={() => router.back()} />
+        <Button label="back to awards" onPress={() => router.back()} variant="ghost" size="md" />
       </SafeAreaView>
     );
   }
@@ -77,7 +77,7 @@ export default function ResolveScreen() {
         <ScreenHeader title="synced" />
         <View className="flex-1 justify-center px-8">
           <Text className="mb-6 text-center text-[14px] font-light text-hum-muted">awards → cheer</Text>
-          <Button label="back to awards" onPress={() => router.back()} />
+          <Button label="back to awards" onPress={() => router.back()} variant="ghost" size="md" />
         </View>
       </SafeAreaView>
     );
@@ -92,7 +92,7 @@ export default function ResolveScreen() {
         showsVerticalScrollIndicator={false}
       >
         <Text
-          className="text-[10px] font-medium uppercase tracking-[0.24em] text-hum-dim"
+          className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
           maxFontSizeMultiplier={1.25}
         >
           {awardsVoice.resolveScreenHint(partnerName).toUpperCase()}

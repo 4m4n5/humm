@@ -105,7 +105,7 @@ export default function MoodScreen() {
   if (!partnerLinked) {
     return (
       <SafeAreaView className="flex-1 bg-hum-bg">
-        <AmbientGlow tone="secondary" />
+        <AmbientGlow tone="bloom" />
         <ScrollView
           className="flex-1"
           contentContainerStyle={scrollContentStandard}
@@ -121,7 +121,7 @@ export default function MoodScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <AmbientGlow tone="secondary" />
+      <AmbientGlow tone="bloom" />
 
       <ScrollView
         className="flex-1"
@@ -171,11 +171,14 @@ export default function MoodScreen() {
             ) : null}
           </View>
         ) : !loading ? (
-          <View className="items-center gap-y-2 py-8">
-            <Text className="text-[28px]" allowFontScaling={false}>
+          <View className="items-center px-6 py-10">
+            <Text
+              className="mb-5 text-[44px] font-extralight leading-none text-hum-bloom/70"
+              allowFontScaling={false}
+            >
               💭
             </Text>
-            <Text className="text-[14px] font-light text-hum-muted">
+            <Text className="max-w-[280px] text-center text-[13px] font-light leading-[20px] text-hum-muted">
               earlier check-ins show up here
             </Text>
           </View>
@@ -217,7 +220,7 @@ function ExpandToggle({
         name={expanded ? 'chevron-up' : 'chevron-down'}
         size={13}
         color={theme.dim}
-        style={{ opacity: 0.6 }}
+        style={{ opacity: 0.5 }}
       />
     </Pressable>
   );
@@ -295,7 +298,7 @@ function DayCard({
   return (
     <View
       className={`overflow-hidden rounded-[22px] border bg-hum-card ${
-        inSync ? 'border-hum-primary/20' : 'border-hum-border/18'
+        inSync ? 'border-hum-bloom/30' : 'border-hum-border/18'
       }`}
       style={cardShadow}
     >

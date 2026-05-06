@@ -24,7 +24,7 @@ export function ScreenHeader({ title }: Props) {
   );
 
   return (
-    <View className="px-6 pb-6" style={{ paddingTop: HEADER_BLOCK_PADDING_TOP }}>
+    <View className="px-6 pb-7" style={{ paddingTop: HEADER_BLOCK_PADDING_TOP }}>
       <Pressable
         onPress={() => router.back()}
         hitSlop={16}

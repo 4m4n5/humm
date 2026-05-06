@@ -91,7 +91,7 @@ function CenterBadge() {
         opacity,
         transform: [{ scale }],
       }}
-      className="items-center gap-1.5 rounded-3xl border border-hum-petal/40 bg-hum-card/95 px-7 py-4"
+      className="items-center gap-1.5 rounded-3xl border border-hum-crimson/40 bg-hum-card/95 px-7 py-4"
     >
       <Text className="text-[40px]" allowFontScaling={false}>
         💖

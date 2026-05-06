@@ -110,7 +110,7 @@ export default function ManageAwardCategoriesScreen() {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-hum-bg px-8">
         <Text className="text-center text-[14px] text-hum-muted">link a partner first</Text>
-        <Button label="back" onPress={() => router.back()} className="mt-6" />
+        <Button label="back" onPress={() => router.back()} variant="ghost" size="md" className="mt-6" />
       </SafeAreaView>
     );
   }
@@ -156,9 +156,10 @@ export default function ManageAwardCategoriesScreen() {
                       label="save"
                       onPress={() => void saveEdit()}
                       loading={busy === `edit-${row.id}`}
+                      size="sm"
                       className="flex-1"
                     />
-                    <Button label="cancel" variant="secondary" onPress={() => setEditingId(null)} className="flex-1" />
+                    <Button label="cancel" variant="secondary" size="sm" onPress={() => setEditingId(null)} className="flex-1" />
                   </View>
                 </>
               ) : (
@@ -226,7 +227,7 @@ export default function ManageAwardCategoriesScreen() {
 
         <View className="gap-y-3 rounded-[20px] border border-hum-border/18 bg-hum-surface/28 px-4 py-5">
           <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">new category</Text>
-          <Text className="text-[12px] text-hum-dim">pick an emoji and a short name (e.g. “best road trip”)</Text>
+          <Text className="text-[12px] text-hum-dim">an emoji · a short name</Text>
           <TextInput
             className="rounded-[20px] border border-hum-border/18 bg-hum-card px-4 py-3 text-[15px] text-hum-text"
             placeholder="emoji"
@@ -236,10 +237,10 @@ export default function ManageAwardCategoriesScreen() {
             maxLength={8}
           />
           <Input label="name" value={newLabel} onChangeText={setNewLabel} />
-          <Button label="add category" onPress={() => void onAdd()} loading={busy === 'add'} disabled={!newLabel.trim() || !newEmoji.trim()} />
+          <Button label="add category" onPress={() => void onAdd()} loading={busy === 'add'} disabled={!newLabel.trim() || !newEmoji.trim()} size="lg" />
         </View>
 
-        <Button label="done" variant="secondary" onPress={() => router.back()} />
+        <Button label="done" variant="secondary" size="lg" onPress={() => router.back()} />
       </ScrollView>
     </SafeAreaView>
   );

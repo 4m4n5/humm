@@ -2,17 +2,22 @@ import React from 'react';
 import { View, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-type Tone = 'petal' | 'secondary' | 'gold' | 'primary';
+type Tone = 'petal' | 'secondary' | 'gold' | 'primary' | 'bloom' | 'ember' | 'sage' | 'spark' | 'crimson';
 
 const TONES: Record<Tone, [string, string, string]> = {
   // Each tone: [start, mid, end] colors. Start is the warm anchor at top,
   // end is fully transparent. Mid is the soft halo plateau. Opacity is
   // baked into the hex value so the gradient itself can run from solid to
   // transparent with no extra layering.
-  petal: ['rgba(212,160,160,0.10)', 'rgba(212,160,160,0.04)', 'rgba(212,160,160,0)'],
-  primary: ['rgba(224,180,172,0.10)', 'rgba(224,180,172,0.04)', 'rgba(224,180,172,0)'],
-  secondary: ['rgba(158,145,180,0.10)', 'rgba(158,145,180,0.04)', 'rgba(158,145,180,0)'],
-  gold: ['rgba(205,184,150,0.10)', 'rgba(205,184,150,0.04)', 'rgba(205,184,150,0)'],
+  petal: ['rgba(232,154,174,0.14)', 'rgba(232,154,174,0.05)', 'rgba(232,154,174,0)'],
+  primary: ['rgba(232,160,154,0.14)', 'rgba(232,160,154,0.05)', 'rgba(232,160,154,0)'],
+  secondary: ['rgba(159,184,210,0.16)', 'rgba(159,184,210,0.06)', 'rgba(159,184,210,0)'],
+  sage: ['rgba(181,198,143,0.15)', 'rgba(181,198,143,0.05)', 'rgba(181,198,143,0)'],
+  spark: ['rgba(159,183,186,0.15)', 'rgba(159,183,186,0.06)', 'rgba(159,183,186,0)'],
+  gold: ['rgba(233,198,133,0.14)', 'rgba(233,198,133,0.05)', 'rgba(233,198,133,0)'],
+  bloom: ['rgba(169,144,194,0.18)', 'rgba(169,144,194,0.07)', 'rgba(169,144,194,0)'],
+  ember: ['rgba(232,160,154,0.13)', 'rgba(232,160,154,0.05)', 'rgba(232,160,154,0)'],
+  crimson: ['rgba(210,115,115,0.16)', 'rgba(210,115,115,0.06)', 'rgba(210,115,115,0)'],
 };
 
 type Props = {

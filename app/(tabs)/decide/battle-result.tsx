@@ -2,9 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, ScrollView, Alert, Platform, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { ScreenHeader } from '@/components/shared/ScreenHeader';
 import { Button } from '@/components/shared/Button';
 import { LoadingState } from '@/components/shared/LoadingState';
+import { theme } from '@/constants/theme';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useBattleStore } from '@/lib/stores/battleStore';
 import { useDecisionStore } from '@/lib/stores/decisionStore';
@@ -15,7 +17,6 @@ import {
 import { grantBattleCompletionRewards } from '@/lib/firestore/gamification';
 import { afterBattleDecisionSaved } from '@/lib/gamificationTriggers';
 import { enqueueGamificationToasts } from '@/lib/stores/xpFeedbackStore';
-import { DECISION_CATEGORIES } from '@/constants/categories';
 import { hapticSuccess } from '@/lib/haptics';
 import { scrollContentStandard } from '@/constants/screenLayout';
 
@@ -129,8 +130,6 @@ export default function BattleResultScreen() {
     );
   }
 
-  const cat = DECISION_CATEGORIES.find((c) => c.id === battle.category);
-
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
       <ScreenHeader title="champion" />
@@ -139,10 +138,12 @@ export default function BattleResultScreen() {
         contentContainerStyle={scrollContentStandard}
         showsVerticalScrollIndicator={false}
       >
-        <View className="items-center rounded-[24px] border border-hum-primary/22 bg-hum-card/95 px-6 py-10">
-          <Text className="text-6xl">🏆</Text>
+        <View className="items-center rounded-[22px] border border-hum-spark/22 bg-hum-card/95 px-6 py-10">
+          <View className="h-16 w-16 items-center justify-center rounded-2xl bg-hum-spark/14">
+            <Ionicons name="trophy-outline" size={36} color={theme.spark} />
+          </View>
           <Text
-            className="mt-4 text-center text-[10px] font-medium uppercase tracking-[0.18em] text-hum-muted"
+            className="mt-4 text-center text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
             maxFontSizeMultiplier={1.25}
             numberOfLines={1}
           >
@@ -169,7 +170,7 @@ export default function BattleResultScreen() {
             m.winner ? (
               <View
                 key={`${m.round}-${m.position}-${i}`}
-                className="flex-row flex-wrap items-center justify-between rounded-[20px] border border-hum-border/18 bg-hum-surface/30 px-4 py-3.5"
+                className="flex-row flex-wrap items-center justify-between rounded-[18px] border border-hum-border/18 bg-hum-surface/30 px-4 py-3.5"
               >
                 <Text
                   className="max-w-[70%] text-[14px] font-light text-hum-muted"
@@ -179,7 +180,7 @@ export default function BattleResultScreen() {
                   {m.optionB === null ? `${m.optionA} (bye)` : `${m.optionA} vs ${m.optionB}`}
                 </Text>
                 <Text
-                  className="text-[15px] font-medium text-hum-primary"
+                  className="text-[15px] font-medium text-hum-spark"
                   maxFontSizeMultiplier={1.25}
                   numberOfLines={1}
                 >

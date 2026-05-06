@@ -87,16 +87,30 @@ export default function AppRoot() {
     }
   }, [profile?.uid]);
 
+  const lastRouteRef = useRef<string | null>(null);
+
   useEffect(() => {
     if (isLoading) return;
 
+    let target: string;
     if (!firebaseUser) {
-      router.replace('/(auth)/sign-in');
+      target = '/(auth)/sign-in';
     } else if (!profile?.coupleId) {
-      router.replace('/(auth)/link-partner');
+      target = '/(auth)/link-partner';
     } else {
-      router.replace('/(tabs)');
+      target = '/(tabs)';
     }
+
+    if (lastRouteRef.current === target) return;
+    lastRouteRef.current = target;
+
+    // Defer to next frame so the replace doesn't fire inside React
+    // Navigation's useSyncState layout-effect commit cycle (causes
+    // "Maximum update depth exceeded" on React 19 + RN 0.81).
+    const raf = requestAnimationFrame(() => {
+      router.replace(target as any);
+    });
+    return () => cancelAnimationFrame(raf);
   }, [isLoading, firebaseUser, profile?.coupleId]);
 
   if (isLoading || !fontsLoaded) {

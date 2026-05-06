@@ -10,88 +10,80 @@ import * as Haptics from 'expo-haptics';
 
 /**
  * Shared "emoji shower" primitive that powers both the reasons-written and
- * shared-habits-completed celebrations.
+ * shared-habits-completed celebrations. Two axes of variability keep the
+ * moment fresh across many fires:
  *
- * Particles originate from a (random per fire) top edge of the screen and
- * **fall** under gravity-like easing toward the bottom — like petals or
- * confetti raining down. Two axes of variability keep the moment fresh
- * across many fires:
- *
- *   1. **Intensity** — how *much* shower (count, fall duration, size).
+ *   1. **Intensity** — how *much* shower (count, arc height, duration).
  *      Three preset levels: gentle / standard / lavish.
- *   2. **Pattern** — *which edge* the particles come from (top / top-left
- *      corner / top-right corner / both top corners). If unspecified, a
- *      fresh pattern is rolled each fire so a user who triggers this five
- *      times in a row sees five different rain shapes.
+ *   2. **Pattern** — *where* the particles come from (spray / fountain /
+ *      sides / burst). If unspecified, a fresh pattern is rolled each fire,
+ *      so a user who triggers this five times in a row sees five different
+ *      launch shapes.
  *
- * On top of the structural variability, every fire jitters duration, fall
- * distance, particle drift, rotation and emoji-subset selection — so even
- * two fires of the same intensity + pattern read as distinct moments.
+ * On top of the structural variability, every fire jitters duration, arc
+ * height, particle drift, rotation and emoji-subset selection — so even two
+ * fires of the same intensity + pattern read as distinct moments.
  *
  * Designed to be wrapped by domain-specific celebrations (with their own
  * center badges and emoji vocabularies) rather than used directly.
  */
 
 export type ShowerIntensity = 'gentle' | 'standard' | 'lavish';
-export type ShowerPattern = 'top' | 'top-left' | 'top-right' | 'top-corners';
-
-/** Speed multiplier — fall durations are divided by this. Tuned to 1.2x. */
-const SPEED = 1.2;
+export type ShowerPattern = 'spray' | 'fountain' | 'sides' | 'burst';
 
 const INTENSITY_CONFIG: Record<
   ShowerIntensity,
   {
-    count: number;
+    count: [number, number]; // [min, max] — a random count is rolled each fire
     baseDuration: number;
+    arcHeight: number;
     sizeMin: number;
     sizeRange: number;
-    /** Max stagger window (ms) for the rain to pour in over time. */
+    /** Max stagger window (ms) for per-particle delay. */
     delaySpread: number;
   }
 > = {
-  // Counts ~doubled vs. the previous "rise upward" version. Durations
-  // baked-in below are then divided by SPEED for the 1.2x snap.
   gentle: {
-    count: 24,
+    count: [18, 26],
     baseDuration: 1900,
+    arcHeight: 320,
     sizeMin: 14,
-    sizeRange: 12,
-    delaySpread: 480,
+    sizeRange: 14,
+    delaySpread: 450,
   },
   standard: {
-    count: 44,
+    count: [34, 48],
     baseDuration: 2200,
-    sizeMin: 16,
-    sizeRange: 16,
-    delaySpread: 620,
+    arcHeight: 420,
+    sizeMin: 15,
+    sizeRange: 18,
+    delaySpread: 550,
   },
   lavish: {
-    count: 72,
-    baseDuration: 2500,
-    sizeMin: 18,
-    sizeRange: 22,
-    delaySpread: 780,
+    count: [56, 76],
+    baseDuration: 2600,
+    arcHeight: 520,
+    sizeMin: 16,
+    sizeRange: 24,
+    delaySpread: 700,
   },
 };
 
-const ALL_PATTERNS: ShowerPattern[] = [
-  'top',
-  'top-left',
-  'top-right',
-  'top-corners',
-];
+function randInt(min: number, max: number): number {
+  return min + Math.floor(Math.random() * (max - min + 1));
+}
+
+const ALL_PATTERNS: ShowerPattern[] = ['spray', 'fountain', 'sides', 'burst'];
 
 type Particle = {
   emoji: string;
   startX: number;
-  /** Vertical start offset relative to the top edge (always negative or 0). */
-  startY: number;
   drift: number;
   delay: number;
   size: number;
   spin: number;
-  /** Per-particle fall scalar (0.85 → 1.15) for organic uneven rain. */
-  fall: number;
+  /** Per-particle vertical reach scalar (0.7 → 1.15) for organic uneven arcs. */
+  rise: number;
 };
 
 /** Pick `n` distinct items from a pool, falling back to repeats if pool < n. */
@@ -112,9 +104,8 @@ function jitter(base: number, frac: number): number {
 }
 
 /**
- * Build particles for the chosen pattern. Each pattern shapes startX, the
- * vertical pre-roll (startY) and horizontal drift so the *origin edge*
- * differs while every particle still falls toward the bottom.
+ * Build particles for the chosen pattern. Each pattern shapes startX and
+ * drift so the launch silhouette differs while sharing the same upward arc.
  */
 function makeParticles(
   width: number,
@@ -124,52 +115,46 @@ function makeParticles(
   spinEnabled: boolean,
 ): Particle[] {
   const cfg = INTENSITY_CONFIG[intensity];
+  const particleCount = randInt(cfg.count[0], cfg.count[1]);
+
   // Grab a fresh subset of emojis each fire so the palette feels rotated.
-  const subsetSize = intensity === 'lavish' ? 7 : intensity === 'gentle' ? 4 : 6;
+  const subsetSize = intensity === 'lavish' ? 8 : intensity === 'gentle' ? 5 : 6;
   const subset = pickSubset(emojiPool, subsetSize);
 
-  return Array.from({ length: cfg.count }).map(() => {
+  return Array.from({ length: particleCount }).map(() => {
     const emoji = subset[Math.floor(Math.random() * subset.length)]!;
     let startX: number;
-    let startY: number;
     let drift: number;
 
     switch (pattern) {
-      case 'top-left': {
-        // Cluster near the top-left corner, drifting right and down. A small
-        // vertical stagger (-80 → 0) keeps them from launching as a single
-        // line.
-        startX = Math.random() * (width * 0.3);
-        startY = -80 - Math.random() * 60;
-        drift = 40 + Math.random() * (width * 0.35);
+      case 'fountain': {
+        const center = width / 2;
+        const span = width * 0.45;
+        startX = center - span / 2 + Math.random() * span;
+        drift = (Math.random() - 0.5) * 70;
         break;
       }
-      case 'top-right': {
-        // Mirror of top-left.
-        startX = width * 0.7 + Math.random() * (width * 0.3) - 24;
-        startY = -80 - Math.random() * 60;
-        drift = -(40 + Math.random() * (width * 0.35));
-        break;
-      }
-      case 'top-corners': {
-        // Twin streams from both top corners, drifting toward the center
-        // as they fall — reads as two ribbons converging.
+      case 'sides': {
         const fromLeft = Math.random() < 0.5;
         startX = fromLeft
-          ? Math.random() * (width * 0.25)
-          : width * 0.75 + Math.random() * (width * 0.25) - 24;
-        startY = -60 - Math.random() * 80;
+          ? Math.random() * (width * 0.28)
+          : width * 0.72 + Math.random() * (width * 0.28);
         drift = fromLeft
-          ? 30 + Math.random() * 110
-          : -(30 + Math.random() * 110);
+          ? 20 + Math.random() * 120
+          : -(20 + Math.random() * 120);
         break;
       }
-      case 'top':
+      case 'burst': {
+        const center = width / 2;
+        const span = width * 0.22;
+        startX = center - span / 2 + Math.random() * span;
+        drift = (startX < center ? -1 : 1) * (50 + Math.random() * 100);
+        break;
+      }
+      case 'spray':
       default: {
-        // Even rain across the whole top edge with mild sway.
         startX = Math.random() * (width - 32);
-        startY = -50 - Math.random() * 80;
-        drift = (Math.random() - 0.5) * 70;
+        drift = (Math.random() - 0.5) * 110;
         break;
       }
     }
@@ -177,26 +162,23 @@ function makeParticles(
     return {
       emoji,
       startX,
-      startY,
       drift,
       delay: Math.random() * cfg.delaySpread,
       size: cfg.sizeMin + Math.random() * cfg.sizeRange,
-      // Slightly more spin while falling — emoji confetti tumbling in air.
-      spin: spinEnabled ? (Math.random() - 0.5) * 28 : 0,
-      // Some drops fall a little short, some overshoot — natural unevenness.
-      fall: 0.85 + Math.random() * 0.3,
+      spin: spinEnabled ? (Math.random() - 0.5) * 30 : 0,
+      rise: 0.6 + Math.random() * 0.55,
     };
   });
 }
 
-function FallingParticle({
+function FloatingParticle({
   p,
   durationMs,
-  fallDistance,
+  arcHeight,
 }: {
   p: Particle;
   durationMs: number;
-  fallDistance: number;
+  arcHeight: number;
 }) {
   const translateY = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(0)).current;
@@ -208,11 +190,9 @@ function FallingParticle({
       Animated.delay(p.delay),
       Animated.parallel([
         Animated.timing(translateY, {
-          // Positive translateY → downward fall.
-          toValue: fallDistance * p.fall,
+          toValue: -arcHeight * p.rise,
           duration: durationMs,
-          // Ease-in feels like gravity: starts slow, accelerates downward.
-          easing: Easing.in(Easing.quad),
+          easing: Easing.out(Easing.quad),
           useNativeDriver: true,
         }),
         Animated.timing(translateX, {
@@ -230,19 +210,19 @@ function FallingParticle({
         Animated.sequence([
           Animated.timing(opacity, {
             toValue: 1,
-            duration: 200,
+            duration: 240,
             useNativeDriver: true,
           }),
-          Animated.delay(Math.max(durationMs - 700, 0)),
+          Animated.delay(Math.max(durationMs - 880, 0)),
           Animated.timing(opacity, {
             toValue: 0,
-            duration: 500,
+            duration: 640,
             useNativeDriver: true,
           }),
         ]),
       ]),
     ]).start();
-  }, [translateY, translateX, opacity, rotate, p, durationMs, fallDistance]);
+  }, [translateY, translateX, opacity, rotate, p, durationMs, arcHeight]);
 
   const rotateInterp = rotate.interpolate({
     inputRange: [-30, 30],
@@ -254,8 +234,7 @@ function FallingParticle({
       pointerEvents="none"
       style={{
         position: 'absolute',
-        // Anchor to the top edge; startY pre-rolls particles slightly above.
-        top: p.startY,
+        bottom: 80,
         left: p.startX,
         opacity,
         transform: [
@@ -281,7 +260,7 @@ type Props = {
   intensity?: ShowerIntensity;
   /** Override pattern. If omitted, a random pattern is chosen each fire. */
   pattern?: ShowerPattern;
-  /** Whether particles tumble as they fall. Default true. */
+  /** Whether particles tumble as they rise. Default true. */
   spin?: boolean;
   /** Optional element painted above the particles (e.g. a center badge). */
   children?: React.ReactNode;
@@ -302,9 +281,9 @@ export function EmojiShower({
   children,
   haptic = 'success',
 }: Props) {
-  const { width, height } = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
-  // Roll a fresh pattern, duration and fall distance every time `visible`
+  // Roll a fresh pattern, duration and arc height every time `visible`
   // toggles on. Memoizing on `visible` (not pattern/intensity) means each
   // fire is structurally distinct — same intensity, different shape.
   const fireConfig = useMemo(() => {
@@ -312,20 +291,11 @@ export function EmojiShower({
     const chosenPattern: ShowerPattern =
       pattern ?? ALL_PATTERNS[Math.floor(Math.random() * ALL_PATTERNS.length)]!;
     const cfg = INTENSITY_CONFIG[intensity];
-    // Apply 1.2x speed-up (shorter duration = faster fall) plus ±8% jitter.
-    const durationMs = Math.round(jitter(cfg.baseDuration / SPEED, 0.08));
-    // Particles must travel further than the screen height so they exit
-    // cleanly off the bottom edge. Add a buffer for jittered start offsets.
-    const fallDistance = Math.round(jitter(height + 200, 0.05));
-    const particles = makeParticles(
-      width,
-      intensity,
-      chosenPattern,
-      emojiPool,
-      spin,
-    );
-    return { particles, durationMs, fallDistance };
-  }, [visible, intensity, pattern, width, height, emojiPool, spin]);
+    const durationMs = Math.round(jitter(cfg.baseDuration, 0.12));
+    const arcHeight = Math.round(jitter(cfg.arcHeight, 0.18));
+    const particles = makeParticles(width, intensity, chosenPattern, emojiPool, spin);
+    return { particles, durationMs, arcHeight, durationTotal: durationMs };
+  }, [visible, intensity, pattern, width, emojiPool, spin]);
 
   useEffect(() => {
     if (!visible || !fireConfig) return;
@@ -336,9 +306,8 @@ export function EmojiShower({
     } else if (haptic === 'light') {
       void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
-    // Total visible time = max delay + fall duration + fade-out tail.
     const cfg = INTENSITY_CONFIG[intensity];
-    const total = cfg.delaySpread + fireConfig.durationMs + 400;
+    const total = cfg.delaySpread + fireConfig.durationTotal + 500;
     const t = setTimeout(onFinished, total);
     return () => clearTimeout(t);
   }, [visible, fireConfig, onFinished, haptic, intensity]);
@@ -352,11 +321,11 @@ export function EmojiShower({
       style={{ overflow: 'hidden' }}
     >
       {fireConfig.particles.map((p, i) => (
-        <FallingParticle
+        <FloatingParticle
           key={i}
           p={p}
           durationMs={fireConfig.durationMs}
-          fallDistance={fireConfig.fallDistance}
+          arcHeight={fireConfig.arcHeight}
         />
       ))}
       {children}

@@ -16,7 +16,7 @@ export default function Decide() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <AmbientGlow tone="primary" />
+      <AmbientGlow tone="spark" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}
@@ -25,34 +25,29 @@ export default function Decide() {
         <ScreenTitle title="decide" />
 
         <TouchableOpacity
-          className="gap-y-4 rounded-[24px] border border-hum-primary/20 bg-hum-card p-5 active:opacity-88"
+          className="gap-y-5 rounded-[22px] border border-hum-spark/35 bg-hum-card p-5 active:opacity-90"
           style={cardShadow}
           onPress={() => router.push('/decide/quick-spin')}
-          activeOpacity={0.88}
+          activeOpacity={0.9}
           accessibilityRole="button"
           accessibilityLabel="quick spin — weighted random pick"
         >
-          <View className="flex-row items-start gap-x-4">
-            <View className="h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-hum-primary/12">
-              <Text className="text-[28px] leading-none" maxFontSizeMultiplier={1.2}>
-                🎰
-              </Text>
+          <View className="flex-row items-center gap-x-4">
+            <View className="h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-hum-spark/14">
+              <Ionicons name="dice-outline" size={22} color={theme.spark} />
             </View>
-            <View className="min-w-0 flex-1 gap-y-1">
-              <Text className="text-[15px] font-medium leading-[20px] tracking-tight text-hum-text">quick spin</Text>
-              <Text className="text-[13px] font-light leading-[19px] text-hum-muted">spin · veto · save</Text>
-            </View>
-            <View className="h-11 w-11 items-center justify-center" accessibilityElementsHidden>
-              <Ionicons name="chevron-forward" size={20} color={theme.dim} />
-            </View>
+            <Text className="min-w-0 flex-1 text-[17px] font-medium leading-[22px] tracking-[-0.01em] text-hum-text">
+              quick spin
+            </Text>
+            <Ionicons name="chevron-forward" size={16} color={theme.dim} style={{ opacity: 0.5 }} />
           </View>
-          <View className="flex-row flex-wrap gap-2">
+          <View className="flex-row items-center justify-between">
             {DECISION_CATEGORIES.map((c) => (
-                <View
-                  key={c.id}
-                  className="rounded-full border border-hum-border/18 bg-hum-surface/40 px-3 py-1.5"
-                >
-                <Text className="text-[11px] font-medium uppercase tracking-[0.12em] text-hum-dim">
+              <View
+                key={c.id}
+                className="rounded-full border border-hum-border/22 bg-hum-surface/45 px-3 py-1.5"
+              >
+                <Text className="text-[10px] font-medium uppercase leading-[14px] tracking-[0.16em] text-hum-dim">
                   {c.label.toLowerCase()}
                 </Text>
               </View>
@@ -61,25 +56,20 @@ export default function Decide() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="flex-row items-start gap-x-4 rounded-[24px] border border-hum-secondary/20 bg-hum-card p-5 active:opacity-88"
+          className="flex-row items-center gap-x-4 rounded-[22px] border border-hum-secondary/35 bg-hum-card p-5 active:opacity-90"
           style={cardShadow}
           onPress={() => router.push('/decide/battle')}
-          activeOpacity={0.88}
+          activeOpacity={0.9}
           accessibilityRole="button"
           accessibilityLabel="battle mode — realtime bracket, both vote each matchup"
         >
-          <View className="h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-hum-secondary/12">
-            <Text className="text-[28px] leading-none" maxFontSizeMultiplier={1.2}>
-              ⚔️
-            </Text>
+          <View className="h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-hum-secondary/14">
+            <Ionicons name="flash-outline" size={22} color={theme.secondary} />
           </View>
-          <View className="min-w-0 flex-1 gap-y-1">
-            <Text className="text-[15px] font-medium leading-[20px] tracking-tight text-hum-text">battle mode</Text>
-            <Text className="text-[13px] font-light leading-[19px] text-hum-muted">live votes · coin on ties</Text>
-          </View>
-          <View className="h-11 w-11 items-center justify-center" accessibilityElementsHidden>
-            <Ionicons name="chevron-forward" size={20} color={theme.dim} />
-          </View>
+          <Text className="min-w-0 flex-1 text-[17px] font-medium leading-[22px] tracking-[-0.01em] text-hum-text">
+            battle mode
+          </Text>
+          <Ionicons name="chevron-forward" size={16} color={theme.dim} style={{ opacity: 0.5 }} />
         </TouchableOpacity>
 
         {history.length > 0 ? (
@@ -98,9 +88,9 @@ export default function Decide() {
             </Text>
             <Ionicons
               name="chevron-forward"
-              size={15}
+              size={16}
               color={theme.dim}
-              style={{ opacity: 0.55 }}
+              style={{ opacity: 0.5 }}
             />
           </TouchableOpacity>
         ) : null}

@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { ScreenHeader } from '@/components/shared/ScreenHeader';
 import { LoadingState } from '@/components/shared/LoadingState';
+import { Button } from '@/components/shared/Button';
 import { BracketProgress } from '@/components/battle/BracketProgress';
 import { CoinFlip } from '@/components/battle/CoinFlip';
 import { useAuthStore } from '@/lib/stores/authStore';
@@ -119,8 +120,8 @@ export default function BattleVoteScreen() {
     Object.keys(m.votesByUser ?? {}).length === 0;
   const splitHintCopy =
     (m.revoteRound ?? 0) >= 2
-      ? 'final try — if you split again we’ll spin between these two'
-      : 'still split — pick again together';
+      ? 'final try · split again spins it'
+      : 'still split · pick together';
   const isFinalTiebreakerRound = (m.revoteRound ?? 0) >= 2;
 
   return (
@@ -146,7 +147,7 @@ export default function BattleVoteScreen() {
         <BracketProgress bracket={battle.bracket} currentIdx={battle.currentMatchupIndex} />
 
         {showSplitHint ? (
-          <View className="rounded-[20px] border border-hum-border/18 bg-amber-950/22 px-4 py-3.5">
+          <View className="rounded-[18px] border border-hum-border/18 bg-amber-950/22 px-4 py-3.5">
             <Text
               className="text-center text-[14px] font-light text-amber-100/90"
               maxFontSizeMultiplier={1.3}
@@ -158,13 +159,13 @@ export default function BattleVoteScreen() {
         ) : null}
 
         {isFinalTiebreakerRound && !showSplitHint && !m.winner && !bothPicked ? (
-          <View className="rounded-[20px] border border-amber-900/35 bg-amber-950/18 px-4 py-3">
+          <View className="rounded-[18px] border border-amber-900/35 bg-amber-950/18 px-4 py-3">
             <Text
               className="text-center text-[13px] font-light leading-[19px] text-amber-100/85"
               maxFontSizeMultiplier={1.3}
               numberOfLines={2}
             >
-              third disagreement flips a tiebreaker — pick the same side to agree
+              third split spins a tiebreaker
             </Text>
           </View>
         ) : null}
@@ -224,7 +225,7 @@ export default function BattleVoteScreen() {
 
         {m.winner && !m.decidedByCoinFlip ? (
           <Text
-            className="text-center text-[15px] font-medium text-hum-primary"
+            className="text-center text-[15px] font-medium text-hum-spark"
             maxFontSizeMultiplier={1.25}
             numberOfLines={1}
           >
@@ -232,16 +233,14 @@ export default function BattleVoteScreen() {
           </Text>
         ) : null}
 
-        <TouchableOpacity
+        <Button
+          label="back"
+          variant="ghost"
+          size="md"
           onPress={() => router.back()}
-          className="mt-6 self-center py-2"
-          accessibilityRole="button"
           accessibilityLabel="back to battle hub"
-        >
-          <Text className="text-[14px] font-medium text-hum-muted" numberOfLines={1}>
-            ← battle hub
-          </Text>
-        </TouchableOpacity>
+          className="mt-4"
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -272,7 +271,7 @@ function VoteCard({
         onPress={onPress}
         disabled={disabled || !label}
         activeOpacity={0.88}
-        className={`min-h-[140px] flex-1 justify-center rounded-[20px] border-2 px-3 py-4 ${
+        className={`min-h-[140px] flex-1 justify-center rounded-[18px] border-2 px-3 py-4 ${
           highlight
             ? 'border-emerald-500/55 bg-emerald-950/25'
             : selected
@@ -292,7 +291,7 @@ function VoteCard({
         </Text>
         {selected ? (
           <View className="mt-3 items-center">
-            <Ionicons name="checkmark-circle" size={22} color={theme.primary} />
+            <Ionicons name="checkmark-circle" size={22} color={theme.spark} />
           </View>
         ) : null}
       </TouchableOpacity>

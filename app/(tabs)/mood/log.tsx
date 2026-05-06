@@ -61,12 +61,9 @@ export default function MoodLogScreen() {
           ? (e as { code: string }).code
           : '';
       if (code === 'permission-denied') {
-        Alert.alert(
-          "couldn't save",
-          'Firestore is blocking mood saves until moodEntries rules are published in the Firebase Console (see FIRESTORE_MOOD_RULES in the repo docs).',
-        );
+        Alert.alert("couldn't save", 'permissions issue · try again later');
       } else {
-        Alert.alert("couldn't save", 'check connection, try again');
+        Alert.alert("couldn't save", 'check connection · try again');
       }
       setSavingId(null);
     }
@@ -88,17 +85,17 @@ export default function MoodLogScreen() {
       >
         {myToday && (
           <View
-            className="flex-row items-center gap-3 self-start rounded-[22px] border border-hum-secondary/40 bg-hum-card px-3.5 py-3"
+            className="flex-row items-center gap-3 self-start rounded-[22px] border border-hum-bloom/40 bg-hum-card px-3.5 py-3"
             style={cardShadow}
           >
-            <View className="h-10 w-10 items-center justify-center rounded-xl bg-hum-secondary/18">
+            <View className="h-10 w-10 items-center justify-center rounded-xl bg-hum-bloom/18">
               <Text className="text-[20px]" allowFontScaling={false}>
                 {myToday.current.emoji}
               </Text>
             </View>
             <View className="gap-y-0.5 pr-2">
               <Text
-                className="text-[11px] font-light text-hum-dim"
+                className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
                 maxFontSizeMultiplier={1.2}
               >
                 right now

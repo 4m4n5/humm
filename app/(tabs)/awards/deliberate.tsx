@@ -48,7 +48,7 @@ export default function DeliberateScreen() {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-hum-bg px-8">
         <Text className="mb-4 text-center text-[14px] text-hum-muted">wrong phase</Text>
-        <Button label="back to awards" onPress={() => router.back()} />
+        <Button label="back to awards" onPress={() => router.back()} variant="ghost" size="md" />
       </SafeAreaView>
     );
   }
@@ -100,7 +100,7 @@ export default function DeliberateScreen() {
           <Text className="text-center text-[14px] font-light leading-[22px] text-hum-muted">
             {partnerSubmitted ? `both in · awards → overlap` : `their turn · yours stay hidden`}
           </Text>
-          <Button label="back to awards" onPress={() => router.back()} className="mt-8" />
+          <Button label="back to awards" onPress={() => router.back()} variant="ghost" size="md" className="mt-8" />
         </View>
       </SafeAreaView>
     );
@@ -112,7 +112,7 @@ export default function DeliberateScreen() {
         <ScreenHeader title="alignment" />
         <View className="flex-1 justify-center px-8">
           <Text className="text-center text-[14px] text-hum-muted">add a nomination first</Text>
-          <Button label="back to awards" onPress={() => router.back()} className="mt-6" />
+          <Button label="back to awards" onPress={() => router.back()} variant="ghost" size="md" className="mt-6" />
         </View>
       </SafeAreaView>
     );
@@ -127,7 +127,7 @@ export default function DeliberateScreen() {
         showsVerticalScrollIndicator={false}
       >
         <Text
-          className="text-[10px] font-medium uppercase tracking-[0.24em] text-hum-dim"
+          className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
           maxFontSizeMultiplier={1.25}
         >
           {awardsVoice.alignPickerHint(partnerName).toUpperCase()}

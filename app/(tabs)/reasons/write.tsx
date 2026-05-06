@@ -35,7 +35,7 @@ export default function WriteReasonScreen() {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-hum-bg px-8">
         <Text className="text-center text-hum-muted">link with your person first</Text>
-        <Button label="go back" onPress={() => router.back()} className="mt-6" />
+        <Button label="go back" onPress={() => router.back()} variant="ghost" size="md" className="mt-6" />
       </SafeAreaView>
     );
   }

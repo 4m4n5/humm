@@ -36,7 +36,7 @@ export function RouletteRevealBlock({
         {eyebrow}
       </Text>
       <Text
-        className="text-center text-[32px] font-light leading-tight text-hum-primary"
+        className="text-center text-[32px] font-light leading-tight text-hum-spark"
         numberOfLines={3}
         maxFontSizeMultiplier={1.08}
       >

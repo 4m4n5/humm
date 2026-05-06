@@ -20,8 +20,8 @@ export default function DeleteAccountScreen() {
     Alert.alert(
       'delete forever?',
       profile?.partnerId
-        ? 'your profile and sign-in go away. your partner will be unlinked and this couple’s shared data (decisions, awards, reasons, battles) will be removed for both of you.'
-        : 'your profile and sign-in go away. any invite-only data tied to this account will be removed.',
+        ? 'your account goes · partner unlinked · shared data removed for both of you'
+        : 'your account goes · any invite-only data removed',
       [
         { text: 'cancel', style: 'cancel' },
         {
@@ -55,11 +55,10 @@ export default function DeleteAccountScreen() {
         >
           <View className="gap-y-5">
             <Text
-              className="text-[14px] font-light leading-[22px] text-hum-muted"
+              className="text-[13px] font-light leading-[20px] text-hum-muted"
               maxFontSizeMultiplier={1.35}
             >
-              enter your password so we know it’s you. after this, the app signs you out and your
-              account is gone.
+              confirm with your password · this signs you out for good
             </Text>
             <Input
               label="password"
@@ -81,6 +80,7 @@ export default function DeleteAccountScreen() {
             ) : null}
             <Button
               label="delete my account"
+              variant="danger"
               onPress={handleDelete}
               loading={isLoading}
               size="lg"
@@ -90,7 +90,7 @@ export default function DeleteAccountScreen() {
               className="text-center text-[12px] font-light leading-[18px] text-hum-dim"
               maxFontSizeMultiplier={1.35}
             >
-              changed your mind? tap back — nothing happens until you confirm.
+              tap back · nothing saved yet
             </Text>
           </View>
         </ScrollView>

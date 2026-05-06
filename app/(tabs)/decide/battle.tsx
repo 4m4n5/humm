@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { ScreenHeader } from '@/components/shared/ScreenHeader';
 import { Button } from '@/components/shared/Button';
 import { useAuthStore } from '@/lib/stores/authStore';
@@ -10,6 +11,7 @@ import { DECISION_CATEGORIES } from '@/constants/categories';
 import { DecisionCategory } from '@/types';
 import { createBattle, cancelBattle } from '@/lib/firestore/battles';
 import { scrollContentStandard } from '@/constants/screenLayout';
+import { theme } from '@/constants/theme';
 
 export default function BattleScreen() {
   const { profile } = useAuthStore();
@@ -79,8 +81,10 @@ export default function BattleScreen() {
         showsVerticalScrollIndicator={false}
       >
         {!partnerLinked ? (
-          <View className="rounded-[24px] border border-hum-border/18 bg-hum-card px-5 py-7">
-            <Text className="text-center text-4xl">⚔️</Text>
+          <View className="items-center rounded-[22px] border border-hum-border/18 bg-hum-card px-5 py-7">
+            <View className="h-14 w-14 items-center justify-center rounded-2xl bg-hum-secondary/14">
+              <Ionicons name="flash-outline" size={26} color={theme.secondary} />
+            </View>
             <Text
               className="mt-4 text-center text-[15px] font-medium text-hum-text"
               maxFontSizeMultiplier={1.25}
@@ -89,16 +93,19 @@ export default function BattleScreen() {
               link your partner first
             </Text>
             <Text
-              className="mt-2 text-center text-[14px] font-light leading-[22px] text-hum-muted"
+              className="mt-2 text-center text-[13px] font-light text-hum-muted"
               maxFontSizeMultiplier={1.3}
+              numberOfLines={1}
             >
-              battle mode needs you both — link your partner from profile, then come back.
+              battle needs both of you
             </Text>
           </View>
         ) : battle ? (
           <View className="gap-y-5">
-            <View className="rounded-[24px] border border-hum-secondary/20 bg-hum-card px-5 py-6">
-              <Text className="text-center text-4xl">⚔️</Text>
+            <View className="items-center rounded-[22px] border border-hum-secondary/20 bg-hum-card px-5 py-6">
+              <View className="h-14 w-14 items-center justify-center rounded-2xl bg-hum-secondary/14">
+                <Ionicons name="flash-outline" size={26} color={theme.secondary} />
+              </View>
               <Text
                 className="mt-3 text-center text-[15px] font-medium text-hum-text"
                 maxFontSizeMultiplier={1.25}
@@ -136,13 +143,16 @@ export default function BattleScreen() {
           </View>
         ) : (
           <>
-            <View className="rounded-[24px] border border-hum-secondary/20 bg-hum-card px-5 py-7">
-              <Text className="text-center text-4xl">⚔️</Text>
+            <View className="items-center rounded-[22px] border border-hum-secondary/20 bg-hum-card px-5 py-7">
+              <View className="h-14 w-14 items-center justify-center rounded-2xl bg-hum-secondary/14">
+                <Ionicons name="flash-outline" size={26} color={theme.secondary} />
+              </View>
               <Text
-                className="mt-5 text-center text-[14px] font-light leading-[22px] text-hum-muted"
-                maxFontSizeMultiplier={1.3}
+                className="mt-4 text-center text-[15px] font-medium text-hum-text"
+                maxFontSizeMultiplier={1.25}
+                numberOfLines={1}
               >
-                both pick every round in real time—if you’re split, it resolves on its own.
+                both pick, every round
               </Text>
             </View>
 
@@ -156,7 +166,7 @@ export default function BattleScreen() {
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ gap: 8 }}
+              contentContainerStyle={{ gap: 10 }}
             >
               {DECISION_CATEGORIES.map((c) => {
                 const selected = category === c.id;
@@ -167,7 +177,7 @@ export default function BattleScreen() {
                     className={`flex-row items-center gap-x-2 rounded-full border px-5 py-2.5 ${
                       selected
                         ? 'border-hum-primary/25 bg-hum-primary'
-                        : 'border-hum-border/18 bg-hum-card/80'
+                        : 'border-hum-border/18 bg-hum-card/70'
                     }`}
                     accessibilityRole="button"
                     accessibilityState={{ selected }}
@@ -176,12 +186,12 @@ export default function BattleScreen() {
                   >
                     <Text className="text-base">{c.emoji}</Text>
                     <Text
-                      className={`text-[14px] font-medium tracking-wide ${
+                      className={`text-[13px] font-medium tracking-wide ${
                         selected ? 'text-hum-ink' : 'text-hum-muted'
                       }`}
                       numberOfLines={1}
                     >
-                      {c.label.toLowerCase()}
+                      {c.label}
                     </Text>
                   </TouchableOpacity>
                 );

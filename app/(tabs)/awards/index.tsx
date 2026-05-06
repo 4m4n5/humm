@@ -173,7 +173,7 @@ export default function Awards() {
                 >
                   {seasonHubTitle}
                 </Text>
-                <Ionicons name="chevron-forward" size={15} color={theme.dim} style={{ opacity: 0.45 }} />
+                <Ionicons name="chevron-forward" size={16} color={theme.dim} style={{ opacity: 0.5 }} />
               </TouchableOpacity>
               <View className="shrink-0 rounded-full border border-hum-border/18 bg-hum-surface/45 px-3 py-1.5">
                 <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-muted">
@@ -299,7 +299,7 @@ export default function Awards() {
                     >
                       {cat.label}
                     </Text>
-                    <Text className="text-[11px] font-medium uppercase tracking-wider text-hum-dim">paused</Text>
+                    <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">paused</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -322,7 +322,7 @@ export default function Awards() {
             accessibilityLabel="Award categories — rename, emoji, add, pause, or re-enable"
           >
             <Text className="text-[14px] font-medium text-hum-text">award categories</Text>
-            <Ionicons name="chevron-forward" size={18} color={theme.dim} style={{ opacity: 0.4 }} />
+            <Ionicons name="chevron-forward" size={16} color={theme.dim} style={{ opacity: 0.5 }} />
           </TouchableOpacity>
 
           <View className="flex-row gap-3">

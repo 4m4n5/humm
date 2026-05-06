@@ -351,7 +351,7 @@ export default function ReasonsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <AmbientGlow tone="petal" />
+      <AmbientGlow tone="crimson" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}
@@ -360,7 +360,7 @@ export default function ReasonsScreen() {
         <ScreenTitle title="reasons" />
 
         <View
-          className="relative overflow-hidden rounded-[28px] border border-hum-petal/25 bg-hum-card"
+          className="relative overflow-hidden rounded-[22px] border border-hum-crimson/25 bg-hum-card"
           style={cardShadow as StyleProp<ViewStyle>}
         >
           {drawn === null ? (
@@ -385,7 +385,7 @@ export default function ReasonsScreen() {
                 </View>
 
                 {warmHint === 'partner_pending' ? (
-                  <View className="rounded-[20px] border border-hum-bloom/25 bg-hum-surface/50 px-4 py-3">
+                  <View className="rounded-[18px] border border-hum-bloom/25 bg-hum-surface/50 px-4 py-3">
                     <Text
                       className="text-center text-[12px] font-light leading-[18px] text-hum-muted"
                       maxFontSizeMultiplier={1.35}
@@ -395,7 +395,7 @@ export default function ReasonsScreen() {
                   </View>
                 ) : null}
                 {warmHint === 'sync' ? (
-                  <View className="rounded-[20px] border border-hum-border/18 bg-hum-surface/40 px-4 py-3">
+                  <View className="rounded-[18px] border border-hum-border/18 bg-hum-surface/40 px-4 py-3">
                     <Text
                       className="text-center text-[12px] font-light leading-[18px] text-hum-muted"
                       maxFontSizeMultiplier={1.35}
@@ -440,25 +440,23 @@ export default function ReasonsScreen() {
                     {reasonsVoice.rewardMomentHint}
                   </Text>
                 </View>
-                <TouchableOpacity
+                <Button
+                  label="done"
+                  variant="ghost"
+                  size="sm"
                   onPress={() => {
                     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                     setDrawn(null);
                   }}
-                  hitSlop={12}
-                  accessibilityRole="button"
                   accessibilityLabel="Close and return to write"
-                  className="min-h-11 min-w-11 items-center justify-center rounded-full border border-hum-border/18 bg-hum-surface/55"
-                >
-                  <Text className="text-xs font-medium text-hum-primary">done</Text>
-                </TouchableOpacity>
+                />
               </View>
 
               <QuotesReveal revealKey={rewardRunId}>
                 {drawn.map((r) => (
                   <View
                     key={`${rewardRunId}-${r.id}`}
-                    className="gap-y-2 rounded-[20px] border border-hum-petal/22 bg-hum-surface/45 px-4 py-4"
+                    className="gap-y-2 rounded-[18px] border border-hum-crimson/22 bg-hum-surface/45 px-4 py-4"
                   >
                     <Text
                       className="text-[16px] font-light leading-[24px] text-hum-text"
@@ -490,32 +488,32 @@ export default function ReasonsScreen() {
         </View>
 
         <View className="flex-row gap-3">
-          <View className="flex-1 items-center gap-y-1.5 rounded-[20px] border border-hum-border/18 bg-hum-card px-2 py-4">
+          <View className="flex-1 items-center gap-y-1.5 rounded-[18px] border border-hum-border/18 bg-hum-card px-2 py-4">
             <Text
               className="min-h-[28px] w-full text-center text-[22px] font-extralight leading-[28px] text-hum-text tabular-nums"
               maxFontSizeMultiplier={1.25}
             >
               {aboutMe.length}
             </Text>
-            <Text className="px-1 text-center text-[9px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+            <Text className="px-1 text-center text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
               about you
             </Text>
           </View>
-          <View className="flex-1 items-center gap-y-1.5 rounded-[20px] border border-hum-border/18 bg-hum-card px-2 py-4">
+          <View className="flex-1 items-center gap-y-1.5 rounded-[18px] border border-hum-border/18 bg-hum-card px-2 py-4">
             <Text
               className="min-h-[28px] w-full text-center text-[22px] font-extralight leading-[28px] text-hum-text tabular-nums"
               maxFontSizeMultiplier={1.25}
             >
               {byMe.length}
             </Text>
-            <Text className="px-1 text-center text-[9px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+            <Text className="px-1 text-center text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
               by you
             </Text>
           </View>
         </View>
 
         {myUid && partnerId ? (
-          <View className="gap-y-3 rounded-[24px] border border-hum-border/18 bg-hum-card px-5 py-5">
+          <View className="gap-y-3 rounded-[22px] border border-hum-border/18 bg-hum-card px-5 py-5">
             <Text
               className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
               maxFontSizeMultiplier={1.2}
@@ -534,7 +532,7 @@ export default function ReasonsScreen() {
                 {byMe.map((r) => (
                   <View
                     key={r.id}
-                    className="rounded-[18px] border border-hum-petal/18 bg-hum-surface/45 px-4 py-3.5"
+                    className="rounded-[18px] border border-hum-crimson/18 bg-hum-surface/45 px-4 py-3.5"
                   >
                     <Text
                       className="text-[14px] font-light leading-[21px] text-hum-text"

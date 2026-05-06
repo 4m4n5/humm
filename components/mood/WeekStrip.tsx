@@ -41,7 +41,7 @@ function Cell({
         className={`h-[34px] w-[34px] items-center justify-center rounded-[11px] ${
           filled
             ? inSync
-              ? 'bg-hum-primary/22'
+              ? 'bg-hum-bloom/22'
               : 'bg-hum-bg/55'
             : 'bg-hum-bg/30'
         }`}
@@ -78,7 +78,7 @@ export function WeekStrip({ myEntries, partnerEntries, myLabel, partnerLabel }: 
 
   return (
     <View
-      className="overflow-hidden rounded-[22px] border border-hum-secondary/20 bg-hum-card px-4 py-4"
+      className="overflow-hidden rounded-[22px] border border-hum-bloom/20 bg-hum-card px-4 py-4"
       style={cardShadow}
     >
       <View className="gap-y-3.5">
@@ -93,7 +93,7 @@ export function WeekStrip({ myEntries, partnerEntries, myLabel, partnerLabel }: 
                   <Text
                     className={`text-[10px] ${
                       isToday
-                        ? 'font-semibold text-hum-secondary'
+                        ? 'font-semibold text-hum-bloom'
                         : 'font-light text-hum-dim/60'
                     }`}
                     allowFontScaling={false}

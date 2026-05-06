@@ -128,12 +128,8 @@ export default function TabsLayout() {
         options={{
           title: 'habits',
           tabBarAccessibilityLabel: 'habits tab',
-          tabBarIcon: ({ color, focused, size }) => (
-            <Ionicons
-              name="checkbox-outline"
-              size={size - 1}
-              color={focused ? theme.secondary : color}
-            />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="checkbox-outline" size={size - 1} color={color} />
           ),
         }}
       />

@@ -147,7 +147,7 @@ export default function RevealScreen() {
           <Text className="mb-6 text-center text-[14px] font-light text-hum-muted">
             crown every category · or sync splits on awards
           </Text>
-          <Button label="back to awards" onPress={() => router.back()} />
+          <Button label="back to awards" onPress={() => router.back()} variant="ghost" size="md" />
         </View>
       </SafeAreaView>
     );
@@ -158,7 +158,7 @@ export default function RevealScreen() {
       <SafeAreaView className="flex-1 bg-hum-bg">
         <ScreenHeader title="cheer" />
         <View className="flex-1 justify-center px-8">
-          <Button label="back to awards" onPress={() => router.back()} />
+          <Button label="back to awards" onPress={() => router.back()} variant="ghost" size="md" />
         </View>
       </SafeAreaView>
     );
@@ -214,7 +214,7 @@ export default function RevealScreen() {
         <ScreenHeader title="cheer" />
         <View className="flex-1 justify-between px-6 pb-10 pt-1">
           <Text
-            className="mb-1 text-[10px] font-medium uppercase tracking-[0.24em] text-hum-dim"
+            className="mb-1 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
             maxFontSizeMultiplier={1.25}
           >
             {awardsVoice.cheerScreenHint.toUpperCase()}

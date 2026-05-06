@@ -25,17 +25,17 @@ export function ceremonyHubPhaseHint(
 export const awardsVoice = {
   startAlignmentTitle: 'start alignment?',
   startAlignmentBody:
-    'private picks \u00b7 one per category with stories\nboth done \u2192 overlap\n(every active category needs a story first)',
+    'private picks · both done → overlap',
   overlapPrimary: 'see the overlap',
   resolvePrimary: 'sync split picks',
   revealPrimary: 'start cheering',
   votingHintContested: (n: number) =>
-    n === 1 ? 'one category \u00b7 same tap from both \u00b7 then cheer' : `${n} categories \u00b7 same tap \u00b7 then cheer`,
-  votingHintSync: 'check overlap for what\u2019s left',
-  alignPickerHint: (_name: string) => 'one winner per category \u00b7 hidden until both submit',
+    n === 1 ? 'one split · same tap to cheer' : `${n} splits · same tap to cheer`,
+  votingHintSync: 'check overlap',
+  alignPickerHint: (_name: string) => 'one per category · hidden till both done',
   overlapScreenHint: '\u2713 match \u00b7 \u25c7 split',
-  resolveScreenHint: (name: string) => `same card as ${name} \u00b7 locks`,
-  cheerScreenHint: 'together \u00b7 last card \u2192 vault',
+  resolveScreenHint: (name: string) => `match ${name} \u00b7 locks`,
+  cheerScreenHint: 'together · last card → vault',
 } as const;
 
 /** Relative-time copy used by `lib/relativeMoodTime`. */

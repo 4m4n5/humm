@@ -32,17 +32,17 @@ function PillGroup<T extends string>({
   return (
     <View className="gap-y-2.5">
       <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">{label}</Text>
-      <View className="flex-row flex-wrap gap-2">
+      <View className="flex-row flex-wrap gap-2.5">
         {options.map(({ key, label: l }) => {
           const on = value === key;
           return (
             <TouchableOpacity
               key={key}
               onPress={() => onChange(key)}
-              className={`rounded-full border px-4 py-2.5 ${
+              className={`rounded-full border px-5 py-2.5 ${
                 on
                   ? 'border-hum-primary/25 bg-hum-primary'
-                  : 'border-hum-border/18 bg-hum-card/60'
+                  : 'border-hum-border/18 bg-hum-card/70'
               }`}
               accessibilityRole="button"
               accessibilityState={{ selected: on }}
@@ -87,7 +87,7 @@ export default function NewHabitScreen() {
     return (
       <SafeAreaView className="flex-1 items-center justify-center bg-hum-bg px-8">
         <Text className="text-center text-hum-muted">link your partner first</Text>
-        <Button label="go back" onPress={() => router.back()} className="mt-6" />
+        <Button label="go back" onPress={() => router.back()} variant="ghost" size="md" className="mt-6" />
       </SafeAreaView>
     );
   }
@@ -140,7 +140,7 @@ export default function NewHabitScreen() {
         <View className="gap-y-2.5">
           <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">emoji</Text>
           <TextInput
-            className="min-h-[52px] rounded-[20px] border border-hum-border/18 bg-hum-surface/65 px-4 py-3.5 text-[22px] font-light text-hum-text"
+            className="min-h-[52px] rounded-[20px] border border-hum-border/18 bg-hum-surface/80 px-4 py-3.5 text-[22px] font-light text-hum-text"
             placeholder="✨"
             placeholderTextColor={theme.dim}
             value={emoji}

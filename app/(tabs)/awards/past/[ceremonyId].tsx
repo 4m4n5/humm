@@ -69,11 +69,11 @@ export default function PastCeremonyDetailScreen() {
         contentContainerStyle={scrollContentStandard}
         showsVerticalScrollIndicator={false}
       >
-        <Button label="back to list" onPress={() => router.back()} variant="secondary" />
+        <Button label="back to list" onPress={() => router.back()} variant="ghost" size="md" />
 
         {orderedCats.length === 0 ? (
-          <Text className="text-[14px] font-light leading-[22px] text-hum-muted">
-            no winners in the vault for this round.
+          <Text className="text-[13px] font-light text-hum-muted">
+            no winners this round
           </Text>
         ) : (
           orderedCats.map((catId) => {

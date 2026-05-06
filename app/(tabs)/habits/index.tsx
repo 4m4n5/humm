@@ -5,6 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { router } from 'expo-router';
 import { ScreenTitle } from '@/components/shared/ScreenTitle';
 import { LoadingState } from '@/components/shared/LoadingState';
+import { EmptyState } from '@/components/shared/EmptyState';
 import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useHabitStore } from '@/lib/stores/habitStore';
@@ -335,7 +336,7 @@ export default function HabitsBoardScreen() {
   if (!coupleId) {
     return (
       <SafeAreaView className="flex-1 bg-hum-bg">
-        <AmbientGlow tone="secondary" />
+        <AmbientGlow tone="sage" />
         <ScrollView
           className="flex-1"
           contentContainerStyle={scrollContentStandard}
@@ -351,7 +352,7 @@ export default function HabitsBoardScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <AmbientGlow tone="secondary" />
+      <AmbientGlow tone="sage" />
       {purging ? (
         <View className="absolute inset-0 z-50 items-center justify-center bg-hum-bg/70">
           <LoadingState message="updating habits…" />
@@ -485,28 +486,17 @@ export default function HabitsBoardScreen() {
         )}
 
         {noHabitsInView ? (
-          <View className="items-center py-8">
-            <Text
-              className="mb-5 text-[44px] font-extralight leading-none text-hum-secondary/70"
-              allowFontScaling={false}
-            >
-              ✨
-            </Text>
-            <Text
-              className="text-center text-[18px] font-light leading-[24px] tracking-[-0.01em] text-hum-text"
-              maxFontSizeMultiplier={1.3}
-            >
-              {view === 'daily' ? 'a fresh canvas' : 'a fresh week'}
-            </Text>
-            <Text
-              className="mt-2 max-w-[280px] text-center text-[13px] font-light leading-[20px] text-hum-muted"
-              maxFontSizeMultiplier={1.4}
-            >
-              {view === 'daily'
-                ? 'pick one small thing to do every day — together or alone.'
-                : 'add a weekly habit — something gentler than every day.'}
-            </Text>
-          </View>
+          <EmptyState
+            icon="✨"
+            iconClassName="text-hum-sage/70"
+            title={view === 'daily' ? 'a fresh canvas' : 'a fresh week'}
+            description={
+              view === 'daily'
+                ? 'one small thing · every day'
+                : 'one ritual · once a week'
+            }
+            className="px-0 py-8"
+          />
         ) : null}
 
         <InlineAddHabitTile onPress={() => router.push('/habits/new')} />

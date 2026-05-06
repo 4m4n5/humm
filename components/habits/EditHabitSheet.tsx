@@ -39,17 +39,17 @@ function PillGroup<T extends string>({
   return (
     <View className="gap-y-2.5">
       <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">{label}</Text>
-      <View className="flex-row flex-wrap gap-2">
+      <View className="flex-row flex-wrap gap-2.5">
         {options.map(({ key, label: l }) => {
           const on = value === key;
           return (
             <TouchableOpacity
               key={key}
               onPress={() => onChange(key)}
-              className={`rounded-full border px-4 py-2.5 ${
+              className={`rounded-full border px-5 py-2.5 ${
                 on
                   ? 'border-hum-primary/25 bg-hum-primary'
-                  : 'border-hum-border/18 bg-hum-card/60'
+                  : 'border-hum-border/18 bg-hum-card/70'
               }`}
               activeOpacity={0.88}
             >
@@ -180,7 +180,7 @@ export function EditHabitSheet({ visible, habit, onClose }: Props) {
             <View className="gap-y-2.5">
               <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">emoji</Text>
               <TextInput
-                className="min-h-[52px] rounded-[20px] border border-hum-border/18 bg-hum-surface/65 px-4 py-3.5 text-[22px] font-light text-hum-text"
+                className="min-h-[52px] rounded-[20px] border border-hum-border/18 bg-hum-surface/80 px-4 py-3.5 text-[22px] font-light text-hum-text"
                 placeholder="✨"
                 placeholderTextColor={theme.dim}
                 value={emoji}
@@ -210,10 +210,13 @@ export function EditHabitSheet({ visible, habit, onClose }: Props) {
               <Button label="cancel" variant="secondary" onPress={handleClose} size="lg" />
             </View>
 
-            <View className="mt-2 items-center border-t border-hum-border/10 pt-4">
-              <TouchableOpacity onPress={archive} className="px-4 py-2" accessibilityRole="button">
-                <Text className="text-[13px] font-medium text-red-400/80">archive this habit</Text>
-              </TouchableOpacity>
+            <View className="mt-2 border-t border-hum-border/10 pt-4">
+              <Button
+                label="archive this habit"
+                onPress={archive}
+                variant="danger"
+                size="md"
+              />
             </View>
           </ScrollView>
         </BlurView>
