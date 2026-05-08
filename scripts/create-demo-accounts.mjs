@@ -40,8 +40,8 @@ const DEMO_EMAIL = 'demo@hum.app';
 const PARTNER_EMAIL = 'partner.demo@hum.app';
 const DEMO_PASSWORD = 'humtumapp@demo';
 
-const DEMO_DISPLAY = 'Demo';
-const PARTNER_DISPLAY = 'Pat';
+const DEMO_DISPLAY = 'rahul';
+const PARTNER_DISPLAY = 'anjali';
 
 /** Must match scripts/seed-starter-nominations.mjs */
 const STARTER_SUBMITTED_BY = 'humm_starter_pack';
