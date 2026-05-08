@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
 import {
-  TouchableOpacity,
+  Pressable,
   Text,
   ActivityIndicator,
-  TouchableOpacityProps,
+  PressableProps,
   ViewStyle,
   StyleProp,
   GestureResponderEvent,
@@ -12,11 +12,12 @@ import * as Haptics from 'expo-haptics';
 import { theme } from '@/constants/theme';
 import { primaryButtonShadow } from '@/constants/elevation';
 
-interface ButtonProps extends TouchableOpacityProps {
+interface ButtonProps extends Omit<PressableProps, 'style' | 'children'> {
   label: string;
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
+  style?: StyleProp<ViewStyle>;
 }
 
 export function Button({
@@ -73,12 +74,12 @@ export function Button({
     variant === 'primary' && !disabled && !loading ? primaryButtonShadow : undefined;
 
   return (
-    <TouchableOpacity
-      className={`${base} ${sizeClasses} ${variantClasses} ${disabled || loading ? 'opacity-45' : ''} ${className ?? ''}`}
+    <Pressable
+      className={`${base} ${sizeClasses} ${variantClasses} ${disabled || loading ? 'opacity-45' : 'active:opacity-88'} ${className ?? ''}`}
       disabled={disabled || loading}
-      activeOpacity={0.88}
       style={[shadowStyle, style]}
       accessibilityRole="button"
+      accessibilityLabel={label}
       accessibilityState={{ disabled: !!(disabled || loading), busy: !!loading }}
       onPress={handlePress}
       {...rest}
@@ -92,10 +93,11 @@ export function Button({
         <Text
           className={`${textClasses} ${textSize} text-center tracking-[-0.005em]`}
           numberOfLines={2}
+          maxFontSizeMultiplier={1.3}
         >
           {label}
         </Text>
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 }

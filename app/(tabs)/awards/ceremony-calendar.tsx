@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, ScrollView, Switch, Alert, Platform, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, Switch, Alert, Platform, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ScreenHeader } from '@/components/shared/ScreenHeader';
 import { Button } from '@/components/shared/Button';
+import { Card } from '@/components/shared/Card';
 import { LoadingState } from '@/components/shared/LoadingState';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { SeasonStatsInfographic, SeasonTimelinePanels } from '@/components/awards/SeasonCalendarPanels';
 import { useNominationsStore } from '@/lib/stores/nominationsStore';
 import { useAuthStore } from '@/lib/stores/authStore';
@@ -20,6 +22,7 @@ import { enabledAwardCategoryIds } from '@/lib/awardCategoryConfig';
 import { theme } from '@/constants/theme';
 import { registerExpoPushToken } from '@/lib/registerExpoPushToken';
 import { scrollContentStandard } from '@/constants/screenLayout';
+import { navVoice } from '@/constants/hummVoice';
 
 const TIMELINE_IDS = new Set(['start', 'alignment_start', 'wrap3', 'end']);
 
@@ -111,7 +114,8 @@ export default function CeremonyCalendarScreen() {
   if (!ceremony) {
     return (
       <SafeAreaView className="flex-1 bg-hum-bg">
-        <ScreenHeader title="season" />
+        <AmbientGlow tone="gold" />
+        <ScreenHeader title="this season" />
         <LoadingState />
       </SafeAreaView>
     );
@@ -121,7 +125,8 @@ export default function CeremonyCalendarScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <ScreenHeader title="season" />
+      <AmbientGlow tone="gold" />
+      <ScreenHeader title="this season" />
 
       <ScrollView
         className="flex-1"
@@ -132,37 +137,38 @@ export default function CeremonyCalendarScreen() {
         <SeasonTimelinePanels ceremony={ceremony} now={now} />
 
         {/* Nominations */}
-        <View className="mt-3 rounded-[22px] border border-hum-border/18 bg-hum-card px-5 py-5">
+        <Card className="mt-3">
           <View className="flex-row items-end justify-between gap-4">
             <View>
               <Text
                 className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
-                maxFontSizeMultiplier={1.15}
+                maxFontSizeMultiplier={1.25}
               >
                 nominations
               </Text>
               <Text
                 className="mt-2 text-[36px] font-extralight tabular-nums leading-none text-hum-text"
-                maxFontSizeMultiplier={1.08}
+                maxFontSizeMultiplier={1.25}
               >
                 {filledCategories}
-                <Text className="text-[18px] font-light text-hum-muted">/{categoryTotal}</Text>
+                <Text className="text-[18px] font-light text-hum-muted" maxFontSizeMultiplier={1.25}>
+                  /{categoryTotal}
+                </Text>
               </Text>
-              <Text className="mt-1.5 text-[12px] text-hum-dim" maxFontSizeMultiplier={1.2}>
+              <Text className="mt-1.5 text-[12px] text-hum-dim" maxFontSizeMultiplier={1.3}>
                 {totalNominations} {totalNominations === 1 ? 'story' : 'stories'} logged
               </Text>
             </View>
-            <TouchableOpacity
+            <Pressable
               onPress={() => router.push('/awards')}
               accessibilityRole="button"
-              accessibilityLabel="add nominations"
-              activeOpacity={0.88}
-              className="rounded-full bg-hum-primary/15 px-4 py-2.5"
+              accessibilityLabel="Add nominations on awards home"
+              className="min-h-[44px] justify-center rounded-full bg-hum-primary/15 px-4 py-2.5 active:opacity-88"
             >
-              <Text className="text-[14px] font-medium text-hum-primary" maxFontSizeMultiplier={1.2}>
+              <Text className="text-[14px] font-medium text-hum-primary" maxFontSizeMultiplier={1.3}>
                 + add
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           {couple ? (
@@ -170,13 +176,13 @@ export default function CeremonyCalendarScreen() {
               <SeasonStatsInfographic nominations={nominations} couple={couple} profile={profile} partnerProfile={partnerProfile} />
             </View>
           ) : null}
-        </View>
+        </Card>
 
         {/* Milestones */}
         <View className="px-1">
           <Text
             className="mb-3 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
-            maxFontSizeMultiplier={1.15}
+            maxFontSizeMultiplier={1.25}
           >
             milestones
           </Text>
@@ -195,17 +201,17 @@ export default function CeremonyCalendarScreen() {
                 </View>
                 <View className={`min-w-0 flex-1 ${isLast ? 'pb-0' : 'pb-3.5'}`}>
                   <View className="flex-row items-baseline justify-between gap-2">
-                    <Text className="text-[15px] font-medium text-hum-text" maxFontSizeMultiplier={1.2}>
+                    <Text className="text-[15px] font-medium text-hum-text" maxFontSizeMultiplier={1.3}>
                       {m.title}
                     </Text>
                     <Text
                       className={`text-[12px] ${past ? 'text-hum-dim' : 'text-hum-gold'}`}
-                      maxFontSizeMultiplier={1.2}
+                      maxFontSizeMultiplier={1.25}
                     >
                       {formatRelativeDay(m.at)}
                     </Text>
                   </View>
-                  <Text className="mt-0.5 text-[11px] text-hum-dim" maxFontSizeMultiplier={1.2}>
+                  <Text className="mt-0.5 text-[11px] text-hum-dim" maxFontSizeMultiplier={1.25}>
                     {formatShortDate(m.at)}
                   </Text>
                 </View>
@@ -220,10 +226,10 @@ export default function CeremonyCalendarScreen() {
             <View className="flex-row items-center gap-3 pr-2">
               <Ionicons name="notifications-outline" size={20} color={theme.dim} />
               <View>
-                <Text className="text-[15px] font-medium text-hum-text" maxFontSizeMultiplier={1.22}>
+                <Text className="text-[15px] font-medium text-hum-text" maxFontSizeMultiplier={1.3}>
                   reminders
                 </Text>
-                <Text className="text-[11px] text-hum-dim" maxFontSizeMultiplier={1.2}>
+                <Text className="text-[11px] text-hum-dim" maxFontSizeMultiplier={1.25}>
                   alignment window start & 3 days before close
                 </Text>
               </View>
@@ -234,13 +240,13 @@ export default function CeremonyCalendarScreen() {
               disabled={reminderBusy}
               trackColor={{ false: '#2E293899', true: `${theme.gold}CC` }}
               thumbColor={Platform.OS === 'android' ? theme.surface : undefined}
-              accessibilityLabel="remind before season closes"
+              accessibilityLabel="Toggle reminders for season alignment start and three days before close"
             />
           </View>
         ) : null}
 
         <Button
-          label="back"
+          label={navVoice.backTo('awards')}
           variant="ghost"
           size="md"
           onPress={() => router.back()}

@@ -28,7 +28,9 @@ type Cell = {
   dayKey: string;
   future: boolean;
   isToday: boolean;
-  combinedPct: number;
+  /** Fraction of shared habits the current user completed (0–1). */
+  myPct: number;
+  /** True when both partners finished all shared habits for the day. */
   bothAll: boolean;
   hasObligations: boolean;
 };
@@ -43,22 +45,12 @@ function buildGrid({
   const dailyCheckins = rangeCheckins.filter((c) => c.cadence === 'daily');
   const keys = indexHabitCheckins(dailyCheckins);
 
-  const dailies = activeDailyHabits(habits);
-  const sharedDailies = dailies.filter((h) => h.scope === 'shared');
-  const myPersonalDailies = dailies.filter(
-    (h) => h.scope === 'personal' && h.createdBy === myUid,
+  const sharedDailies = activeDailyHabits(habits).filter(
+    (h) => h.scope === 'shared',
   );
-  const partnerPersonalDailies = partnerId
-    ? dailies.filter(
-        (h) => h.scope === 'personal' && h.createdBy === partnerId,
-      )
-    : [];
 
-  const myOwed = sharedDailies.length + myPersonalDailies.length;
-  const partnerOwed = partnerId
-    ? sharedDailies.length + partnerPersonalDailies.length
-    : 0;
-  const totalOwed = myOwed + partnerOwed;
+  const myOwed = sharedDailies.length;
+  const partnerOwed = partnerId ? sharedDailies.length : 0;
 
   const thisMonday = localWeekKey();
   const startMonday = offsetLocalDayKey(thisMonday, -7 * (WEEKS - 1));
@@ -75,7 +67,7 @@ function buildGrid({
           dayKey: dk,
           future: true,
           isToday: false,
-          combinedPct: 0,
+          myPct: 0,
           bothAll: false,
           hasObligations: false,
         };
@@ -88,16 +80,7 @@ function buildGrid({
           partnerDone += 1;
         }
       }
-      for (const h of myPersonalDailies) {
-        if (hasDailyCheckin(keys, h.id, myUid, dk)) myDone += 1;
-      }
-      if (partnerId) {
-        for (const h of partnerPersonalDailies) {
-          if (hasDailyCheckin(keys, h.id, partnerId, dk)) partnerDone += 1;
-        }
-      }
-      const combinedPct =
-        totalOwed > 0 ? (myDone + partnerDone) / totalOwed : 0;
+      const myPct = myOwed > 0 ? myDone / myOwed : 0;
       const bothAll =
         myOwed > 0 &&
         partnerOwed > 0 &&
@@ -107,9 +90,9 @@ function buildGrid({
         dayKey: dk,
         future: false,
         isToday,
-        combinedPct,
+        myPct,
         bothAll,
-        hasObligations: totalOwed > 0,
+        hasObligations: myOwed > 0,
       };
     });
     grid.push(row);
@@ -117,58 +100,57 @@ function buildGrid({
   return grid;
 }
 
-function cellClasses(cell: Cell): { bg: string; border: string } {
-  if (cell.future) {
-    return { bg: 'bg-transparent', border: 'border-transparent' };
-  }
-  if (!cell.hasObligations) {
-    return { bg: 'bg-hum-surface/20', border: 'border-transparent' };
-  }
+// Inline rgba so colors are guaranteed — NativeWind can miss dynamic class strings.
+const CELL_NONE = 'rgba(46,41,56,0.35)';       // hum-border at 35%
+const CELL_SOME = 'rgba(232,160,154,0.40)';     // hum-primary at 40%
+const CELL_DONE = 'rgba(232,160,154,0.85)';     // hum-primary at 85%
+const CELL_BOTH = 'rgba(210,115,115,0.75)';     // hum-crimson at 75%
+const BORDER_PRIMARY = '#E8A09A';
+const BORDER_CRIMSON = '#D27373';
+
+function cellStyle(cell: Cell): { bg: string; borderColor: string } {
+  if (cell.future) return { bg: 'transparent', borderColor: 'transparent' };
+  if (!cell.hasObligations) return { bg: CELL_NONE, borderColor: 'transparent' };
   if (cell.bothAll) {
-    return {
-      bg: 'bg-hum-crimson/75',
-      border: cell.isToday ? 'border-hum-crimson' : 'border-transparent',
-    };
+    return { bg: CELL_BOTH, borderColor: cell.isToday ? BORDER_CRIMSON : 'transparent' };
   }
-  let bg: string;
-  if (cell.combinedPct === 0) bg = 'bg-hum-surface/20';
-  else if (cell.combinedPct < 0.34) bg = 'bg-hum-primary/20';
-  else if (cell.combinedPct < 0.67) bg = 'bg-hum-primary/40';
-  else if (cell.combinedPct < 1) bg = 'bg-hum-primary/60';
-  else bg = 'bg-hum-primary/82';
-  return {
-    bg,
-    border: cell.isToday ? 'border-hum-primary' : 'border-transparent',
-  };
+  const bg = cell.myPct >= 1 ? CELL_DONE : cell.myPct > 0 ? CELL_SOME : CELL_NONE;
+  return { bg, borderColor: cell.isToday ? BORDER_PRIMARY : 'transparent' };
 }
 
 const GAP = 4;
 
 function HeatmapCell({ cell, size }: { cell: Cell; size: number }) {
-  const { bg, border } = cellClasses(cell);
+  const { bg, borderColor } = cellStyle(cell);
   return (
     <View
-      className={`rounded-[4px] border ${bg} ${border}`}
-      style={{ width: size, height: size }}
+      style={{
+        width: size,
+        height: size,
+        borderRadius: 4,
+        borderWidth: 1,
+        backgroundColor: bg,
+        borderColor,
+      }}
       accessibilityElementsHidden
     />
   );
 }
 
-function LegendDot({ bg }: { bg: string }) {
-  return <View className={`h-[8px] w-[8px] rounded-[2px] ${bg}`} />;
+function LegendDot({ color }: { color: string }) {
+  return <View style={{ width: 10, height: 10, borderRadius: 3, backgroundColor: color }} />;
 }
 
 export function HabitsAdherenceLog(props: Props) {
   const { width: screenW } = useWindowDimensions();
-  const dailies = useMemo(
-    () => activeDailyHabits(props.habits),
+  const sharedDailies = useMemo(
+    () => activeDailyHabits(props.habits).filter((h) => h.scope === 'shared'),
     [props.habits],
   );
 
   const grid = useMemo(() => buildGrid(props), [props]);
 
-  if (dailies.length === 0) return null;
+  if (sharedDailies.length === 0) return null;
 
   const cardPadH = 24;
   const scrollPadH = 24;
@@ -193,7 +175,7 @@ export function HabitsAdherenceLog(props: Props) {
             <View key={`l-${i}`} style={{ width: cellSize }} className="items-center">
               <Text
                 className="text-[9px] font-medium text-hum-dim/40"
-                allowFontScaling={false}
+                maxFontSizeMultiplier={1.25}
               >
                 {l}
               </Text>
@@ -213,22 +195,28 @@ export function HabitsAdherenceLog(props: Props) {
         </View>
 
         {/* Legend */}
-        <View className="mt-3 flex-row items-center justify-center gap-x-3">
-          <View className="flex-row items-center gap-x-[2.5px]">
-            <Text className="mr-0.5 text-[9px] font-light text-hum-dim/40" allowFontScaling={false}>
-              less
-            </Text>
-            <LegendDot bg="bg-hum-surface/25" />
-            <LegendDot bg="bg-hum-primary/25" />
-            <LegendDot bg="bg-hum-primary/45" />
-            <LegendDot bg="bg-hum-primary/70" />
-            <Text className="ml-0.5 text-[9px] font-light text-hum-dim/40" allowFontScaling={false}>
-              more
+        <View className="mt-3 flex-row items-center justify-center gap-x-4">
+          <View className="flex-row items-center gap-x-1.5">
+            <LegendDot color={CELL_NONE} />
+            <Text className="text-[9px] font-light text-hum-dim" maxFontSizeMultiplier={1.25}>
+              none
             </Text>
           </View>
-          <View className="flex-row items-center gap-x-[2.5px]">
-            <LegendDot bg="bg-hum-crimson/75" />
-            <Text className="ml-0.5 text-[9px] font-light text-hum-dim/40" allowFontScaling={false}>
+          <View className="flex-row items-center gap-x-1.5">
+            <LegendDot color={CELL_SOME} />
+            <Text className="text-[9px] font-light text-hum-dim" maxFontSizeMultiplier={1.25}>
+              some
+            </Text>
+          </View>
+          <View className="flex-row items-center gap-x-1.5">
+            <LegendDot color={CELL_DONE} />
+            <Text className="text-[9px] font-light text-hum-dim" maxFontSizeMultiplier={1.25}>
+              you done
+            </Text>
+          </View>
+          <View className="flex-row items-center gap-x-1.5">
+            <LegendDot color={CELL_BOTH} />
+            <Text className="text-[9px] font-light text-hum-dim" maxFontSizeMultiplier={1.25}>
               both done
             </Text>
           </View>

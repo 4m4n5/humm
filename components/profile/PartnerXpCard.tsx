@@ -15,7 +15,7 @@ type Props = {
 export function PartnerXpCard({ partner, loading }: Props) {
   if (loading && !partner) {
     return (
-      <Card className="bg-hum-surface/15 py-6">
+      <Card bgClassName="bg-hum-surface/15">
         <Text
           className="text-center text-[13px] font-light text-hum-muted"
           maxFontSizeMultiplier={1.35}
@@ -28,7 +28,7 @@ export function PartnerXpCard({ partner, loading }: Props) {
 
   if (!partner) {
     return (
-      <Card className="bg-hum-surface/15 py-5">
+      <Card bgClassName="bg-hum-surface/15">
         <Text
           className="text-center text-[13px] font-light text-hum-muted"
           maxFontSizeMultiplier={1.35}
@@ -45,7 +45,7 @@ export function PartnerXpCard({ partner, loading }: Props) {
     : 1;
 
   return (
-    <Card className="gap-y-5 bg-hum-card/55">
+    <Card bgClassName="bg-hum-card/55" className="gap-y-5">
       <View className="flex-row items-center gap-x-4">
         <View className="h-16 w-16 items-center justify-center rounded-full border border-hum-border/18 bg-hum-surface/40">
           <Text
@@ -67,8 +67,9 @@ export function PartnerXpCard({ partner, loading }: Props) {
           <AnimatedNumber
             value={partner.xp ?? 0}
             className="text-[34px] font-extralight tabular-nums leading-[36px] tracking-[-0.025em] text-hum-primary/90"
+            maxFontSizeMultiplier={1.25}
           />
-          <Text className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+          <Text className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim" maxFontSizeMultiplier={1.25}>
             xp
           </Text>
         </View>
@@ -76,7 +77,7 @@ export function PartnerXpCard({ partner, loading }: Props) {
 
       {level.nextLevelXp ? (
         <View className="gap-y-2">
-          <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+          <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim" maxFontSizeMultiplier={1.25}>
             level {level.level}
           </Text>
           <View className="h-[6px] overflow-hidden rounded-full bg-hum-border/30">
@@ -85,7 +86,7 @@ export function PartnerXpCard({ partner, loading }: Props) {
               style={{ width: `${Math.min(xpProgress * 100, 100)}%` }}
             />
           </View>
-          <Text className="text-[12px] font-light text-hum-dim">
+          <Text className="text-[12px] font-light text-hum-dim" maxFontSizeMultiplier={1.5}>
             {level.nextLevelXp - (partner.xp ?? 0)} xp until {getLevelForXp(level.nextLevelXp).name}
           </Text>
         </View>

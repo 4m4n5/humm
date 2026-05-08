@@ -25,7 +25,7 @@ import type { Habit } from '@/types';
 import { HabitsActionBar } from '@/components/habits/HabitsActionBar';
 import { HabitCard } from '@/components/habits/HabitCard';
 import { InlineAddHabitTile } from '@/components/habits/InlineAddHabitTile';
-import { SectionLabel } from '@/components/habits/SectionLabel';
+import { SectionLabel } from '@/components/shared/SectionLabel';
 import { EditHabitSheet } from '@/components/habits/EditHabitSheet';
 import { HabitsAdherenceLog } from '@/components/habits/HabitsAdherenceLog';
 import { purgeLegacyHabitsIfNeeded } from '@/lib/firestore/habitsLegacyPurge';

@@ -96,7 +96,7 @@ export function WeekStrip({ myEntries, partnerEntries, myLabel, partnerLabel }: 
                         ? 'font-semibold text-hum-bloom'
                         : 'font-light text-hum-dim/60'
                     }`}
-                    allowFontScaling={false}
+                    maxFontSizeMultiplier={1.25}
                   >
                     {dayLetterFromKey(dk)}
                   </Text>
@@ -142,6 +142,7 @@ function Row({
       <Text
         className="w-12 pl-1 text-[11px] font-light lowercase tracking-[-0.005em] text-hum-dim"
         numberOfLines={1}
+        maxFontSizeMultiplier={1.25}
       >
         {label}
       </Text>

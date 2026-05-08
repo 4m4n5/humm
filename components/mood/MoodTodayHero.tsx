@@ -47,7 +47,7 @@ function MoodRow({
       {pressable ? (
         <Ionicons name="add" size={20} color={theme.bloom} />
       ) : (
-        <Text className="text-[16px] opacity-30" allowFontScaling={false}>
+        <Text className="text-[16px] opacity-30" maxFontSizeMultiplier={1.25}>
           ✦
         </Text>
       )}
@@ -60,12 +60,14 @@ function MoodRow({
         <Text
           className="text-[15px] font-medium leading-[20px] tracking-tight text-hum-text"
           numberOfLines={1}
+          maxFontSizeMultiplier={1.3}
         >
           {entry.current.label}
         </Text>
         <Text
           className="text-[11px] font-light lowercase text-hum-dim"
           numberOfLines={1}
+          maxFontSizeMultiplier={1.25}
         >
           {label}
         </Text>
@@ -74,6 +76,7 @@ function MoodRow({
         <Text
           className="text-[11px] font-light leading-[15px] tabular-nums text-hum-dim/70"
           numberOfLines={1}
+          maxFontSizeMultiplier={1.25}
         >
           {lastAgo}
         </Text>
@@ -85,12 +88,14 @@ function MoodRow({
         <Text
           className="text-[15px] font-medium leading-[20px] tracking-tight text-hum-muted/85"
           numberOfLines={1}
+          maxFontSizeMultiplier={1.3}
         >
           {pressable ? 'log mood' : 'not yet'}
         </Text>
         <Text
           className="text-[11px] font-light lowercase text-hum-dim"
           numberOfLines={1}
+          maxFontSizeMultiplier={1.25}
         >
           {label}
         </Text>
@@ -98,6 +103,7 @@ function MoodRow({
       <Text
         className={`text-[11px] font-light leading-[15px] ${pressable ? 'text-hum-bloom/75' : 'text-hum-dim/55'}`}
         numberOfLines={1}
+        maxFontSizeMultiplier={1.25}
       >
         {pressable ? 'tap to check in' : 'waiting on them'}
       </Text>

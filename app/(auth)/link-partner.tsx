@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
+  Pressable,
   Share,
   Alert,
   KeyboardAvoidingView,
@@ -13,8 +13,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { Input } from '@/components/shared/Input';
 import { Button } from '@/components/shared/Button';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { AUTH_SCREEN_PADDING_TOP } from '@/constants/screenLayout';
 import { repairHalfLinkedProfile } from '@/lib/firestore/users';
+import { errorsVoice } from '@/constants/hummVoice';
 
 export default function LinkPartner() {
   const { profile, linkPartner, signOut, error, clearError } = useAuthStore();
@@ -50,7 +52,7 @@ export default function LinkPartner() {
     try {
       await linkPartner(partnerCode.trim());
     } catch (e) {
-      Alert.alert('couldn’t link', e instanceof Error ? e.message : 'check the code and try again');
+      Alert.alert(errorsVoice.couldntLink, e instanceof Error ? e.message : 'check the code · try again');
     } finally {
       setLinking(false);
     }
@@ -58,6 +60,7 @@ export default function LinkPartner() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg" edges={['top', 'bottom']}>
+      <AmbientGlow tone="primary" />
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -74,8 +77,8 @@ export default function LinkPartner() {
           >
             <View className="items-center gap-y-3">
               <Text
-                className="text-center text-[30px] font-extralight leading-[36px] tracking-[-0.02em] text-hum-primary"
-                maxFontSizeMultiplier={1.2}
+                className="text-center text-[40px] font-extralight leading-[44px] tracking-[-0.02em] text-hum-primary"
+                maxFontSizeMultiplier={1.3}
               >
                 Hum - rituals
               </Text>
@@ -87,7 +90,7 @@ export default function LinkPartner() {
               </Text>
               <Text
                 className="max-w-[280px] text-center text-[13px] font-light leading-[20px] text-hum-muted"
-                maxFontSizeMultiplier={1.35}
+                maxFontSizeMultiplier={1.3}
               >
                 one shares · the other types
               </Text>
@@ -97,54 +100,54 @@ export default function LinkPartner() {
               className="flex-row rounded-full border border-hum-border/18 bg-hum-surface/50 p-[3px]"
               accessibilityRole="tablist"
             >
-              <TouchableOpacity
-                className={`min-h-12 flex-1 items-center justify-center rounded-full py-3 ${tab === 'share' ? 'bg-hum-card' : ''}`}
+              <Pressable
+                className={`min-h-[44px] flex-1 items-center justify-center rounded-full py-3 active:opacity-88 ${tab === 'share' ? 'bg-hum-card' : ''}`}
                 onPress={() => setTab('share')}
-                activeOpacity={0.88}
                 accessibilityRole="tab"
                 accessibilityState={{ selected: tab === 'share' }}
-                accessibilityLabel="show my invite code"
+                accessibilityLabel="Show my invite code tab"
               >
                 <Text
                   className={`text-center text-[13px] tracking-wide ${
                     tab === 'share' ? 'font-semibold text-hum-text' : 'font-light text-hum-dim'
                   }`}
+                  maxFontSizeMultiplier={1.3}
                 >
                   my code
                 </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                className={`min-h-12 flex-1 items-center justify-center rounded-full py-3 ${tab === 'enter' ? 'bg-hum-card' : ''}`}
+              </Pressable>
+              <Pressable
+                className={`min-h-[44px] flex-1 items-center justify-center rounded-full py-3 active:opacity-88 ${tab === 'enter' ? 'bg-hum-card' : ''}`}
                 onPress={() => setTab('enter')}
-                activeOpacity={0.88}
                 accessibilityRole="tab"
                 accessibilityState={{ selected: tab === 'enter' }}
-                accessibilityLabel="enter partner invite code"
+                accessibilityLabel="Enter partner invite code tab"
               >
                 <Text
                   className={`text-center text-[13px] tracking-wide ${
                     tab === 'enter' ? 'font-semibold text-hum-text' : 'font-light text-hum-dim'
                   }`}
+                  maxFontSizeMultiplier={1.3}
                 >
                   their code
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
 
             {tab === 'share' ? (
               <View className="items-center gap-y-8">
                 <View className="w-full max-w-sm items-center gap-y-4 self-center rounded-[22px] border border-hum-border/18 bg-hum-card px-7 py-11">
-                  <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+                  <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim" maxFontSizeMultiplier={1.25}>
                     your code
                   </Text>
-                  <Text className="text-[32px] font-light tracking-[0.45em] text-hum-primary">
+                  <Text className="text-[32px] font-light tracking-[0.45em] text-hum-primary" maxFontSizeMultiplier={1.3}>
                     {profile?.inviteCode ?? '······'}
                   </Text>
                 </View>
 
                 <Button label="share code" onPress={handleShareCode} size="lg" className="w-full" />
 
-                <Text className="max-w-[280px] text-center text-[12px] font-light leading-[18px] text-hum-dim">
+                <Text className="max-w-[280px] text-center text-[12px] font-light leading-[18px] text-hum-dim" maxFontSizeMultiplier={1.5}>
                   send through anything you already use
                 </Text>
               </View>
@@ -163,6 +166,7 @@ export default function LinkPartner() {
                   <Text
                     className="text-center text-[14px] leading-[22px] text-red-400/90"
                     accessibilityLiveRegion="polite"
+                    maxFontSizeMultiplier={1.5}
                   >
                     {error}
                   </Text>
@@ -172,17 +176,16 @@ export default function LinkPartner() {
               </View>
             )}
 
-            <TouchableOpacity
-              className="mt-auto min-h-12 items-center justify-center py-4"
+            <Pressable
+              className="mt-auto min-h-[44px] items-center justify-center py-4 active:opacity-88"
               onPress={signOut}
-              activeOpacity={0.88}
               accessibilityRole="button"
-              accessibilityLabel="sign out, not you"
+              accessibilityLabel="Sign out, this is not your account"
             >
-              <Text className="text-[13px] font-light text-hum-dim">
-                not you? <Text className="font-medium text-hum-muted">sign out</Text>
+              <Text className="text-[13px] font-light text-hum-dim" maxFontSizeMultiplier={1.3}>
+                not you? <Text className="font-medium text-hum-muted" maxFontSizeMultiplier={1.3}>sign out</Text>
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

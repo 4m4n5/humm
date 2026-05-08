@@ -11,11 +11,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScreenHeader } from '@/components/shared/ScreenHeader';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { updateUserProfile } from '@/lib/firestore/users';
 import { scrollContentStandard } from '@/constants/screenLayout';
 import { theme } from '@/constants/theme';
 import { cardShadow } from '@/constants/elevation';
+import { errorsVoice } from '@/constants/hummVoice';
 import type {
   NotificationPreferences,
   DailyRemindersPreferences,
@@ -35,7 +37,7 @@ const ACTIVITY_DEFAULTS: NotificationPreferences = {
 const ACTIVITY_LABELS: Record<keyof NotificationPreferences, { label: string; hint: string }> = {
   mood: { label: 'mood', hint: 'when your partner taps a sticker' },
   habits: { label: 'habits', hint: 'check-ins and new shared habits' },
-  decide: { label: 'decide', hint: 'quick spins and battles' },
+  decide: { label: 'decide', hint: 'when your partner makes a pick' },
   reasons: { label: 'reasons', hint: 'when your partner writes one for you' },
   awards: { label: 'awards', hint: 'nominations, picks, ceremony moments' },
   weeklyChallenge: { label: 'weekly challenge', hint: 'wins to celebrate together' },
@@ -129,7 +131,7 @@ export default function NotificationSettingsScreen() {
     try {
       await updateUserProfile(profile.uid, { notificationPreferences: next });
     } catch {
-      Alert.alert('couldn\u2019t save', 'check your connection');
+      Alert.alert(errorsVoice.couldntSave, errorsVoice.checkConnection);
       setActivity(activity);
     } finally {
       setSaving(false);
@@ -144,7 +146,7 @@ export default function NotificationSettingsScreen() {
         dailyReminders: { ...next, timezone: next.timezone || resolveTimezone() },
       });
     } catch {
-      Alert.alert('couldn\u2019t save', 'check your connection');
+      Alert.alert(errorsVoice.couldntSave, errorsVoice.checkConnection);
       setReminders(reminders);
     } finally {
       setSaving(false);
@@ -185,6 +187,7 @@ export default function NotificationSettingsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
+      <AmbientGlow tone="primary" />
       <ScreenHeader title="notifications" />
       <ScrollView
         className="flex-1"
@@ -192,7 +195,7 @@ export default function NotificationSettingsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* ─── Partner activity ─── */}
-        <Text className="mb-2 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+        <Text className="mb-2 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim" maxFontSizeMultiplier={1.25}>
           partner activity
         </Text>
         <View
@@ -209,8 +212,8 @@ export default function NotificationSettingsScreen() {
                 }`}
               >
                 <View className="mr-3 flex-1">
-                  <Text className="text-[14px] font-medium text-hum-text">{meta.label}</Text>
-                  <Text className="mt-0.5 text-[11.5px] font-light text-hum-dim">
+                  <Text className="text-[14px] font-medium text-hum-text" maxFontSizeMultiplier={1.3}>{meta.label}</Text>
+                  <Text className="mt-0.5 text-[11.5px] font-light text-hum-dim" maxFontSizeMultiplier={1.25}>
                     {meta.hint}
                   </Text>
                 </View>
@@ -219,6 +222,7 @@ export default function NotificationSettingsScreen() {
                   onValueChange={() => toggleActivity(key)}
                   trackColor={{ false: theme.border, true: theme.primary }}
                   disabled={saving}
+                  accessibilityLabel={`${meta.label} notifications: ${meta.hint}. ${activity[key] ? 'On' : 'Off'}`}
                 />
               </View>
             );
@@ -226,7 +230,7 @@ export default function NotificationSettingsScreen() {
         </View>
 
         {/* ─── Daily reminders ─── */}
-        <Text className="mb-2 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+        <Text className="mb-2 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim" maxFontSizeMultiplier={1.25}>
           daily reminders
         </Text>
         <View
@@ -251,12 +255,12 @@ export default function NotificationSettingsScreen() {
             disabled={saving || !activity.reminders}
           />
         </View>
-        <Text className="mt-2 px-1 text-[11px] font-light text-hum-dim">
+        <Text className="mt-2 px-1 text-[11px] font-light text-hum-dim" maxFontSizeMultiplier={1.5}>
           {activity.reminders
             ? 'reminders skip themselves on days you\u2019ve already logged.'
             : 'turn on \u201cdaily reminders\u201d above to enable.'}
         </Text>
-        <Text className="mt-1 px-1 text-[10.5px] font-light text-hum-dim/70">
+        <Text className="mt-1 px-1 text-[10.5px] font-light text-hum-dim/70" maxFontSizeMultiplier={1.25}>
           timezone: {reminders.timezone}
         </Text>
       </ScrollView>
@@ -290,14 +294,15 @@ function ReminderRow(props: {
     <View className="px-4 py-3.5">
       <View className="flex-row items-center justify-between">
         <View className="mr-3 flex-1">
-          <Text className="text-[14px] font-medium text-hum-text">{props.label}</Text>
-          <Text className="mt-0.5 text-[11.5px] font-light text-hum-dim">{props.hint}</Text>
+          <Text className="text-[14px] font-medium text-hum-text" maxFontSizeMultiplier={1.3}>{props.label}</Text>
+          <Text className="mt-0.5 text-[11.5px] font-light text-hum-dim" maxFontSizeMultiplier={1.25}>{props.hint}</Text>
         </View>
         <Switch
           value={props.cfg.enabled && !props.disabled}
           onValueChange={props.onToggle}
           trackColor={{ false: theme.border, true: theme.primary }}
           disabled={props.disabled}
+          accessibilityLabel={`${props.label} reminder: ${props.hint}. ${props.cfg.enabled && !props.disabled ? 'On' : 'Off'}`}
         />
       </View>
       {props.cfg.enabled && !props.disabled ? (
@@ -307,10 +312,10 @@ function ReminderRow(props: {
           accessibilityLabel={`change ${props.label} time, currently ${formatTimeForDisplay(
             props.cfg.localTime,
           )}`}
-          className="mt-3 flex-row items-center justify-between rounded-[12px] border border-hum-primary/20 bg-hum-bg px-3 py-2.5 active:opacity-70"
+          className="mt-3 min-h-[44px] flex-row items-center justify-between rounded-[12px] border border-hum-primary/20 bg-hum-bg px-3 py-2.5 active:opacity-70"
         >
-          <Text className="text-[12.5px] font-light text-hum-muted">at</Text>
-          <Text className="text-[14px] font-medium tabular-nums text-hum-text">
+          <Text className="text-[12.5px] font-light text-hum-muted" maxFontSizeMultiplier={1.25}>at</Text>
+          <Text className="text-[14px] font-medium tabular-nums text-hum-text" maxFontSizeMultiplier={1.3}>
             {formatTimeForDisplay(props.cfg.localTime)}
           </Text>
         </Pressable>
@@ -342,13 +347,14 @@ function TimePickerModal(props: {
       >
         <Pressable
           onPress={(e) => e.stopPropagation()}
+          accessible={false}
           className="rounded-t-[28px] border-t border-hum-border/18 bg-hum-bg px-4 pb-8 pt-3"
           style={cardShadow}
         >
           <View className="mb-2 items-center">
             <View className="h-[4px] w-12 rounded-full bg-hum-border/40" />
           </View>
-          <Text className="mb-3 text-center text-[13px] font-medium text-hum-text">
+          <Text className="mb-3 text-center text-[13px] font-medium text-hum-text" maxFontSizeMultiplier={1.3}>
             {props.title}
           </Text>
           <ScrollView
@@ -363,8 +369,9 @@ function TimePickerModal(props: {
                   key={slot}
                   onPress={() => props.onPick(slot)}
                   accessibilityRole="button"
+                  accessibilityLabel={`Set reminder time to ${formatTimeForDisplay(slot)}`}
                   accessibilityState={{ selected }}
-                  className={`flex-row items-center justify-between rounded-[10px] px-3 py-3 ${
+                  className={`min-h-[44px] flex-row items-center justify-between rounded-[10px] px-3 py-3 ${
                     selected ? 'bg-hum-primary/10' : ''
                   }`}
                 >
@@ -374,11 +381,12 @@ function TimePickerModal(props: {
                         ? 'font-semibold text-hum-primary'
                         : 'font-light text-hum-text'
                     }`}
+                    maxFontSizeMultiplier={1.3}
                   >
                     {formatTimeForDisplay(slot)}
                   </Text>
                   {selected ? (
-                    <Text className="text-[11px] font-medium text-hum-primary">selected</Text>
+                    <Text className="text-[11px] font-medium text-hum-primary" maxFontSizeMultiplier={1.25}>selected</Text>
                   ) : null}
                 </Pressable>
               );

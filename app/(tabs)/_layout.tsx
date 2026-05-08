@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo } from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useEffect, useMemo, useCallback, useRef } from 'react';
+import { AppState, StyleSheet, View } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,9 +8,10 @@ import { useAuthStore } from '@/lib/stores/authStore';
 import { useDecisionStore } from '@/lib/stores/decisionStore';
 import { useNominationsStore } from '@/lib/stores/nominationsStore';
 import { useReasonStore } from '@/lib/stores/reasonStore';
-import { useBattleStore } from '@/lib/stores/battleStore';
+import { usePickStore } from '@/lib/stores/pickStore';
 import { useHabitStore } from '@/lib/stores/habitStore';
 import { useMoodStore } from '@/lib/stores/moodStore';
+import { heartbeat } from '@/lib/firestore/users';
 import { theme } from '@/constants/theme';
 import {
   TAB_BAR_PADDING_BOTTOM_BASE,
@@ -45,7 +46,7 @@ export default function TabsLayout() {
     const u1 = useDecisionStore.getState().init(profile.coupleId);
     const u2 = useNominationsStore.getState().init(profile.coupleId, profile.uid);
     const u3 = useReasonStore.getState().init(profile.coupleId);
-    const u4 = useBattleStore.getState().init(profile.coupleId);
+    const u4 = usePickStore.getState().init(profile.coupleId);
     const u5 = useHabitStore.getState().init(profile.coupleId);
     // Mood needs both uids — only subscribe once the partner link exists.
     const u6 = profile.partnerId
@@ -67,6 +68,21 @@ export default function TabsLayout() {
       console.warn('[tabs] ensureWeeklyChallengeRotated', e),
     );
   }, [profile?.coupleId]);
+
+  const uidRef = useRef(profile?.uid);
+  uidRef.current = profile?.uid;
+
+  const sendHeartbeat = useCallback(() => {
+    if (uidRef.current) void heartbeat(uidRef.current).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    sendHeartbeat();
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') sendHeartbeat();
+    });
+    return () => sub.remove();
+  }, [sendHeartbeat]);
 
   return (
     <View style={styles.root}>
@@ -116,7 +132,7 @@ export default function TabsLayout() {
         listeners={{ tabPress: tabHaptic }}
         options={{
           title: 'decide',
-          tabBarAccessibilityLabel: 'decide tab, quick spin and battle',
+          tabBarAccessibilityLabel: 'decide tab',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="sparkles-outline" size={size - 1} color={color} />
           ),

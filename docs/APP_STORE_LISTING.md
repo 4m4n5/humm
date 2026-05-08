@@ -4,7 +4,7 @@ Single reference for **App Store Connect** metadata, URLs, privacy, review, and 
 
 **Not legal advice:** Have a lawyer review privacy policy and paid-app terms before you charge money.
 
-**Operator (listed on hosted pages):** Aman Shrivastava · **Support email:** `aman.srivastava999@gmail.com` · **Policy/support pages last updated:** May 5, 2026 (`docs/store/`).
+**Operator (listed on hosted pages):** Aman Shrivastava · **Support email:** `aman.srivastava999@gmail.com` · **Policy/support pages last updated:** May 8, 2026 (`docs/store/`).
 
 **Binary source of truth:** [`app.json`](../app.json) — name, version, iOS bundle ID, build number, orientation, dark UI, plugins (`expo-router`, `expo-font`, `expo-image-picker`, `expo-notifications`). Firebase is wired via **`EXPO_PUBLIC_*`** env vars at runtime, not an `app.json` plugin.
 
@@ -21,7 +21,7 @@ Single reference for **App Store Connect** metadata, URLs, privacy, review, and 
 | **SKU** (internal, unique)           | e.g. `humtum-ios-001`                                                                                                |
 | **Primary language**                 | English (U.S.)                                                                                                       |
 | **Marketing version** (user-visible) | `1.0.0` (from `expo.version`)                                                                                        |
-| **Build** (`CFBundleVersion`)        | `1` — must increase every upload (see EAS / Xcode)                                                                   |
+| **Build** (`CFBundleVersion`)        | `5` — must increase every upload (see EAS / Xcode)                                                                   |
 | **Privacy Policy URL**               | `https://4m4n5.github.io/humm/store/privacy.html`                                                                    |
 | **Support URL**                      | `https://4m4n5.github.io/humm/store/support.html`                                                                    |
 | **Marketing URL** (optional)         | `https://4m4n5.github.io/humm/store/index.html`                                                                      |
@@ -57,13 +57,13 @@ Single reference for **App Store Connect** metadata, URLs, privacy, review, and 
 **Primary (170 chars):**
 
 ```
-Mood check-ins, shared habits, collaborative decisions, awards seasons, and reasons to love each other—invite-only, just you and your person.
+Mood check-ins, shared habits, picks made together, awards seasons, and reasons to love each other—private by design, just you and your person.
 ```
 
 **Shorter (116 chars):**
 
 ```
-Invite your person. Check moods, build habits, decide together, vote on pairs, trade reasons—private by design.
+Invite your person. Check moods, build habits, pick together, trade reasons—private by design.
 ```
 
 ---
@@ -76,22 +76,21 @@ Paste as **Description**; trim trailing paragraph if you want a shorter listing.
 Hum - rituals is a calm, private space for you and your partner—not a social network.
 
 WHAT YOU DO TOGETHER
-• Home — jump into what matters today.
+• Home — a time-aware greeting, your partner's live presence, and quick access to everything. The ambient glow warms as your streaks grow.
 • Mood — check in with how you're feeling, multiple times a day if you like. See your partner's mood in real time, track a seven-day strip, and celebrate "in sync" moments when you both feel the same way.
-• Habits — create daily or weekly habits, shared (together) or personal (just you). Track completion side-by-side, watch a six-week heatmap fill in, and build joint streaks. When you both finish all shared habits for the day, enjoy a celebration.
-• Decide — Quick Pick: select a category, add your options, let the app choose for you, or veto if you want a redo. Saved to history.
-• Decide — Head-to-Head: build a shared pool of ideas, vote together on pairs of options, and resolve disagreements to find your winning choice.
-• Awards — Nominate little stories across categories for each season. When you're ready, move through align (private picks), resolve any overlaps, cheer the winners, and keep past seasons in the vault. Calendar view shows where you are in the season.
-• Reasons — Write a reason you love them; when the moment's right, reveal three reasons they've written about you.
+• Habits — create daily or weekly habits, shared or personal. Track completion side-by-side, watch a six-week heatmap fill in, and build joint streaks. When you both finish all shared habits for the day, enjoy a celebration.
+• Decide — build a shared pool of ideas across categories. Vote together round by round, or tap "pick for us" to let the app choose one when you can't both be there. Saves to history.
+• Awards — nominate little stories across categories for each season. When you're ready, move through align, resolve any overlaps, cheer the winners, and keep past seasons in the vault.
+• Reasons — write a reason you love them; when the moment's right, reveal three reasons they've written about you.
 • You — XP, level, badges, weekly challenges, and a soft snapshot of how you're showing up together.
 
 WHO IT'S FOR
 Two people who already chose each other. You'll link accounts with a short invite code.
 
 WHAT IT ISN'T
-No public feed, no discovery, no ads in this build—just the two of you and your rituals.
+No public feed, no discovery, no ads—just the two of you and your rituals.
 
-Requires a free Firebase-backed account. An internet connection is needed for sync. Optional photo access is used only when you attach images in flows that support it.
+Requires a free Firebase-backed account. An internet connection is needed for sync.
 ```
 
 ---
@@ -101,7 +100,7 @@ Requires a free Firebase-backed account. An internet connection is needed for sy
 **Suggested (100 chars):**
 
 ```
-couple,partner,relationship,love,mood,tracker,habits,decide,voting,awards,reasons,together,sync
+couple,partner,relationship,love,mood,tracker,habits,decide,picks,awards,reasons,together,sync
 ```
 
 **Alternate (99 chars):**
@@ -122,10 +121,10 @@ Do not stuff competitor names or abuse Apple trademarks.
 
 ---
 
-## 6. What's New (version 1.0.0 — first release)
+## 6. What's New (version 1.0.0 — build 5)
 
 ```
-First App Store release: mood check-ins with partner sync, shared & personal habits with heatmap and streaks, decide together (quick pick + head-to-head), awards seasons with nominate → align → cheer, reasons write & reveal, profile XP and badges, partner linking with invite codes.
+Build 5: design polish across the entire app — consistent empty states, time-aware home greeting with partner presence, dynamic ambient warmth that grows with your streaks, refreshed heatmap with clear "you done" and "both done" states, accessibility improvements (44pt hit targets, screen-reader labels, dynamic type), and unified microcopy voice.
 ```
 
 ---
@@ -141,9 +140,10 @@ Use these so **description**, **screenshots**, and **App Privacy** stay aligned 
 | **Sync**                 | **Firestore** real-time listeners (`onSnapshot`); internet required.                                                                                                                                                                   |
 | **Orientation / device** | **Portrait**; iOS `supportsTablet: false` — phone-only iOS experience; no iPad-optimized UI.                                                                                                                                           |
 | **Appearance**           | `userInterfaceStyle: dark` in `app.json` — capture screenshots in dark mode.                                                                                                                                                           |
+| **Home**                 | Time-aware greeting, partner presence indicator (online/recent/away, 6hr decay), dynamic relationship warmth glow (AmbientGlow reach scales with reason/habit/mood streaks).                                                             |
 | **Mood**                 | Emoji-based check-ins (multiple per day), partner visibility in real time, seven-day strip, intraday history modal, "in sync" celebration overlay when both partners share the same mood.                                               |
-| **Habits**               | Daily/weekly habits, shared (couple) or personal scope, participant-level check-in pills, six-week adherence heatmap, joint streak tracking, "in sync" celebration when both complete all shared habits.                                |
-| **Decide**               | Quick Pick (categories, options, veto, history); **Head-to-Head** (realtime pool + voting, tie resolution).                                                                                                                                |
+| **Habits**               | Daily/weekly habits, shared (couple) or personal scope, participant-level check-in pills, six-week shared-habits-only heatmap (none / some / you done / both done), joint streak tracking, "in sync" celebration when both complete all shared habits. |
+| **Decide**               | **Pick Together** (one feature, two paths). Auto-seeded shared pool per category. **Vote together** round-by-round (realtime, both vote, tie resolution by app pick after repeated splits) or **pick for us** (one tap, recency-weighted pick from the pool).                          |
 | **Awards**               | Seasons (e.g. H1/H2 calendar context); nominate → **align** → **cheer**; past seasons. Internal Firestore statuses may still say `deliberating` — user-facing copy is "align" (`[CEREMONY_TERMINOLOGY.md](./CEREMONY_TERMINOLOGY.md)`). |
 | **Reasons**              | Write text for partner; reveal up to three random lines about you.                                                                                                                                                                        |
 | **Profile**              | XP, level, badges, weekly challenges, together-style stats strip.                                                                                                                                                                       |
@@ -172,8 +172,8 @@ Apple expects screenshots that **match the app's general UI** (chrome, typograph
 3. **Mood** — partner sync, seven-day strip, "in sync" highlight.
 4. **Habits** — board with shared/personal cards, progress bar, streak.
 5. **Habits** — six-week adherence heatmap with legend.
-6. **Quick pick** — category + options.
-7. **Head-to-head** — lobby or live bracket.
+6. **Pick Together** — lobby (shared pool, two CTAs).
+7. **Pick Together** — live vote in progress.
 8. **Awards hub** — season + phase strip + categories.
 9. **Reasons** — write or "reveal three".
 10. **You / profile** — XP + badges.
@@ -185,7 +185,7 @@ Apple expects screenshots that **match the app's general UI** (chrome, typograph
 ## 9. App Preview (optional)
 
 - **15–30 s**, same device class as screenshots.  
-- Flow: home → mood check-in → habits board → quick pick → result → awards hub → reason line.  
+- Flow: home → mood check-in → habits board → pick together lobby → vote / pick for us → awards hub → reason line.  
 - No unlicensed music.
 
 ---
@@ -232,10 +232,10 @@ DEMO FOR REVIEW (pre-linked couple — same password on both)
 Primary account:  demo@hum.app  /  humtumapp@demo
 Partner account: partner.demo@hum.app  /  humtumapp@demo
 
-Use the partner sign-in on a second simulator or device for Decide → Head-to-Head (realtime) and to see real-time mood/habit sync. Everything else works signed in as the primary account only.
+Use the partner sign-in on a second simulator or device for Decide → Pick Together (vote together) and to see real-time mood/habit sync. Everything else (including the solo "pick for us" path inside Pick Together) works signed in as the primary account only.
 
 FEATURES TO TRY
-Mood → tap the mood tab, pick an emoji, save. Switch to partner account and log a mood to see real-time sync and "in sync" celebration. Habits → check off shared habits on both accounts to trigger joint celebration. Home → Quick Pick (category, add options, let app choose, save). Awards → categories / add nomination text. Reasons → write one line, then reveal three. Head-to-Head → needs two signed-in clients for realtime voting bracket.
+Home → the greeting changes by time of day; if the partner account was recently active, a green presence dot appears beside their name; the ambient glow warms as streaks build. Mood → tap the mood tab, pick an emoji, save. Switch to partner account and log a mood to see real-time sync and "in sync" celebration. Habits → check off shared habits on both accounts to trigger joint celebration; the heatmap shows shared-habit completion only. Decide → Pick Together: pick a category, the pool auto-seeds with the couple's saved options, add a few more if you like, then either tap "lock in & vote" (needs the partner client) or "pick for us" (solo, picks one from the pool). Awards → categories / add nomination text. Reasons → write one line, then reveal three.
 
 ACCOUNT DELETION (Guideline 5.1.1(v))
 Sign in with the demo account, then: bottom tab "you" → scroll to the very bottom → tap the red "delete account" button → enter the demo password "humtumapp@demo" → tap "delete my account" → confirm in the alert. The app re-authenticates, deletes the user's Firestore data (including any shared couple data: mood entries, habits, decisions, awards, reasons), removes the Firebase Auth user, and signs out.
@@ -296,8 +296,36 @@ For **redundancy / lawyer drafts**, a Markdown template was previously kept in t
 - **Demo accounts** work on **production** Firebase + Firestore rules.  
 - **Marketing version** and **build number** match uploaded IPA and `[app.json](../app.json)` / EAS.  
 - **Age rating** questionnaire matches freeform text features.  
-- **What's New** and **Description** match shipped features (mood, habits, decide, awards, reasons).  
+- **What's New** and **Description** match shipped features (mood, habits, decide / pick together, awards, reasons).  
 - **Export compliance** answered.
+
+---
+
+## 17b. Reply to Apple (build 4 resubmit)
+
+Use this in the **App Review** thread when uploading build 4. Paste in App Store Connect → app → Resolution Center.
+
+```
+Hi App Review,
+
+Thank you for the feedback on submission 956d0317-0da6-42cc-be29-9ffa5a6407a2.
+
+We took the rejection seriously and rebuilt the Decide tab from the ground up to remove every gambling-style mechanic and any combat / wager language from both the binary and the marketing copy. Specifically, in build 4:
+
+1. The standalone "Quick Spin" feature has been removed entirely. There is no spinning wheel, roulette, coin, or chance-based animation anywhere in the app.
+2. "Battle Mode" no longer exists. Decide is now a single feature called "Pick Together" with two paths:
+   • "Vote together" — both partners build a shared pool of ideas (e.g. restaurants, activities) and vote round by round on pairs until one option remains.
+   • "Pick for us" — when only one partner is around, a single tap picks one option from the shared pool for them.
+3. All marketing references to "battle", "bracket", "spin", "wheel", "coin", "veto", and similar wording have been removed from the App Store description, promotional text, keywords, screenshots, marketing site, and in-app copy. The new copy says "pick together", "vote together", "pick for us".
+4. The reveal animation is now a calm static fade-and-spring card. There is no cycling label, no haptic ticking, no roulette spin, no coin flip.
+5. There is no element of chance presented to users as gambling: the "pick for us" path is a recency-weighted suggestion from a list the couple themselves curated. No simulated wagering, prizes, or odds are presented anywhere in the app.
+
+The app remains an invite-only utility for two linked partners to share moods, habits, decisions, awards, and reasons. There is no public feed, no discovery, no real-money or virtual currency, and no advertising.
+
+Thank you for your time. Please let us know if any further changes are needed.
+
+— Aman Shrivastava (aman.srivastava999@gmail.com)
+```
 
 ---
 
@@ -324,4 +352,4 @@ For **redundancy / lawyer drafts**, a Markdown template was previously kept in t
 
 ---
 
-*Hum - rituals · `com.humtum.app` · Expo slug `humm` · Listing pack updated May 5, 2026.*
+*Hum - rituals · `com.humtum.app` · Expo slug `humm` · Listing pack updated May 8, 2026.*

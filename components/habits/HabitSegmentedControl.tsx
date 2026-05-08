@@ -27,13 +27,14 @@ export function HabitSegmentedControl({ value, onChange }: Props) {
             }}
             accessibilityRole="tab"
             accessibilityState={{ selected: on }}
-            className={`rounded-full px-3.5 py-[7px] ${on ? 'bg-hum-primary/20' : ''}`}
+            accessibilityLabel={`show ${t.label === 'today' ? "today's" : "this week's"} habits`}
+            className={`min-h-[44px] items-center justify-center rounded-full px-3.5 ${on ? 'bg-hum-primary/20' : ''}`}
           >
             <Text
               className={`text-[12px] tracking-wide ${
                 on ? 'font-semibold text-hum-text' : 'font-light text-hum-dim'
               }`}
-              allowFontScaling={false}
+              maxFontSizeMultiplier={1.25}
             >
               {t.label}
             </Text>

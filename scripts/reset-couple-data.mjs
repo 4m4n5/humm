@@ -1,9 +1,14 @@
 #!/usr/bin/env node
 /**
  * Reset one couple to "fresh link" state: clear awards, decisions, reasons,
- * battles, quick-spin lists, XP, and badges. Keeps Auth users, user profiles
- * (display names, invite codes, partner/couple ids), and the couple document
- * identity — only replaces active ceremony with a new nominating season.
+ * pick-together sessions, decisionOptions lists, XP, and badges. Keeps Auth
+ * users, user profiles (display names, invite codes, partner/couple ids), and
+ * the couple document identity — only replaces active ceremony with a new
+ * nominating season.
+ *
+ * NOTE: the Firestore collection name is preserved as `battles` for backwards
+ * compat with existing in-flight sessions; the user-facing label is
+ * "pick together" everywhere.
  *
  * Requires Firebase Admin (service account):
  *   export GOOGLE_APPLICATION_CREDENTIALS="/path/to/serviceAccount.json"

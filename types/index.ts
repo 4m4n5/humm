@@ -15,6 +15,8 @@ export interface UserProfile {
   level: number;
   badges: string[];
   createdAt: Timestamp;
+  /** Updated on app foreground; drives partner-presence indicator. */
+  lastActiveAt?: Timestamp;
   /**
    * Reasons tab (legacy): draw count under the old stacking model.
    * Used only to infer checkpoint when partner count checkpoints are absent.
@@ -44,7 +46,7 @@ export interface NotificationPreferences {
   mood: boolean;
   /** Partner checked in a habit or created a new one. */
   habits: boolean;
-  /** Partner spun the wheel / started a battle. */
+  /** Partner saved a decide pick or started a pick together. */
   decide: boolean;
   /** Partner wrote a reason for you. */
   reasons: boolean;
@@ -257,37 +259,88 @@ export interface Decision {
   createdByUserId?: string;
 }
 
-// ─── Battle mode (realtime bracket) ─────────────────────────────────────────
+// ─── Pick Together (live vote bracket) ──────────────────────────────────────
+//
+// NOTE on naming: types are renamed to `Pick*` for the user-facing rebrand,
+// but Firestore collection name (`battles`), couple field (`activeBattleId`),
+// and `Decision.mode = 'battle'` literal stay unchanged for backwards compat
+// with existing data and history rendering.
 
-export type BattleStatus = 'collecting' | 'battling' | 'complete';
+export type PickStatus = 'collecting' | 'battling' | 'complete';
 
-export interface BattleMatchup {
+export interface PickMatchup {
   round: number;
   position: number;
   optionA: string;
   /** null = first-round bye slot (non-null side advances without voting) */
   optionB: string | null;
   votesByUser: Record<string, string>;
-  /** 0 = first vote attempt; increments on each disagree cycle; coin after 2 */
+  /** 0 = first vote attempt; increments on each disagree cycle; auto-resolve after 2 */
   revoteRound: number;
   winner: string | null;
+  /** Was this matchup resolved by the random tiebreaker (after repeated splits)? */
   decidedByCoinFlip: boolean;
 }
 
-export interface BattleSession {
+/**
+ * One pairwise comparison in the Copeland round-robin.
+ * Both partners independently vote `optionA` or `optionB`. Stored vote is
+ * the chosen label (must equal optionA or optionB).
+ */
+export interface PickPair {
+  /** Stable index used for resume / progress. */
+  index: number;
+  optionA: string;
+  optionB: string;
+  /**
+   * Swiss-tournament round this pair belongs to (0-indexed). Round k+1 is
+   * only generated after both partners finish round k. Optional for legacy
+   * sessions; absent ⇒ round 0.
+   */
+  round?: number;
+  /** uid → chosen label. Empty until each partner votes. */
+  voteByUser: Record<string, string>;
+}
+
+export interface PickSession {
   id: string;
   coupleId: string;
   category: DecisionCategory;
-  status: BattleStatus;
+  status: PickStatus;
   /** Combined pool of option labels (order = insertion order, deduped) */
   options: string[];
   /** uid → labels that user added (for remove + attribution) */
   optionsByUser: Record<string, string[]>;
   readyByUser: Record<string, boolean>;
-  bracket: BattleMatchup[];
+
+  /** Round-robin pairs (Copeland). Present on new vote-mode sessions. */
+  pairs?: PickPair[];
+  /** Per-user shuffled order of pair indices. uid → pair-index sequence. */
+  pairOrderByUser?: Record<string, number[]>;
+  /** uid → number of pairs voted on (derived but cached for resume). */
+  pairProgressByUser?: Record<string, number>;
+  /**
+   * Swiss tournament: current round being played (0-indexed). Round k+1
+   * pairs are generated server-side once both partners finish round k.
+   * Absent on legacy sessions ⇒ treated as 0.
+   */
+  currentRound?: number;
+  /** Total rounds scheduled for this session. 1 for full-RR mode. */
+  roundsTotal?: number;
+  /** Computed at completion: option label → Copeland score. */
+  scores?: Record<string, number>;
+  /** Computed at completion: full ranking, highest score first. */
+  ranking?: string[];
+
+  /** Legacy bracket — kept for in-flight single-elim sessions. */
+  bracket: PickMatchup[];
   /** Index into bracket for the matchup that needs votes (or next to resolve) */
   currentMatchupIndex: number;
+
   winner: string | null;
+  /** When set, this session was resolved via the solo "pick for us" path
+   *  (single-tap recency-weighted pick from the shared pool). */
+  pickedSoloByUserId?: string;
   createdAt: Timestamp;
 }
 
@@ -351,6 +404,8 @@ export interface Ceremony {
   picksSubmitted?: Record<string, boolean>;
   /** uid → category → nominationId while resolving disagreements */
   resolutionPicksByUser?: Record<string, Partial<Record<AwardCategory, string>>>;
+  /** uid → true once the user has completed the cheer/reveal walkthrough */
+  cheerCompletedBy?: Record<string, boolean>;
 }
 
 // ─── Reasons ────────────────────────────────────────────────────────────────

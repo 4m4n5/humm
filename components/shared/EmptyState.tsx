@@ -1,10 +1,17 @@
 import React from 'react';
 import { View, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Button } from '@/components/shared/Button';
+import { theme } from '@/constants/theme';
 
 type Props = {
+  /** Emoji string (rendered as text) OR Ionicons name (rendered as icon). */
   icon?: string;
-  /** Tailwind class for the icon glyph color, e.g. `text-hum-bloom/70`. Defaults to primary tint. */
+  /** Ionicons name — takes precedence over `icon` when both are set. */
+  ionicon?: React.ComponentProps<typeof Ionicons>['name'];
+  /** Hex color for ionicon. Defaults to `theme.primary` at 70% opacity. */
+  ioniconColor?: string;
+  /** Tailwind class for the emoji glyph color. Defaults to primary tint. */
   iconClassName?: string;
   title: string;
   description: string;
@@ -16,18 +23,28 @@ type Props = {
 /** Empty list / zero state with optional single CTA. */
 export function EmptyState({
   icon,
+  ionicon,
+  ioniconColor,
   iconClassName,
   title,
   description,
   primaryAction,
   className,
 }: Props) {
-  return (
-    <View
-      className={`items-center px-6 py-10 ${className ?? ''}`}
-      accessibilityRole="text"
-    >
-      {icon ? (
+  const renderIcon = () => {
+    if (ionicon) {
+      return (
+        <View className="mb-5 h-14 w-14 items-center justify-center rounded-2xl bg-hum-primary/10">
+          <Ionicons
+            name={ionicon}
+            size={28}
+            color={ioniconColor ?? `${theme.primary}B3`}
+          />
+        </View>
+      );
+    }
+    if (icon) {
+      return (
         <Text
           className={`mb-5 text-[44px] font-extralight leading-none ${
             iconClassName ?? 'text-hum-primary/70'
@@ -37,7 +54,17 @@ export function EmptyState({
         >
           {icon}
         </Text>
-      ) : null}
+      );
+    }
+    return null;
+  };
+
+  return (
+    <View
+      className={`items-center px-6 py-10 ${className ?? ''}`}
+      accessibilityRole="text"
+    >
+      {renderIcon()}
       <Text
         className="text-center text-[18px] font-light leading-[24px] tracking-[-0.01em] text-hum-text"
         maxFontSizeMultiplier={1.3}

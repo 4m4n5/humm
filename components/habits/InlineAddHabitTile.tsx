@@ -18,7 +18,7 @@ export function InlineAddHabitTile({ onPress }: Props) {
       <View className="h-8 w-8 items-center justify-center rounded-full border border-hum-primary/15 bg-hum-primary/8">
         <Ionicons name="add" size={17} color={theme.primary} />
       </View>
-      <Text className="text-[13px] font-light tracking-wide text-hum-dim">add habit</Text>
+      <Text className="text-[13px] font-light tracking-wide text-hum-dim" maxFontSizeMultiplier={1.3}>add habit</Text>
     </Pressable>
   );
 }

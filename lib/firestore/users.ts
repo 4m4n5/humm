@@ -78,6 +78,19 @@ export async function setReasonPartnerCountAtLastDraw(
   });
 }
 
+let _lastHeartbeat = 0;
+
+/**
+ * Write `lastActiveAt` to the user's profile doc. Throttled to at most
+ * once per 2 minutes to keep Firestore costs down.
+ */
+export async function heartbeat(uid: string): Promise<void> {
+  const now = Date.now();
+  if (now - _lastHeartbeat < 120_000) return;
+  _lastHeartbeat = now;
+  await updateDoc(userDoc(uid), { lastActiveAt: serverTimestamp() });
+}
+
 export async function findUserByInviteCode(
   code: string,
 ): Promise<UserProfile | null> {

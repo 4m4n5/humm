@@ -31,7 +31,7 @@ export function ScreenHeader({ title }: Props) {
         accessibilityRole="button"
         accessibilityLabel="go back"
         accessibilityHint="previous screen"
-        className="-ml-1 mb-5 h-9 w-9 items-center justify-center rounded-full bg-hum-surface/55 active:opacity-70"
+        className="-ml-1 mb-5 h-11 w-11 items-center justify-center rounded-full bg-hum-surface/55 active:opacity-70"
       >
         <Ionicons name="chevron-back" size={19} color={theme.text} style={{ opacity: 0.85 }} />
       </Pressable>

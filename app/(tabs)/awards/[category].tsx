@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { AwardCategory } from '@/types';
 import { ScreenHeader } from '@/components/shared/ScreenHeader';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { Button } from '@/components/shared/Button';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useNominationsStore } from '@/lib/stores/nominationsStore';
 import { nominationsForCategory } from '@/lib/firestore/nominations';
@@ -60,6 +61,7 @@ export default function AwardCategoryScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
+      <AmbientGlow tone="gold" />
       <ScreenHeader title={display.label} />
       <ScrollView
         className="flex-1"
@@ -67,13 +69,25 @@ export default function AwardCategoryScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View className="flex-row items-center gap-2">
-          <Text className="text-[20px]">{display.emoji}</Text>
+          <Text className="text-[20px]" allowFontScaling={false}>
+            {display.emoji}
+          </Text>
           {categoryDisabled ? (
-            <Text className="text-[11px] font-medium uppercase tracking-wider text-amber-200/90">paused</Text>
+            <Text
+              className="text-[11px] font-medium uppercase tracking-wider text-hum-dim"
+              maxFontSizeMultiplier={1.25}
+            >
+              paused
+            </Text>
           ) : null}
         </View>
         {display.description ? (
-          <Text className="text-[14px] font-light leading-5 text-hum-muted">{display.description}</Text>
+          <Text
+            className="text-[14px] font-light leading-5 text-hum-muted"
+            maxFontSizeMultiplier={1.5}
+          >
+            {display.description}
+          </Text>
         ) : null}
 
         {list.length === 0 ? (
@@ -95,33 +109,50 @@ export default function AwardCategoryScreen() {
               >
                 <View className="min-w-0 flex-1 gap-y-2">
                   <View className="flex-row flex-wrap items-center gap-x-2 gap-y-1">
-                    <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-gold">
+                    <Text
+                      className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-gold"
+                      maxFontSizeMultiplier={1.25}
+                    >
                       {nomineeShortLabel(n.nomineeId, profile, couple, partnerName)}
                     </Text>
-                    <Text className="text-hum-dim text-xs">·</Text>
-                    <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+                    <Text className="text-hum-dim text-xs" maxFontSizeMultiplier={1.25}>
+                      ·
+                    </Text>
+                    <Text
+                      className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
+                      maxFontSizeMultiplier={1.25}
+                    >
                       by {authorShortLabel(n.submittedBy, profile, couple, partnerName)}
                     </Text>
                   </View>
-                  <Text className="text-[15px] font-medium text-hum-text">{n.title}</Text>
+                  <Text className="text-[15px] font-medium text-hum-text" maxFontSizeMultiplier={1.3}>
+                    {n.title}
+                  </Text>
                   {n.description ? (
-                    <Text className="text-[14px] font-light leading-5 text-hum-muted">{n.description}</Text>
+                    <Text
+                      className="text-[14px] font-light leading-5 text-hum-muted"
+                      maxFontSizeMultiplier={1.5}
+                    >
+                      {n.description}
+                    </Text>
                   ) : null}
                 </View>
                 {editable ? (
-                  <TouchableOpacity
+                  <Pressable
                     onPress={() =>
                       router.push({
                         pathname: '/awards/nominate',
                         params: { category, nominationId: n.id },
                       })
                     }
-                    className="justify-center py-1"
+                    className="h-11 min-h-[44px] w-11 min-w-[44px] items-center justify-center self-center active:opacity-88"
                     accessibilityRole="button"
-                    accessibilityLabel={`edit nomination ${n.title}`}
+                    accessibilityLabel={`Edit nomination ${n.title} in ${display.label} category`}
                   >
-                    <Text className="text-[12px] font-semibold text-hum-gold">edit</Text>
-                  </TouchableOpacity>
+                    <Text className="text-[12px] font-semibold text-hum-gold" maxFontSizeMultiplier={1.25}>
+                      edit
+                    </Text>
+                  </Pressable>
                 ) : null}
               </View>
             );

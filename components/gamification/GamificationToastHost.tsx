@@ -1,5 +1,12 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Animated, Modal, Pressable, Text, View } from 'react-native';
+import { Modal, Pressable, Text, View } from 'react-native';
+import Animated, {
+  cancelAnimation,
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { XP_BANNER_ABOVE_TAB_GAP, tabBarTotalHeight } from '@/constants/tabBar';
@@ -7,6 +14,7 @@ import { useXpFeedbackStore } from '@/lib/stores/xpFeedbackStore';
 import type { GrantXpResult } from '@/lib/firestore/gamification';
 import { getBadge } from '@/constants/badges';
 import { MODAL_SHEET_PADDING_H, MODAL_SHEET_PADDING_V } from '@/constants/screenLayout';
+import { REDUCE_MOTION_NEVER } from '@/lib/motion';
 
 type ModalPayload =
   | { kind: 'level'; result: GrantXpResult }
@@ -19,7 +27,7 @@ export function GamificationToastHost() {
   const head = queue[0];
   const [banner, setBanner] = useState<string | null>(null);
   const [modal, setModal] = useState<ModalPayload | null>(null);
-  const bannerOpacity = useRef(new Animated.Value(0)).current;
+  const bannerOpacity = useSharedValue(0);
   const bannerTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const clearBannerTimer = () => {
@@ -31,29 +39,39 @@ export function GamificationToastHost() {
 
   useEffect(() => () => clearBannerTimer(), []);
 
+  const onFadeOutComplete = useCallback(() => {
+    setBanner(null);
+    shift();
+  }, [shift]);
+
   const showBanner = useCallback(
     (message: string) => {
       clearBannerTimer();
+      // Cancel any in-flight fade so a fresh xp grant on top of a
+      // previous banner doesn't compound the opacity animation.
+      cancelAnimation(bannerOpacity);
       setBanner(message);
-      bannerOpacity.setValue(0);
-      Animated.timing(bannerOpacity, {
-        toValue: 1,
+      bannerOpacity.value = 0;
+      bannerOpacity.value = withTiming(1, {
         duration: 200,
-        useNativeDriver: true,
-      }).start();
+        reduceMotion: REDUCE_MOTION_NEVER,
+      });
       bannerTimer.current = setTimeout(() => {
-        Animated.timing(bannerOpacity, {
-          toValue: 0,
-          duration: 320,
-          useNativeDriver: true,
-        }).start(() => {
-          setBanner(null);
-          shift();
-        });
+        bannerOpacity.value = withTiming(
+          0,
+          { duration: 320, reduceMotion: REDUCE_MOTION_NEVER },
+          (finished) => {
+            if (finished) runOnJS(onFadeOutComplete)();
+          },
+        );
       }, 2400);
     },
-    [bannerOpacity, shift],
+    [bannerOpacity, onFadeOutComplete],
   );
+
+  const bannerStyle = useAnimatedStyle(() => ({
+    opacity: bannerOpacity.value,
+  }));
 
   useEffect(() => {
     if (modal) return;
@@ -106,17 +124,19 @@ export function GamificationToastHost() {
       {banner ? (
         <Animated.View
           pointerEvents="none"
-          style={{
-            position: 'absolute',
-            bottom: tabBarTotalHeight(insets.bottom) + XP_BANNER_ABOVE_TAB_GAP,
-            left: 24,
-            right: 24,
-            opacity: bannerOpacity,
-            zIndex: 9999,
-          }}
+          style={[
+            {
+              position: 'absolute',
+              bottom: tabBarTotalHeight(insets.bottom) + XP_BANNER_ABOVE_TAB_GAP,
+              left: 24,
+              right: 24,
+              zIndex: 9999,
+            },
+            bannerStyle,
+          ]}
         >
           <View className="rounded-[22px] border border-hum-primary/35 bg-hum-card/95 px-5 py-3.5">
-            <Text className="text-center text-[15px] font-medium tracking-wide text-hum-primary">
+            <Text className="text-center text-[15px] font-medium tracking-wide text-hum-primary" maxFontSizeMultiplier={1.3}>
               {banner}
             </Text>
           </View>
@@ -134,7 +154,7 @@ export function GamificationToastHost() {
           className="flex-1 items-center justify-center bg-black/55 px-6"
           onPress={closeModal}
           accessibilityRole="button"
-          accessibilityLabel="Dismiss"
+          accessibilityLabel="dismiss level up dialog"
         >
           <Pressable
             className="w-full max-w-sm rounded-[22px] border border-hum-border/18 bg-hum-card/95"

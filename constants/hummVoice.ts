@@ -65,3 +65,71 @@ export const reasonsVoice = {
   listForPartnerEyebrow: (name: string) => `by you \u00b7 ${name}`,
   listForPartnerEmpty: 'nothing yet',
 } as const;
+
+/**
+ * Shared error toasts. Convention:
+ *   title = what failed (`couldn\u2019t <verb>`)
+ *   body  = what's preserved + next step (one short fragment, middle-dot separator)
+ *
+ * Source: NN/g UX Writing Study Guide (consistency #4); Unicorn Club 2026
+ * "Avoid \u00b7 Explain \u00b7 Resolve" framework for error microcopy.
+ */
+export const errorsVoice = {
+  // Titles \u2014 always `couldn\u2019t <verb>` to keep one error voice across the app.
+  couldnt: (verb: string) => `couldn\u2019t ${verb}`,
+  couldntSave: 'couldn\u2019t save',
+  couldntStart: 'couldn\u2019t start',
+  couldntAdd: 'couldn\u2019t add',
+  couldntRemove: 'couldn\u2019t remove',
+  couldntUpdate: 'couldn\u2019t update',
+  couldntFinish: 'couldn\u2019t finish',
+  couldntPick: 'couldn\u2019t pick',
+  couldntLeave: 'couldn\u2019t leave',
+  couldntLink: 'couldn\u2019t link',
+  couldntReset: 'couldn\u2019t reset',
+  couldntEnable: 'couldn\u2019t enable',
+  couldntOpen: (what: string) => `couldn\u2019t open ${what}`,
+
+  // Bodies \u2014 always middle-dot separator, never comma/em-dash.
+  tryAgain: 'try again',
+  tryAgainLater: 'try again in a moment',
+  checkConnection: 'check connection \u00b7 try again',
+  permissions: 'permissions issue \u00b7 try again later',
+
+  // Validation prompts (used in pre-submit alerts, lowercase fragment).
+  needTitle: 'a few words help you find it later',
+  needText: 'even one honest reason is enough',
+  needName: 'we need something to call you',
+  needEmail: 'drop the address you\u2019ll sign in with',
+  needPassword: 'we need it to confirm it\u2019s really you',
+} as const;
+
+/**
+ * Shared navigation labels. Convention: ghost back-buttons at the bottom of
+ * a screen are *terminus / destination* affordances \u2014 always name the
+ * destination. The header chevron handles step-back navigation.
+ *
+ * Source: Apple HIG \u2014 \u201cAvoid stacking redundant navigation controls.\u201d
+ */
+export const navVoice = {
+  backTo: (destination: string) => `back to ${destination}`,
+  cancel: 'cancel',
+  done: 'done',
+  stay: 'stay',
+  goBack: 'go back', // intentionally NOT exported as a button label \u2014 deprecated.
+} as const;
+
+/** Decide-feature voice: the verb family is `decide \u2192 vote \u2192 randomize`. */
+export const decideVoice = {
+  primaryAction: 'decide together',
+  randomizeAction: 'randomize',
+  resumeAction: 'resume',
+  startAction: 'start',
+  leaveAction: 'leave',
+  saveResultAction: 'save this one',
+  startOverAction: 'start over',
+  leavePickTitle: 'leave this pick?',
+  leavePickBody: 'open a fresh one anytime \u00b7 nothing saves to history',
+  randomizeConfirmTitle: 'randomize?',
+  randomizeConfirmBody: 'we\u2019ll pick from the pool \u00b7 no vote',
+} as const;

@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { View, Text, ScrollView, useWindowDimensions } from 'react-native';
+import { Card } from '@/components/shared/Card';
 import { getBadge } from '@/constants/badges';
 
 const DEFAULT_EMPTY_MESSAGE = 'no badges yet · reasons · habits · spins · seasons';
@@ -31,11 +32,11 @@ export function BadgeShelf({
 
   if (earned.length === 0) {
     return (
-      <View className="rounded-[22px] border border-dashed border-hum-border/18 bg-hum-card/50 px-6 py-8">
-        <Text className="text-center text-[14px] font-light leading-[22px] text-hum-muted">
+      <Card padding="hero" dashed bgClassName="bg-hum-card/50" flat>
+        <Text className="text-center text-[14px] font-light leading-[22px] text-hum-muted" maxFontSizeMultiplier={1.5}>
           {emptyMessage}
         </Text>
-      </View>
+      </Card>
     );
   }
 

@@ -1,5 +1,5 @@
 /**
- * Decide / Quick Spin — lighter ladder than Awards & Reasons; still covers the tab with room to grow.
+ * Decide / Pick Together — lighter ladder than Awards & Reasons; still covers the tab with room to grow.
  */
 
 function expandingTotals(firstGap: number, maxGap: number, tierCount: number): number[] {
@@ -22,46 +22,46 @@ export type DecideTierMeta = {
   count: number;
 };
 
-const SPIN = expandingTotals(4, 14, 5);
+const SOLO = expandingTotals(4, 14, 5);
 export const QUICKSPIN_COUPLE_TIERS: DecideTierMeta[] = [
   {
-    count: SPIN[0]!,
-    id: `spin_chain_${SPIN[0]}`,
-    name: 'spin rhythm',
-    description: '4 quick spins saved as a pair',
-    emoji: '🎰',
-  },
-  {
-    count: SPIN[1]!,
-    id: `spin_chain_${SPIN[1]}`,
-    name: 'spin streak',
-    description: '9 quick spins in the log',
-    emoji: '💫',
-  },
-  {
-    count: SPIN[2]!,
-    id: `spin_chain_${SPIN[2]}`,
-    name: 'spin ritual',
-    description: '15 spins — this is a thing for you two',
-    emoji: '🔁',
-  },
-  {
-    count: SPIN[3]!,
-    id: `spin_chain_${SPIN[3]}`,
-    name: 'spin devotion',
-    description: '22 quick spins together',
+    count: SOLO[0]!,
+    id: `spin_chain_${SOLO[0]}`,
+    name: 'pick rhythm',
+    description: '4 randomized decisions saved',
     emoji: '✨',
   },
   {
-    count: SPIN[4]!,
-    id: `spin_chain_${SPIN[4]}`,
-    name: 'spin library',
-    description: '30 spins saved — serious decide energy',
+    count: SOLO[1]!,
+    id: `spin_chain_${SOLO[1]}`,
+    name: 'pick streak',
+    description: '9 randomized decisions in the log',
+    emoji: '💫',
+  },
+  {
+    count: SOLO[2]!,
+    id: `spin_chain_${SOLO[2]}`,
+    name: 'pick ritual',
+    description: '15 randomized \u2014 this is a thing for you two',
+    emoji: '🔁',
+  },
+  {
+    count: SOLO[3]!,
+    id: `spin_chain_${SOLO[3]}`,
+    name: 'pick devotion',
+    description: '22 randomized decisions together',
+    emoji: '✨',
+  },
+  {
+    count: SOLO[4]!,
+    id: `spin_chain_${SOLO[4]}`,
+    name: 'pick library',
+    description: '30 randomized \u2014 serious decide energy',
     emoji: '📚',
   },
 ];
 
-/** All decisions (quick spin + battle) — couple; `decisive` at 100 stays separate */
+/** All decisions (quick + live) — couple; `decisive` at 100 stays separate */
 export const ALL_DECISIONS_COUPLE_TIERS: DecideTierMeta[] = [
   {
     count: 12,

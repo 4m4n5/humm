@@ -3,18 +3,26 @@ import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity,
   Alert,
-  Animated,
-  Easing,
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { router, useFocusEffect } from 'expo-router';
+import Animated, {
+  Easing as REasing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
+import { Ionicons } from '@expo/vector-icons';
 import { Button } from '@/components/shared/Button';
+import { Card } from '@/components/shared/Card';
 import { ScreenTitle } from '@/components/shared/ScreenTitle';
+import { EmptyState } from '@/components/shared/EmptyState';
 import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useReasonStore } from '@/lib/stores/reasonStore';
@@ -28,10 +36,10 @@ import {
 } from '@/lib/reasonsDrawCredits';
 import { scrollContentStandard } from '@/constants/screenLayout';
 import { cardShadow } from '@/constants/elevation';
-import { reasonsVoice } from '@/constants/hummVoice';
+import { theme } from '@/constants/theme';
+import { reasonsVoice, errorsVoice } from '@/constants/hummVoice';
 import type { Reason, UserProfile } from '@/types';
 
-/** Pause after a real draw is committed so the moment reads before cards appear. */
 const REVEAL_PAUSE_MS = 1400;
 
 function reasonsByMeForPartner(
@@ -73,68 +81,65 @@ function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-/** Very soft “alive” feel on the hero glyph — opacity only, works reliably with NativeWind. */
 function SoftGlyphBreath() {
-  const opacity = useRef(new Animated.Value(1)).current;
+  const opacity = useSharedValue(1);
+  const scale = useSharedValue(1);
+
   useEffect(() => {
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 0.68,
-          duration: 3200,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 3200,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ]),
+    opacity.value = withRepeat(
+      withSequence(
+        withTiming(0.55, { duration: 3200, easing: REasing.inOut(REasing.quad) }),
+        withTiming(1, { duration: 3200, easing: REasing.inOut(REasing.quad) }),
+      ),
+      -1,
+      false,
     );
-    loop.start();
-    return () => loop.stop();
-  }, [opacity]);
+    scale.value = withRepeat(
+      withSequence(
+        withTiming(0.92, { duration: 3200, easing: REasing.inOut(REasing.quad) }),
+        withTiming(1, { duration: 3200, easing: REasing.inOut(REasing.quad) }),
+      ),
+      -1,
+      false,
+    );
+  }, [opacity, scale]);
+
+  const animStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ scale: scale.value }],
+  }));
+
   return (
-    <Animated.View
-      className="items-center justify-center py-1"
-      style={{ opacity }}
-    >
-      <Text className="text-[52px] leading-none" accessibilityElementsHidden>
-        💌
-      </Text>
+    <Animated.View className="items-center justify-center py-2" style={animStyle}>
+      <Ionicons name="heart-outline" size={36} color={theme.crimson} />
     </Animated.View>
   );
 }
 
-/** Fade + gentle lift so the trio is easy to notice. */
 function QuotesReveal({ revealKey, children }: { revealKey: number; children: React.ReactNode }) {
-  const opacity = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(22)).current;
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(22);
+
   useEffect(() => {
-    opacity.setValue(0);
-    translateY.setValue(22);
-    Animated.parallel([
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 1100,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(translateY, {
-        toValue: 0,
-        duration: 1100,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-    ]).start();
+    opacity.value = 0;
+    translateY.value = 22;
+    opacity.value = withTiming(1, {
+      duration: 1100,
+      easing: REasing.out(REasing.cubic),
+    });
+    translateY.value = withTiming(0, {
+      duration: 1100,
+      easing: REasing.out(REasing.cubic),
+    });
   }, [revealKey, opacity, translateY]);
+
+  const animStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ translateY: translateY.value }],
+  }));
+
   return (
-    <Animated.View
-      className="gap-y-3"
-      style={{ opacity, transform: [{ translateY }] }}
-    >
+    <Animated.View className="gap-y-3" style={animStyle}>
       {children}
     </Animated.View>
   );
@@ -182,10 +187,6 @@ export default function ReasonsScreen() {
     }
   }, [serverCheckpoint, optimisticCheckpointFloor]);
 
-  const drawUnlocked = reasonsDealThreeUnlocked(byMe.length, effectiveCheckpoint);
-
-  const hasPartnerReasonsAboutMe = aboutMe.length > 0;
-
   const runPostWriteReward = useCallback(
     async (cancelled: { current: boolean }) => {
       if (!myUid || !partnerId) return;
@@ -219,7 +220,7 @@ export default function ReasonsScreen() {
             console.error(e);
             finishFailure();
             if (cancelled.current) return;
-            Alert.alert('couldn’t open your trio', 'try again in a moment');
+            Alert.alert(errorsVoice.couldntOpen('your trio'), errorsVoice.tryAgainLater);
             return;
           }
           if (cancelled.current) {
@@ -270,7 +271,7 @@ export default function ReasonsScreen() {
           } catch (e) {
             console.error(e);
             finishFailure();
-            Alert.alert('couldn’t open your trio', 'try again in a moment');
+            Alert.alert(errorsVoice.couldntOpen('your trio'), errorsVoice.tryAgainLater);
           }
           return;
         }
@@ -307,32 +308,7 @@ export default function ReasonsScreen() {
   const partnerWrote = (r: Reason) =>
     partnerId.length > 0 && r.authorId === partnerId;
 
-  const needsWriteForPartnerFirst = byMe.length === 0;
-
-  const idleHero = (() => {
-    if (needsWriteForPartnerFirst) {
-      return {
-        title: reasonsVoice.writeFirstTitle(partnerName),
-        body: reasonsVoice.writeFirstBody,
-      };
-    }
-    if (!hasPartnerReasonsAboutMe) {
-      return {
-        title: reasonsVoice.waitingOnPartnerTitle(partnerName),
-        body: reasonsVoice.waitingOnPartnerBody,
-      };
-    }
-    if (!drawUnlocked) {
-      return {
-        title: reasonsVoice.writeAgainTitle(partnerName),
-        body: reasonsVoice.writeAgainBody,
-      };
-    }
-    return {
-      title: reasonsVoice.readyHeroTitle,
-      body: reasonsVoice.readyHeroBody,
-    };
-  })();
+  const idleHero = 'one for them \u00b7 three for you';
 
   const primaryWriteLabel = reasonsVoice.primaryWriteFor(partnerName);
 
@@ -342,12 +318,7 @@ export default function ReasonsScreen() {
     router.push('/reasons/write');
   };
 
-  const openingHero = {
-    title: 'opening…',
-    body: 'three about you',
-  };
-
-  const idleHeroResolved = isOpeningTrio ? openingHero : idleHero;
+  const heroTagline = isOpeningTrio ? 'opening\u2026' : idleHero;
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
@@ -364,31 +335,24 @@ export default function ReasonsScreen() {
           style={cardShadow as StyleProp<ViewStyle>}
         >
           {drawn === null ? (
-            <View className="min-h-[280px] justify-center px-6 py-6">
+            <View className="min-h-[220px] justify-center px-6 py-6">
               <View className="gap-y-5">
-                <View className="items-center gap-y-2" accessibilityRole="text">
+                <View className="items-center gap-y-2.5" accessibilityRole="text">
                   <SoftGlyphBreath />
                   <Text
-                    className="text-center text-[20px] font-light leading-[26px] text-hum-text"
-                    maxFontSizeMultiplier={1.25}
+                    className="text-center text-[13px] font-light leading-[20px] text-hum-muted"
+                    maxFontSizeMultiplier={1.3}
+                    numberOfLines={1}
                   >
-                    {idleHeroResolved.title}
+                    {heroTagline}
                   </Text>
-                  {idleHeroResolved.body ? (
-                    <Text
-                      className="text-center text-[14px] font-light leading-[22px] text-hum-muted"
-                      maxFontSizeMultiplier={1.35}
-                    >
-                      {idleHeroResolved.body}
-                    </Text>
-                  ) : null}
                 </View>
 
                 {warmHint === 'partner_pending' ? (
-                  <View className="rounded-[18px] border border-hum-bloom/25 bg-hum-surface/50 px-4 py-3">
+                  <View className="rounded-[18px] border border-hum-crimson/18 bg-hum-surface/50 px-4 py-3">
                     <Text
                       className="text-center text-[12px] font-light leading-[18px] text-hum-muted"
-                      maxFontSizeMultiplier={1.35}
+                      maxFontSizeMultiplier={1.5}
                     >
                       reason saved · trio opens when they write about you
                     </Text>
@@ -398,7 +362,7 @@ export default function ReasonsScreen() {
                   <View className="rounded-[18px] border border-hum-border/18 bg-hum-surface/40 px-4 py-3">
                     <Text
                       className="text-center text-[12px] font-light leading-[18px] text-hum-muted"
-                      maxFontSizeMultiplier={1.35}
+                      maxFontSizeMultiplier={1.5}
                     >
                       stay here a moment · or write again
                     </Text>
@@ -422,22 +386,16 @@ export default function ReasonsScreen() {
               <View className="flex-row items-start justify-between gap-3">
                 <View className="min-w-0 flex-1 pt-0.5">
                   <Text
-                    className="text-[11px] font-medium uppercase tracking-[0.18em] text-hum-bloom/60"
-                    maxFontSizeMultiplier={1.2}
+                    className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
+                    maxFontSizeMultiplier={1.25}
                   >
                     {reasonsVoice.rewardCardsTitle}
                   </Text>
                   <Text
                     className="mt-1.5 text-[17px] font-light leading-[24px] text-hum-text"
-                    maxFontSizeMultiplier={1.25}
+                    maxFontSizeMultiplier={1.3}
                   >
                     {reasonsVoice.rewardCardsSubtitle(partnerName)}
-                  </Text>
-                  <Text
-                    className="mt-2 text-[12px] font-light leading-[18px] text-hum-bloom/55"
-                    maxFontSizeMultiplier={1.35}
-                  >
-                    {reasonsVoice.rewardMomentHint}
                   </Text>
                 </View>
                 <Button
@@ -460,13 +418,13 @@ export default function ReasonsScreen() {
                   >
                     <Text
                       className="text-[16px] font-light leading-[24px] text-hum-text"
-                      maxFontSizeMultiplier={1.35}
+                      maxFontSizeMultiplier={1.5}
                     >
                       {`\u201C${r.text}\u201D`}
                     </Text>
                     {partnerWrote(r) ? (
                       <Text
-                        className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-bloom/50"
+                        className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
                         maxFontSizeMultiplier={1.25}
                       >
                         from {partnerName}
@@ -488,45 +446,50 @@ export default function ReasonsScreen() {
         </View>
 
         <View className="flex-row gap-3">
-          <View className="flex-1 items-center gap-y-1.5 rounded-[18px] border border-hum-border/18 bg-hum-card px-2 py-4">
+          <View className="flex-1 items-center gap-y-1.5 rounded-[18px] border border-hum-crimson/18 bg-hum-card px-2 py-4">
             <Text
               className="min-h-[28px] w-full text-center text-[22px] font-extralight leading-[28px] text-hum-text tabular-nums"
-              maxFontSizeMultiplier={1.25}
+              maxFontSizeMultiplier={1.3}
             >
               {aboutMe.length}
             </Text>
-            <Text className="px-1 text-center text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+            <Text className="px-1 text-center text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim" maxFontSizeMultiplier={1.25}>
               about you
             </Text>
           </View>
-          <View className="flex-1 items-center gap-y-1.5 rounded-[18px] border border-hum-border/18 bg-hum-card px-2 py-4">
+          <View className="flex-1 items-center gap-y-1.5 rounded-[18px] border border-hum-crimson/18 bg-hum-card px-2 py-4">
             <Text
               className="min-h-[28px] w-full text-center text-[22px] font-extralight leading-[28px] text-hum-text tabular-nums"
-              maxFontSizeMultiplier={1.25}
+              maxFontSizeMultiplier={1.3}
             >
               {byMe.length}
             </Text>
-            <Text className="px-1 text-center text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+            <Text className="px-1 text-center text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim" maxFontSizeMultiplier={1.25}>
               by you
             </Text>
           </View>
         </View>
 
         {myUid && partnerId ? (
-          <View className="gap-y-3 rounded-[22px] border border-hum-border/18 bg-hum-card px-5 py-5">
+          <Card className="gap-y-3">
             <Text
               className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
-              maxFontSizeMultiplier={1.2}
+              maxFontSizeMultiplier={1.25}
             >
               {reasonsVoice.listForPartnerEyebrow(partnerName)}
             </Text>
             {byMe.length === 0 ? (
-              <Text
-                className="text-center text-[13px] font-light leading-[20px] text-hum-muted"
-                maxFontSizeMultiplier={1.35}
-              >
-                {reasonsVoice.listForPartnerEmpty}
-              </Text>
+              <EmptyState
+                className="px-0 py-2"
+                ionicon="heart-outline"
+                ioniconColor={`${theme.crimson}B3`}
+                title={reasonsVoice.listForPartnerEmpty}
+                description={reasonsVoice.writeFirstBody}
+                primaryAction={{
+                  label: reasonsVoice.primaryWriteFor(partnerName),
+                  onPress: openWrite,
+                }}
+              />
             ) : (
               <View className="gap-y-2.5">
                 {byMe.map((r) => (
@@ -536,7 +499,7 @@ export default function ReasonsScreen() {
                   >
                     <Text
                       className="text-[14px] font-light leading-[21px] text-hum-text"
-                      maxFontSizeMultiplier={1.35}
+                      maxFontSizeMultiplier={1.5}
                     >
                       {r.text}
                     </Text>
@@ -544,7 +507,7 @@ export default function ReasonsScreen() {
                 ))}
               </View>
             )}
-          </View>
+          </Card>
         ) : null}
       </ScrollView>
     </SafeAreaView>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Alert, TextInput, Pressable } from 'react-native';
+import { View, Text, ScrollView, Alert, TextInput, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,7 +8,6 @@ import { getLevelForXp } from '@/constants/levels';
 import { Card } from '@/components/shared/Card';
 import { Button } from '@/components/shared/Button';
 import { theme } from '@/constants/theme';
-import { cardShadow } from '@/constants/elevation';
 import { updateUserProfile, subscribeToUserProfile } from '@/lib/firestore/users';
 import { ScreenTitle } from '@/components/shared/ScreenTitle';
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber';
@@ -21,6 +20,7 @@ import { subscribeToNominationsForCouple } from '@/lib/firestore/nominations';
 import { useReasonStore } from '@/lib/stores/reasonStore';
 import { Couple, Nomination, UserProfile } from '@/types';
 import { scrollContentStandard } from '@/constants/screenLayout';
+import { errorsVoice, navVoice } from '@/constants/hummVoice';
 
 export default function Profile() {
   const { profile, signOut } = useAuthStore();
@@ -67,8 +67,8 @@ export default function Profile() {
   }, [profile?.partnerId]);
 
   function handleSignOut() {
-    Alert.alert('sign out?', 'leave this session?', [
-      { text: 'stay', style: 'cancel' },
+    Alert.alert('sign out?', 'you can sign back in anytime', [
+      { text: navVoice.stay, style: 'cancel' },
       { text: 'sign out', style: 'destructive', onPress: signOut },
     ]);
   }
@@ -113,7 +113,7 @@ export default function Profile() {
                         await updateUserProfile(profile.uid, { displayName: trimmed });
                         setEditingName(false);
                       } catch {
-                        Alert.alert('couldn’t save', 'check connection, try again');
+                        Alert.alert(errorsVoice.couldntSave, errorsVoice.checkConnection);
                       }
                     }}
                     placeholderTextColor={theme.dim}
@@ -129,14 +129,14 @@ export default function Profile() {
                         await updateUserProfile(profile.uid, { displayName: trimmed });
                         setEditingName(false);
                       } catch {
-                        Alert.alert('couldn’t save', 'check connection, try again');
+                        Alert.alert(errorsVoice.couldntSave, errorsVoice.checkConnection);
                       }
                     }}
                     accessibilityLabel="Save display name"
                   />
                 </View>
               ) : (
-                <TouchableOpacity
+                <Pressable
                   onPress={() => {
                     setNameDraft(profile?.displayName ?? '');
                     setEditingName(true);
@@ -144,9 +144,8 @@ export default function Profile() {
                   accessibilityRole="button"
                   accessibilityLabel="Edit display name"
                   accessibilityHint="opens an inline editor"
-                  activeOpacity={0.88}
                   hitSlop={{ top: 6, bottom: 6, left: 4, right: 8 }}
-                  className="flex-row items-center gap-x-2"
+                  className="flex-row items-center gap-x-2 active:opacity-88"
                 >
                   <Text
                     className="text-[18px] font-medium tracking-tight text-hum-text"
@@ -160,15 +159,16 @@ export default function Profile() {
                     color={theme.dim}
                     style={{ opacity: 0.7 }}
                   />
-                </TouchableOpacity>
+                </Pressable>
               )}
             </View>
             <View className="items-end">
               <AnimatedNumber
                 value={profile?.xp ?? 0}
                 className="text-[34px] font-extralight tabular-nums leading-[36px] tracking-[-0.025em] text-hum-primary"
+                maxFontSizeMultiplier={1.25}
               />
-              <Text className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+              <Text className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim" maxFontSizeMultiplier={1.25}>
                 xp
               </Text>
             </View>
@@ -176,7 +176,7 @@ export default function Profile() {
 
           {level.nextLevelXp && (
             <View className="gap-y-2">
-              <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+              <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim" maxFontSizeMultiplier={1.25}>
                 level {level.level}
               </Text>
               <View className="h-[6px] overflow-hidden rounded-full bg-hum-border/30">
@@ -185,7 +185,7 @@ export default function Profile() {
                   style={{ width: `${Math.min(xpProgress * 100, 100)}%` }}
                 />
               </View>
-              <Text className="text-[12px] font-light text-hum-dim">
+              <Text className="text-[12px] font-light text-hum-dim" maxFontSizeMultiplier={1.5}>
                 {`${level.nextLevelXp - (profile?.xp ?? 0)} xp until ${getLevelForXp(level.nextLevelXp).name}`}
               </Text>
             </View>
@@ -195,7 +195,7 @@ export default function Profile() {
 
         {profile?.partnerId ? (
           <View className="gap-y-3">
-            <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+            <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim" maxFontSizeMultiplier={1.25}>
               partner
             </Text>
             <PartnerXpCard partner={partnerProfile} loading={partnerProfileLoading} />
@@ -214,7 +214,7 @@ export default function Profile() {
 
         <View className="gap-y-3">
           <View className="flex-row items-baseline justify-between gap-3">
-            <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+            <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim" maxFontSizeMultiplier={1.25}>
               badges
             </Text>
             {(profile?.badges?.length ?? 0) > 0 ? (
@@ -229,7 +229,7 @@ export default function Profile() {
           <BadgeShelf earnedIds={profile?.badges ?? []} />
           {profile?.partnerId ? (
             <View className="gap-y-3">
-              <TouchableOpacity
+              <Pressable
                 className="rounded-[20px] border border-dashed border-hum-border/18 bg-hum-surface/15 py-3.5 active:opacity-88"
                 onPress={() => setPartnerBadgesOpen((o) => !o)}
                 accessibilityRole="button"
@@ -261,17 +261,17 @@ export default function Profile() {
                     </Text>
                   ) : null}
                 </View>
-              </TouchableOpacity>
+              </Pressable>
               {partnerBadgesOpen ? (
                 partnerProfileLoading && !partnerProfile ? (
-                  <View className="rounded-[22px] border border-dashed border-hum-border/18 bg-hum-card/50 px-6 py-8">
+                  <Card padding="hero" dashed bgClassName="bg-hum-card/50" flat>
                     <Text
                       className="text-center text-[13px] font-light text-hum-muted"
                       maxFontSizeMultiplier={1.35}
                     >
                       loading badges
                     </Text>
-                  </View>
+                  </Card>
                 ) : (
                   <BadgeShelf
                     earnedIds={partnerProfile?.badges ?? []}
@@ -282,7 +282,7 @@ export default function Profile() {
               ) : null}
             </View>
           ) : null}
-          <TouchableOpacity
+          <Pressable
             className="rounded-[20px] border border-dashed border-hum-border/18 bg-hum-surface/15 py-3.5 active:opacity-88"
             onPress={() => router.push('/profile/badge-teasers')}
             accessibilityRole="button"
@@ -294,34 +294,34 @@ export default function Profile() {
             >
               peek at a few locked
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         {profile?.inviteCode && !profile?.partnerId ? (
-          <Card className="gap-y-3 border-hum-primary/15">
-            <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+          <Card tone="primary" tier="inner" className="gap-y-3">
+            <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim" maxFontSizeMultiplier={1.25}>
               invite
             </Text>
-            <Text className="text-[26px] font-light tracking-[0.35em] text-hum-primary">
+            <Text className="text-[26px] font-light tracking-[0.35em] text-hum-primary" maxFontSizeMultiplier={1.25}>
               {profile.inviteCode}
             </Text>
-            <Text className="text-[13px] font-light leading-5 text-hum-muted">
+            <Text className="text-[13px] font-light leading-5 text-hum-muted" maxFontSizeMultiplier={1.3}>
               share once · in private
             </Text>
           </Card>
         ) : null}
 
         <View className="gap-y-3">
-          <Pressable
+          <Card
+            pressable
+            padding="list-row"
             onPress={() => router.push('/profile/notification-settings')}
-            className="flex-row items-center gap-x-3 rounded-[22px] border border-hum-border/18 bg-hum-card px-5 py-4 active:opacity-88"
-            style={cardShadow}
-            accessibilityRole="button"
             accessibilityLabel="notifications"
             accessibilityHint="manage push notification preferences and daily reminders"
+            className="flex-row items-center gap-x-3"
           >
-            <View className="h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-hum-secondary/14">
-              <Ionicons name="notifications-outline" size={22} color={theme.secondary} />
+            <View className="h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-hum-secondary/14">
+              <Ionicons name="notifications-outline" size={20} color={theme.secondary} />
             </View>
             <Text
               className="min-w-0 flex-1 text-[17px] font-medium leading-[22px] tracking-[-0.01em] text-hum-text"
@@ -335,7 +335,35 @@ export default function Profile() {
               color={theme.dim}
               style={{ opacity: 0.5 }}
             />
-          </Pressable>
+          </Card>
+          {__DEV__ ? (
+            <Card
+              pressable
+              padding="list-row"
+              dashed
+              bgClassName="bg-hum-surface/22"
+              flat
+              onPress={() => router.push('/profile/dev-tools')}
+              accessibilityLabel="dev tools"
+              className="flex-row items-center gap-x-3"
+            >
+              <View className="h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-hum-surface/45">
+                <Ionicons name="construct-outline" size={20} color={theme.dim} />
+              </View>
+              <Text
+                className="min-w-0 flex-1 text-[17px] font-medium leading-[22px] tracking-[-0.01em] text-hum-muted"
+                maxFontSizeMultiplier={1.3}
+              >
+                dev tools
+              </Text>
+              <Ionicons
+                name="chevron-forward"
+                size={16}
+                color={theme.dim}
+                style={{ opacity: 0.5 }}
+              />
+            </Card>
+          ) : null}
           <Button
             label="sign out"
             variant="secondary"

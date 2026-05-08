@@ -122,8 +122,8 @@ export function DayTrailSlot({ entry, ownerLabel }: Props) {
               onPress={() => setExpanded(false)}
               hitSlop={16}
               accessibilityRole="button"
-              accessibilityLabel="close"
-              className="h-10 w-10 shrink-0 items-center justify-center rounded-full border border-hum-border/18 bg-hum-card/90 active:opacity-88"
+              accessibilityLabel={`close ${ownerLabel}'s mood history`}
+              className="h-11 w-11 shrink-0 items-center justify-center rounded-full border border-hum-border/18 bg-hum-card/90 active:opacity-88"
             >
               <Ionicons name="close" size={18} color={theme.text} style={{ opacity: 0.85 }} />
             </Pressable>

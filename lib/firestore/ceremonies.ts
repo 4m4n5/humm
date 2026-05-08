@@ -267,6 +267,13 @@ export async function submitResolutionPick(
   });
 }
 
+/** Mark that a user has finished the cheer/reveal walkthrough. */
+export async function markCheerCompleted(ceremonyId: string, uid: string): Promise<void> {
+  await updateDoc(ceremonyDoc(ceremonyId), {
+    [`cheerCompletedBy.${uid}`]: true,
+  });
+}
+
 export async function completeCeremonyAndAdvance(
   coupleId: string,
   ceremonyId: string,

@@ -1,46 +1,63 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, Animated, Easing } from 'react-native';
-import { BattleMatchup } from '@/types';
-import { bracketProgress } from '@/lib/battleLogic';
+import React, { useEffect } from 'react';
+import { View, Text } from 'react-native';
+import Animated, {
+  Easing,
+  cancelAnimation,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
+import { PickMatchup } from '@/types';
+import { bracketProgress } from '@/lib/pickLogic';
 import { theme } from '@/constants/theme';
+import { REDUCE_MOTION_NEVER } from '@/lib/motion';
 
 type Props = {
-  bracket: BattleMatchup[];
+  bracket: PickMatchup[];
   currentIdx: number;
 };
 
+const PULSE_HALF_MS = 550;
+
 function PulseDot({ active }: { active: boolean }) {
-  const o = useRef(new Animated.Value(1)).current;
+  const o = useSharedValue(1);
 
   useEffect(() => {
     if (active) {
-      const loop = Animated.loop(
-        Animated.sequence([
-          Animated.timing(o, {
-            toValue: 0.35,
-            duration: 550,
+      o.value = 1;
+      o.value = withRepeat(
+        withSequence(
+          withTiming(0.35, {
+            duration: PULSE_HALF_MS,
             easing: Easing.inOut(Easing.quad),
-            useNativeDriver: true,
+            reduceMotion: REDUCE_MOTION_NEVER,
           }),
-          Animated.timing(o, {
-            toValue: 1,
-            duration: 550,
+          withTiming(1, {
+            duration: PULSE_HALF_MS,
             easing: Easing.inOut(Easing.quad),
-            useNativeDriver: true,
+            reduceMotion: REDUCE_MOTION_NEVER,
           }),
-        ]),
+        ),
+        -1,
       );
-      loop.start();
-      return () => loop.stop();
+      return () => {
+        cancelAnimation(o);
+        o.value = 1;
+      };
     }
-    o.setValue(1);
+    cancelAnimation(o);
+    o.value = 1;
     return undefined;
   }, [active, o]);
 
+  const animStyle = useAnimatedStyle(() => ({ opacity: o.value }));
+
   return (
     <Animated.View
-      style={{ opacity: o }}
-      className="h-2.5 w-2.5 rounded-full bg-hum-spark"
+      style={animStyle}
+      className="h-2.5 w-2.5 rounded-full bg-hum-primary"
     />
   );
 }

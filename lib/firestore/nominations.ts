@@ -27,7 +27,7 @@ export async function addNomination(
   await setDoc(ref, {
     ...data,
     id: ref.id,
-    seeded: false,
+    seeded: data.seeded ?? false,
     createdAt: serverTimestamp(),
   });
   return ref.id;

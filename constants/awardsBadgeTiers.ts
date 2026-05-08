@@ -138,16 +138,16 @@ export const SEASONS_VAULT_COUPLE_TIERS: AwardsTierMeta[] = [
   },
 ];
 
-/** Couple — battle-mode decisions completed (same counter as today’s battle_tested check) */
+/** Couple — live "vote together" picks completed (same counter as the prior battle ladder) */
 const BAT = expandingTotals(2, 12, 7);
 export const BATTLE_DECISION_TIERS: AwardsTierMeta[] = zipCounts(BAT, 'battle_badge', [
-  { name: 'bracket spark', description: '2 battle brackets finished together', emoji: '⚔️' },
-  { name: 'bracket groove', description: '5 battles in the books', emoji: '🛡️' },
-  { name: 'bracket habit', description: '9 bracket nights wrapped', emoji: '⚡' },
-  { name: 'bracket depth', description: '14 battles — you like the fight', emoji: '🎯' },
-  { name: 'bracket tested', description: '20 brackets finished', emoji: '🏅' },
-  { name: 'bracket forged', description: '27 battles settled', emoji: '🔥' },
-  { name: 'bracket legends', description: '35 brackets — legendary decide mode', emoji: '👑' },
+  { name: 'pick spark', description: '2 live picks finished together', emoji: '✨' },
+  { name: 'pick groove', description: '5 live picks in the books', emoji: '🌟' },
+  { name: 'pick habit', description: '9 decisions made together', emoji: '⚡' },
+  { name: 'pick depth', description: '14 live picks — you do this often', emoji: '🎯' },
+  { name: 'pick tested', description: '20 live picks finished', emoji: '🏅' },
+  { name: 'pick forged', description: '27 decisions settled', emoji: '🔥' },
+  { name: 'pick legends', description: '35 decisions — legendary decide mode', emoji: '👑' },
 ]);
 
 /** Couple — user-authored nominations that include a photo */

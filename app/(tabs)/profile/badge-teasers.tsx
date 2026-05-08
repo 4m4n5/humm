@@ -3,10 +3,13 @@ import { View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from 'expo-router';
 import { ScreenHeader } from '@/components/shared/ScreenHeader';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { pickRandomTeasers, BADGE_TEASER_COUNT } from '@/lib/badgeTeasers';
 import type { BadgeDefinition } from '@/constants/badges';
 import { scrollContentStandard } from '@/constants/screenLayout';
+import { theme } from '@/constants/theme';
 
 export default function BadgeTeasersScreen() {
   const { profile } = useAuthStore();
@@ -21,6 +24,7 @@ export default function BadgeTeasersScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
+      <AmbientGlow tone="primary" />
       <ScreenHeader title="coming soon" />
       <ScrollView
         className="flex-1"
@@ -28,14 +32,13 @@ export default function BadgeTeasersScreen() {
         showsVerticalScrollIndicator={false}
       >
         {teasers.length === 0 ? (
-          <View className="rounded-[24px] border border-dashed border-hum-border/30 bg-hum-card/60 px-6 py-10">
-            <Text
-              className="text-center text-[14px] font-light leading-[22px] text-hum-muted"
-              maxFontSizeMultiplier={1.35}
-            >
-              all caught for now · more as you play
-            </Text>
-          </View>
+          <EmptyState
+            className="px-0"
+            ionicon="sparkles-outline"
+            ioniconColor={`${theme.primary}B3`}
+            title="all caught for now"
+            description="more hints appear as you play"
+          />
         ) : (
           <View className="gap-y-4">
             {teasers.map((b) => (

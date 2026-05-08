@@ -44,7 +44,7 @@ app/
   (auth)/               # sign-in, sign-up, link-partner
   (tabs)/               # home, mood/*, decide/*, awards/*, reasons/*, habits/*, profile/*
 components/shared/      # Button, Input, Card, ScreenTitle, ScreenHeader
-components/battle/      # BracketProgress, CoinFlip (battle mode)
+components/pick/        # BracketProgress, PickReveal, PickRevealAnimated (pick-together)
 components/mood/        # MoodTodayHero, MoodGrid, WeekStrip, MoodChip, MoodHomeRow, …
 constants/              # categories, levels, badges, moodStickers, hummVoice, theme (hex), elevation
 lib/

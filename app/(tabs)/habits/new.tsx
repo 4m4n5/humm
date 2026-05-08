@@ -4,19 +4,22 @@ import {
   ScrollView,
   Text,
   TextInput,
-  TouchableOpacity,
+  Pressable,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { ScreenHeader } from '@/components/shared/ScreenHeader';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { Button } from '@/components/shared/Button';
 import { Input } from '@/components/shared/Input';
+import { LinkPartnerGate } from '@/components/shared/LinkPartnerGate';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useHabitStore } from '@/lib/stores/habitStore';
 import { theme } from '@/constants/theme';
 import { scrollContentStandard } from '@/constants/screenLayout';
 import type { HabitCadence, HabitScope } from '@/types';
+import { errorsVoice, navVoice } from '@/constants/hummVoice';
 
 function PillGroup<T extends string>({
   label,
@@ -31,31 +34,32 @@ function PillGroup<T extends string>({
 }) {
   return (
     <View className="gap-y-2.5">
-      <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">{label}</Text>
+      <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim" maxFontSizeMultiplier={1.25}>{label}</Text>
       <View className="flex-row flex-wrap gap-2.5">
         {options.map(({ key, label: l }) => {
           const on = value === key;
           return (
-            <TouchableOpacity
+            <Pressable
               key={key}
               onPress={() => onChange(key)}
-              className={`rounded-full border px-5 py-2.5 ${
+              className={`min-h-[44px] items-center justify-center rounded-full border px-5 active:opacity-88 ${
                 on
                   ? 'border-hum-primary/25 bg-hum-primary'
                   : 'border-hum-border/18 bg-hum-card/70'
               }`}
               accessibilityRole="button"
               accessibilityState={{ selected: on }}
-              activeOpacity={0.88}
+              accessibilityLabel={`${label}: ${l}`}
             >
               <Text
                 className={`text-[13px] font-medium tracking-wide ${
                   on ? 'text-hum-ink' : 'text-hum-muted'
                 }`}
+                maxFontSizeMultiplier={1.3}
               >
                 {l}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           );
         })}
       </View>
@@ -84,18 +88,13 @@ export default function NewHabitScreen() {
   const [busy, setBusy] = useState(false);
 
   if (!profile?.coupleId || !profile.uid) {
-    return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-hum-bg px-8">
-        <Text className="text-center text-hum-muted">link your partner first</Text>
-        <Button label="go back" onPress={() => router.back()} variant="ghost" size="md" className="mt-6" />
-      </SafeAreaView>
-    );
+    return <LinkPartnerGate backTo="habits" tone="sage" />;
   }
 
   async function handleSave() {
     const t = title.trim();
     if (!t) {
-      Alert.alert('need a title', 'a few words are enough');
+      Alert.alert(errorsVoice.couldnt('save'), errorsVoice.needTitle);
       return;
     }
     const coupleId = profile?.coupleId;
@@ -114,7 +113,7 @@ export default function NewHabitScreen() {
       router.back();
     } catch (e) {
       console.error(e);
-      Alert.alert("couldn't save", 'check connection, try again');
+      Alert.alert(errorsVoice.couldntSave, errorsVoice.checkConnection);
     } finally {
       setBusy(false);
     }
@@ -122,6 +121,7 @@ export default function NewHabitScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
+      <AmbientGlow tone="sage" />
       <ScreenHeader title="new habit" />
       <ScrollView
         className="flex-1"
@@ -138,9 +138,9 @@ export default function NewHabitScreen() {
         />
 
         <View className="gap-y-2.5">
-          <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">emoji</Text>
+          <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim" maxFontSizeMultiplier={1.25}>emoji</Text>
           <TextInput
-            className="min-h-[52px] rounded-[20px] border border-hum-border/18 bg-hum-surface/80 px-4 py-3.5 text-[22px] font-light text-hum-text"
+            className="min-h-[52px] rounded-[20px] border border-hum-sage/18 bg-hum-surface/80 px-4 py-3.5 text-[22px] font-light text-hum-text"
             placeholder="✨"
             placeholderTextColor={theme.dim}
             value={emoji}

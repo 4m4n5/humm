@@ -68,6 +68,7 @@ export function MoodConfirmModal({
       >
         <Pressable
           onPress={(e) => e.stopPropagation()}
+          accessible={false}
           accessibilityViewIsModal
           className="w-full max-w-[360px] overflow-hidden rounded-[28px] border border-hum-bloom/30"
           style={cardShadow}
@@ -86,7 +87,7 @@ export function MoodConfirmModal({
               <StickerPreview sticker={current} dim />
               <Text
                 className="text-[18px] font-light text-hum-dim/70"
-                allowFontScaling={false}
+                maxFontSizeMultiplier={1.25}
               >
                 →
               </Text>
@@ -160,7 +161,7 @@ function StickerPreview({
           dim ? 'font-light text-hum-dim' : 'font-medium text-hum-text'
         }`}
         numberOfLines={1}
-        allowFontScaling={false}
+        maxFontSizeMultiplier={1.25}
       >
         {sticker.label}
       </Text>

@@ -2,9 +2,14 @@ import React, { useMemo, useEffect, useRef } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { AwardCategory } from '@/types';
 import { ScreenHeader } from '@/components/shared/ScreenHeader';
+import { EmptyState } from '@/components/shared/EmptyState';
 import { Button } from '@/components/shared/Button';
+import { Card } from '@/components/shared/Card';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
+import { theme } from '@/constants/theme';
 import { useNominationsStore } from '@/lib/stores/nominationsStore';
 import { displayForCategoryId, enabledAwardCategoryIds } from '@/lib/awardCategoryConfig';
 import {
@@ -15,6 +20,7 @@ import {
 import { hapticMedium } from '@/lib/haptics';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { scrollContentStandard } from '@/constants/screenLayout';
+import { navVoice } from '@/constants/hummVoice';
 
 export default function OverlapScreen() {
   const { nominations, ceremony, couple } = useNominationsStore();
@@ -50,32 +56,47 @@ export default function OverlapScreen() {
 
   if (ceremony.status !== 'voting') {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-hum-bg px-8">
-        <Text className="mb-4 text-center text-[14px] text-hum-muted">after both submit picks</Text>
-        <Button label="back to awards" onPress={() => router.back()} variant="ghost" size="md" />
+      <SafeAreaView className="flex-1 justify-center bg-hum-bg">
+        <EmptyState
+          ionicon="time-outline"
+          ioniconColor={`${theme.gold}B3`}
+          title="not yet"
+          description="after both submit picks"
+          primaryAction={{ label: navVoice.backTo('awards'), onPress: () => router.back() }}
+        />
       </SafeAreaView>
     );
   }
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
+      <AmbientGlow tone="gold" />
       <ScreenHeader title="overlap" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}
         showsVerticalScrollIndicator={false}
       >
-        <View className="gap-y-3 rounded-[22px] border border-hum-border/18 bg-emerald-950/10 p-5">
+        <Card tone="gold" tier="inner" className="gap-y-3">
           <View className="flex-row items-center gap-x-2.5">
-            <View className="h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-900/35">
-              <Text className="text-[14px] leading-none">✓</Text>
+            <View className="h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-hum-surface/55">
+              <Ionicons name="checkmark-outline" size={18} color={theme.gold} />
             </View>
-            <Text className="flex-1 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+            <Text
+              className="flex-1 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
+              maxFontSizeMultiplier={1.25}
+            >
               same page · {agreed.length}
             </Text>
           </View>
           {agreed.length === 0 ? (
-            <Text className="text-[13px] font-light text-hum-muted">no matches yet</Text>
+            <EmptyState
+              className="px-0 py-2"
+              ionicon="git-merge-outline"
+              ioniconColor={`${theme.gold}B3`}
+              title="no matches yet"
+              description="same-page picks land here first"
+            />
           ) : (
             <View className="gap-y-2.5">
               {agreed.map((id) => {
@@ -85,16 +106,24 @@ export default function OverlapScreen() {
                 return (
                   <View
                     key={id}
-                    className="flex-row items-start gap-x-3 rounded-[18px] border border-emerald-900/14 bg-emerald-950/14 px-4 py-3.5"
+                    className="flex-row items-start gap-x-3 rounded-[18px] border border-hum-gold/18 bg-hum-card px-4 py-3.5"
                   >
-                    <View className="h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-950/40">
-                      <Text className="text-[15px] leading-none">{meta?.emoji}</Text>
+                    <View className="h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-hum-surface/55">
+                      <Text className="text-[15px] leading-none" allowFontScaling={false}>
+                        {meta?.emoji}
+                      </Text>
                     </View>
                     <View className="min-w-0 flex-1 gap-y-1">
-                      <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+                      <Text
+                        className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
+                        maxFontSizeMultiplier={1.25}
+                      >
                         {meta?.label}
                       </Text>
-                      <Text className="text-[14px] font-medium leading-[20px] text-hum-text">
+                      <Text
+                        className="text-[14px] font-medium leading-[20px] text-hum-text"
+                        maxFontSizeMultiplier={1.3}
+                      >
                         {n?.title ?? '—'}
                       </Text>
                     </View>
@@ -103,19 +132,28 @@ export default function OverlapScreen() {
               })}
             </View>
           )}
-        </View>
+        </Card>
 
-        <View className="gap-y-3 rounded-[22px] border border-hum-border/18 bg-amber-950/12 p-5">
+        <Card className="gap-y-3">
           <View className="flex-row items-center gap-x-2.5">
-            <View className="h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-900/18">
-              <Text className="text-[14px] leading-none">◇</Text>
+            <View className="h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-hum-surface/55">
+              <Ionicons name="git-branch-outline" size={18} color={theme.dim} />
             </View>
-            <Text className="flex-1 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+            <Text
+              className="flex-1 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
+              maxFontSizeMultiplier={1.25}
+            >
               different picks · {contested.length}
             </Text>
           </View>
           {contested.length === 0 ? (
-            <Text className="text-[13px] font-light text-hum-muted">clear to cheer</Text>
+            <EmptyState
+              className="px-0 py-2"
+              ionicon="checkmark-done-outline"
+              ioniconColor={`${theme.gold}B3`}
+              title="clear to cheer"
+              description="no split picks left in this round"
+            />
           ) : (
             <View className="gap-y-2.5">
               {contested.map((id) => {
@@ -128,20 +166,31 @@ export default function OverlapScreen() {
                 return (
                   <View
                     key={id}
-                    className="gap-y-2 rounded-[20px] border border-amber-900/22 bg-amber-950/18 px-4 py-3.5"
+                    className="gap-y-2 rounded-[20px] border border-hum-border/18 bg-hum-card px-4 py-3.5"
                   >
                     <View className="flex-row items-center gap-x-2.5">
-                      <View className="h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-950/35">
-                        <Text className="text-[15px] leading-none">{meta?.emoji}</Text>
+                      <View className="h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-hum-surface/55">
+                        <Text className="text-[15px] leading-none" allowFontScaling={false}>
+                          {meta?.emoji}
+                        </Text>
                       </View>
-                      <Text className="flex-1 text-[15px] font-medium leading-[20px] text-hum-text">
+                      <Text
+                        className="flex-1 text-[15px] font-medium leading-[20px] text-hum-text"
+                        maxFontSizeMultiplier={1.3}
+                      >
                         {meta?.label}
                       </Text>
                     </View>
-                    <Text className="pl-[42px] text-[12px] font-light leading-[18px] text-hum-muted">
+                    <Text
+                      className="pl-[42px] text-[12px] font-light leading-[18px] text-hum-muted"
+                      maxFontSizeMultiplier={1.5}
+                    >
                       A · {na?.title ?? '—'}
                     </Text>
-                    <Text className="pl-[42px] text-[12px] font-light leading-[18px] text-hum-muted">
+                    <Text
+                      className="pl-[42px] text-[12px] font-light leading-[18px] text-hum-muted"
+                      maxFontSizeMultiplier={1.5}
+                    >
                       B · {nb?.title ?? '—'}
                     </Text>
                   </View>
@@ -149,13 +198,13 @@ export default function OverlapScreen() {
               })}
             </View>
           )}
-        </View>
+        </Card>
 
         {contested.length > 0 ? (
           <Button label="sync split picks" onPress={() => router.push('/awards/resolve')} size="lg" />
         ) : null}
 
-        <Button label="back" onPress={() => router.back()} variant="ghost" size="md" />
+        <Button label={navVoice.backTo('awards')} onPress={() => router.back()} variant="ghost" size="md" />
       </ScrollView>
     </SafeAreaView>
   );

@@ -161,7 +161,7 @@ export function validateDeliberationPicks(
     const id = picks[cat];
     if (!id) return `pick something for ${labelForPickError(cat, categoryLabels)}`;
     const ok = nominations.some((n) => n.id === id && n.category === cat);
-    if (!ok) return 'invalid pick — try again';
+    if (!ok) return 'invalid pick · try again';
   }
   return null;
 }

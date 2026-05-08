@@ -6,12 +6,16 @@ import { AwardCategory, Ceremony, Couple, Nomination } from '@/types';
 import { ScreenHeader } from '@/components/shared/ScreenHeader';
 import { LoadingState } from '@/components/shared/LoadingState';
 import { Button } from '@/components/shared/Button';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { subscribeToCeremony } from '@/lib/firestore/ceremonies';
 import { subscribeToNominations } from '@/lib/firestore/nominations';
 import { subscribeToCouple } from '@/lib/firestore/couples';
 import { nominationById } from '@/lib/awardsLogic';
 import { displayForCategoryId } from '@/lib/awardCategoryConfig';
 import { scrollContentStandard } from '@/constants/screenLayout';
+import { navVoice } from '@/constants/hummVoice';
+import { theme } from '@/constants/theme';
 
 export default function PastCeremonyDetailScreen() {
   const { ceremonyId } = useLocalSearchParams<{ ceremonyId: string }>();
@@ -36,8 +40,14 @@ export default function PastCeremonyDetailScreen() {
 
   if (!ceremonyId || typeof ceremonyId !== 'string') {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-hum-bg">
-        <Text className="text-hum-muted">missing ceremony</Text>
+      <SafeAreaView className="flex-1 justify-center bg-hum-bg">
+        <EmptyState
+          ionicon="alert-circle-outline"
+          ioniconColor={`${theme.gold}B3`}
+          title="missing ceremony"
+          description="this link may be outdated"
+          primaryAction={{ label: navVoice.backTo('archive'), onPress: () => router.back() }}
+        />
       </SafeAreaView>
     );
   }
@@ -45,6 +55,7 @@ export default function PastCeremonyDetailScreen() {
   if (!ceremony) {
     return (
       <SafeAreaView className="flex-1 justify-center bg-hum-bg">
+        <AmbientGlow tone="gold" />
         <LoadingState />
       </SafeAreaView>
     );
@@ -63,18 +74,23 @@ export default function PastCeremonyDetailScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
-      <ScreenHeader title="season" />
+      <AmbientGlow tone="gold" />
+      <ScreenHeader title="past season" />
       <ScrollView
         className="flex-1"
         contentContainerStyle={scrollContentStandard}
         showsVerticalScrollIndicator={false}
       >
-        <Button label="back to list" onPress={() => router.back()} variant="ghost" size="md" />
+        <Button label={navVoice.backTo('archive')} onPress={() => router.back()} variant="ghost" size="md" />
 
         {orderedCats.length === 0 ? (
-          <Text className="text-[13px] font-light text-hum-muted">
-            no winners this round
-          </Text>
+          <EmptyState
+            className="px-0"
+            ionicon="ribbon-outline"
+            ioniconColor={`${theme.gold}B3`}
+            title="no winners this round"
+            description="nothing was crowned in this archive"
+          />
         ) : (
           orderedCats.map((catId) => {
             const meta = displayForCategoryId(couple?.awardCategories, catId);
@@ -87,15 +103,30 @@ export default function PastCeremonyDetailScreen() {
               >
                 <View className="flex-row items-center gap-x-2.5">
                   <View className="h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-hum-surface/55">
-                    <Text className="text-[15px] leading-none">{meta.emoji}</Text>
+                    <Text className="text-[15px] leading-none" allowFontScaling={false}>
+                      {meta.emoji}
+                    </Text>
                   </View>
-                  <Text className="flex-1 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">
+                  <Text
+                    className="flex-1 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
+                    maxFontSizeMultiplier={1.25}
+                  >
                     {meta.label}
                   </Text>
                 </View>
-                <Text className="text-[15px] font-medium leading-[20px] text-hum-text">{nom?.title ?? '—'}</Text>
+                <Text
+                  className="text-[15px] font-medium leading-[20px] text-hum-text"
+                  maxFontSizeMultiplier={1.3}
+                >
+                  {nom?.title ?? '—'}
+                </Text>
                 {nom?.description ? (
-                  <Text className="text-[14px] font-light leading-5 text-hum-muted">{nom.description}</Text>
+                  <Text
+                    className="text-[14px] font-light leading-5 text-hum-muted"
+                    maxFontSizeMultiplier={1.5}
+                  >
+                    {nom.description}
+                  </Text>
                 ) : null}
               </View>
             );

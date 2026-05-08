@@ -1,10 +1,22 @@
-import React, { useRef } from 'react';
-import { Animated, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React from 'react';
+import { View, Text, Pressable, ActivityIndicator } from 'react-native';
+import Animated, {
+  cancelAnimation,
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withSpring,
+} from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import type { MoodStickerOption } from '@/types';
 import { MOOD_QUADRANTS } from '@/constants/moodStickers';
 import { theme } from '@/constants/theme';
-import { SectionLabel } from '@/components/habits/SectionLabel';
+import { SectionLabel } from '@/components/shared/SectionLabel';
+import {
+  REDUCE_MOTION_NEVER,
+  SPRING_EXPRESSIVE_BLOOM,
+  SPRING_EXPRESSIVE_SETTLE,
+} from '@/lib/motion';
 
 type Props = {
   currentId: string | null;
@@ -33,49 +45,44 @@ function StickerPill({
   const showGloballyDimmed = disabled && !saving && !selected;
 
   // Tap-bloom: when a mood is selected, the emoji breathes outward briefly.
-  // Sequence: 1 → 1.22 (snappy spring) → 1 (settle). Tied to a synchronized
+  // Sequence: 1 → 1.22 (expressive bloom) → 1 (settle). Tied to a synchronized
   // light haptic so the visual + tactile arrive together.
-  const bloom = useRef(new Animated.Value(1)).current;
+  const bloom = useSharedValue(1);
 
   const handlePress = () => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    Animated.sequence([
-      Animated.spring(bloom, {
-        toValue: 1.22,
-        friction: 3.5,
-        tension: 220,
-        useNativeDriver: true,
-      }),
-      Animated.spring(bloom, {
-        toValue: 1,
-        friction: 5,
-        tension: 160,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    // Cancel any in-flight bloom so rapid taps don't compound and wobble.
+    cancelAnimation(bloom);
+    bloom.value = withSequence(
+      withSpring(1.22, { ...SPRING_EXPRESSIVE_BLOOM, reduceMotion: REDUCE_MOTION_NEVER }),
+      withSpring(1, { ...SPRING_EXPRESSIVE_SETTLE, reduceMotion: REDUCE_MOTION_NEVER }),
+    );
     onPress();
   };
 
+  const bloomStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: bloom.value }],
+  }));
+
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={handlePress}
       disabled={interactionLocked}
-      activeOpacity={0.88}
       accessibilityRole="button"
       accessibilityLabel={
         selected ? `${sticker.label}, currently set` : `set mood to ${sticker.label}`
       }
       accessibilityState={{ selected, busy: saving, disabled: interactionLocked }}
-      className={`flex-row items-center gap-2 rounded-full border px-3.5 py-2.5 ${
+      className={`min-h-[44px] flex-row items-center gap-2 rounded-full border px-3.5 ${
         selected
           ? 'border-hum-bloom/45 bg-hum-bloom/18'
           : 'border-hum-border/18 bg-hum-card'
-      } ${showGloballyDimmed ? 'opacity-40' : ''}`}
+      } ${showGloballyDimmed ? 'opacity-40' : ''} ${interactionLocked ? '' : 'active:opacity-88'}`}
     >
       {saving ? (
         <ActivityIndicator size="small" color={theme.bloom} />
       ) : (
-        <Animated.View style={{ transform: [{ scale: bloom }] }}>
+        <Animated.View style={bloomStyle}>
           <Text className="text-[18px] leading-[20px]" allowFontScaling={false}>
             {sticker.emoji}
           </Text>
@@ -90,7 +97,7 @@ function StickerPill({
       >
         {sticker.label}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 

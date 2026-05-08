@@ -1,8 +1,16 @@
 import React, { useEffect, useRef } from 'react';
-import { Pressable, View, Animated, AccessibilityInfo } from 'react-native';
+import { Pressable, View } from 'react-native';
+import Animated, {
+  cancelAnimation,
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { MoodChip } from '@/components/mood/MoodChip';
 import type { MoodEntry } from '@/types';
+import { SPRING_FAST_SPATIAL } from '@/lib/motion';
 
 type Props = {
   myEntry: MoodEntry | null;
@@ -13,8 +21,11 @@ type Props = {
 
 /** Home row — paired pills only (no extra wrapping card / boxes). */
 export function MoodHomeRow({ myEntry, partnerEntry, myLabel, partnerLabel }: Props) {
-  const partnerScale = useRef(new Animated.Value(1)).current;
+  const partnerScale = useSharedValue(1);
   const prevPartnerUpdated = useRef<number | null>(null);
+  // Partner pulse on update is large-ish (4% scale on a peer-attention surface);
+  // respect the system reduce-motion flag rather than forcing it. HIG-aligned.
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     if (!partnerEntry) return;
@@ -23,19 +34,16 @@ export function MoodHomeRow({ myEntry, partnerEntry, myLabel, partnerLabel }: Pr
     const isNew = prevPartnerUpdated.current !== null && ts !== prevPartnerUpdated.current;
     prevPartnerUpdated.current = ts;
 
-    if (isRecent && isNew) {
-      AccessibilityInfo.isReduceMotionEnabled().then((reduced) => {
-        if (reduced) return;
-        partnerScale.setValue(1.04);
-        Animated.spring(partnerScale, {
-          toValue: 1,
-          friction: 6,
-          tension: 120,
-          useNativeDriver: true,
-        }).start();
-      });
+    if (isRecent && isNew && !reduceMotion) {
+      cancelAnimation(partnerScale);
+      partnerScale.value = 1.04;
+      partnerScale.value = withSpring(1, SPRING_FAST_SPATIAL);
     }
-  }, [partnerEntry?.updatedAt, partnerScale]);
+  }, [partnerEntry, partnerScale, reduceMotion]);
+
+  const partnerStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: partnerScale.value }],
+  }));
 
   return (
     <View className="flex-row gap-2.5">
@@ -48,7 +56,7 @@ export function MoodHomeRow({ myEntry, partnerEntry, myLabel, partnerLabel }: Pr
         <MoodChip entry={myEntry} ownerLabel={myLabel} emptyLabel="log mood" size="sm" embedded />
       </Pressable>
 
-      <Animated.View className="min-w-0 flex-1" style={{ transform: [{ scale: partnerScale }] }}>
+      <Animated.View className="min-w-0 flex-1" style={partnerStyle}>
         <MoodChip entry={partnerEntry} ownerLabel={partnerLabel} size="sm" embedded />
       </Animated.View>
     </View>

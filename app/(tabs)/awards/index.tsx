@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, ScrollView, Pressable, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ScreenTitle } from '@/components/shared/ScreenTitle';
 import { Button } from '@/components/shared/Button';
+import { Card } from '@/components/shared/Card';
 import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useNominationsStore } from '@/lib/stores/nominationsStore';
@@ -16,12 +17,11 @@ import {
   contestedCategories,
 } from '@/lib/awardsLogic';
 import { CeremonyPhaseStrip } from '@/components/awards/CeremonyPhaseStrip';
-import { awardsVoice } from '@/constants/hummVoice';
+import { awardsVoice, errorsVoice } from '@/constants/hummVoice';
 import { hapticSuccess } from '@/lib/haptics';
 import { scrollContentStandard } from '@/constants/screenLayout';
 import { ceremonySeasonShortLabel } from '@/lib/ceremonyCalendar';
 import { theme } from '@/constants/theme';
-import { cardShadow } from '@/constants/elevation';
 
 function statusLabel(status: string | undefined, revealReady: boolean): string {
   switch (status) {
@@ -129,7 +129,7 @@ export default function Awards() {
               await hapticSuccess();
               router.push('/awards/deliberate');
             } catch (e: unknown) {
-              Alert.alert('couldn’t start', e instanceof Error ? e.message : 'try again');
+              Alert.alert(errorsVoice.couldntStart, e instanceof Error ? e.message : errorsVoice.tryAgain);
             } finally {
               setStarting(false);
             }
@@ -152,19 +152,18 @@ export default function Awards() {
         <View className="-mt-3 gap-3">
           <CeremonyPhaseStrip status={ceremony?.status} revealUnlocked={revealReady} />
 
-          <View
-            className="gap-y-4 rounded-[22px] border border-hum-border/18 bg-hum-card px-5 pb-5 pt-4"
-            style={cardShadow}
-          >
+          <Card className="gap-y-4 pt-4">
             <View className="flex-row items-center gap-x-3.5">
               <View className="h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-hum-gold/12">
-                <Text className="text-lg text-hum-gold/85">✦</Text>
+                <Text className="text-lg text-hum-gold/85" maxFontSizeMultiplier={1.25}>
+                  ✦
+                </Text>
               </View>
-              <TouchableOpacity
-                className="min-w-0 flex-1 flex-row items-center gap-1.5 py-1 active:opacity-88"
+              <Pressable
+                className="min-h-[44px] min-w-0 flex-1 flex-row items-center gap-1.5 py-1 active:opacity-88"
                 onPress={() => router.push('/awards/ceremony-calendar')}
                 accessibilityRole="button"
-                accessibilityLabel={`${seasonHubTitle}, open season calendar`}
+                accessibilityLabel={`Open season calendar, ${seasonHubTitle}`}
                 hitSlop={{ top: 6, bottom: 6, left: 2, right: 2 }}
               >
                 <Text
@@ -174,16 +173,22 @@ export default function Awards() {
                   {seasonHubTitle}
                 </Text>
                 <Ionicons name="chevron-forward" size={16} color={theme.dim} style={{ opacity: 0.5 }} />
-              </TouchableOpacity>
+              </Pressable>
               <View className="shrink-0 rounded-full border border-hum-border/18 bg-hum-surface/45 px-3 py-1.5">
-                <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-muted">
+                <Text
+                  className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-muted"
+                  maxFontSizeMultiplier={1.25}
+                >
                   {statusLabel(ceremony?.status, revealReady)}
                 </Text>
               </View>
             </View>
 
             {total > 0 || periodHint ? (
-              <Text className="text-[12px] font-light tabular-nums leading-[18px] text-hum-dim">
+              <Text
+                className="text-[12px] font-light tabular-nums leading-[18px] text-hum-dim"
+                maxFontSizeMultiplier={1.3}
+              >
                 {`${total > 0 ? `${total} in the jar` : ''}${total > 0 && periodHint ? ' · ' : ''}${periodHint ?? ''}`}
               </Text>
             ) : null}
@@ -242,13 +247,13 @@ export default function Awards() {
                 ) : null}
               </View>
             ) : null}
-          </View>
+          </Card>
         </View>
 
         <View className="gap-y-3">
           <Text
             className="px-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
-            maxFontSizeMultiplier={1.2}
+            maxFontSizeMultiplier={1.25}
           >
             categories
           </Text>
@@ -256,51 +261,65 @@ export default function Awards() {
             {enabledRows.map((cat) => {
               const count = counts[cat.id] ?? 0;
               return (
-                <TouchableOpacity
+                <Pressable
                   key={cat.id}
                   className="flex-row items-center gap-x-3.5 rounded-[18px] border border-hum-border/18 bg-hum-card px-4 py-4 active:opacity-88"
                   onPress={() => router.push(`/awards/${cat.id}`)}
-                  activeOpacity={0.88}
                   accessibilityRole="button"
-                  accessibilityLabel={`${cat.label}, ${count} nominations`}
+                  accessibilityLabel={`Open ${cat.label} category, ${count} nomination${count === 1 ? '' : 's'}`}
                 >
                   <View className="h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-hum-surface/35">
-                    <Text className="text-[19px] leading-none">{cat.emoji}</Text>
+                    <Text className="text-[19px] leading-none" allowFontScaling={false}>
+                      {cat.emoji}
+                    </Text>
                   </View>
                   <Text
                     className="min-w-0 flex-1 text-[15px] font-medium leading-[20px] text-hum-text"
                     numberOfLines={2}
+                    maxFontSizeMultiplier={1.3}
                   >
                     {cat.label}
                   </Text>
                   <View className="h-8 min-w-8 shrink-0 items-center justify-center rounded-full border border-hum-border/18 bg-hum-surface/40 px-2.5">
-                    <Text className="text-[13px] font-medium tabular-nums text-hum-muted">{count}</Text>
+                    <Text
+                      className="text-[13px] font-medium tabular-nums text-hum-muted"
+                      maxFontSizeMultiplier={1.25}
+                    >
+                      {count}
+                    </Text>
                   </View>
-                </TouchableOpacity>
+                </Pressable>
               );
             })}
             {pausedRows.length > 0 ? (
               <View className="mt-3 gap-y-2.5 border-t border-hum-border/18 pt-3">
                 {pausedRows.map((cat) => (
-                  <TouchableOpacity
+                  <Pressable
                     key={cat.id}
                     className="flex-row items-center gap-x-3.5 rounded-[18px] border border-dashed border-hum-border/18 bg-hum-surface/22 px-4 py-4 active:opacity-88"
                     onPress={() => router.push('/awards/manage-categories')}
-                    activeOpacity={0.88}
                     accessibilityRole="button"
-                    accessibilityLabel={`${cat.label}, paused. Opens award categories to manage`}
+                    accessibilityLabel={`${cat.label} category is paused, open award categories to manage`}
                   >
                     <View className="h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-hum-surface/35 opacity-75">
-                      <Text className="text-[19px] leading-none">{cat.emoji}</Text>
+                      <Text className="text-[19px] leading-none" allowFontScaling={false}>
+                        {cat.emoji}
+                      </Text>
                     </View>
                     <Text
                       className="min-w-0 flex-1 text-[15px] font-medium leading-[20px] text-hum-muted"
                       numberOfLines={2}
+                      maxFontSizeMultiplier={1.3}
                     >
                       {cat.label}
                     </Text>
-                    <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">paused</Text>
-                  </TouchableOpacity>
+                    <Text
+                      className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
+                      maxFontSizeMultiplier={1.25}
+                    >
+                      paused
+                    </Text>
+                  </Pressable>
                 ))}
               </View>
             ) : null}
@@ -310,43 +329,55 @@ export default function Awards() {
         <View className="gap-y-3">
           <Text
             className="px-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
-            maxFontSizeMultiplier={1.2}
+            maxFontSizeMultiplier={1.25}
           >
             more
           </Text>
-          <TouchableOpacity
+          <Pressable
             onPress={() => router.push('/awards/manage-categories')}
-            className="flex-row items-center justify-between rounded-[18px] border border-hum-border/18 bg-hum-surface/28 px-4 py-4 active:opacity-88"
-            activeOpacity={0.88}
+            className="flex-row items-center justify-between rounded-[18px] border border-hum-border/18 bg-hum-surface/35 px-4 py-4 active:opacity-88"
+
             accessibilityRole="button"
             accessibilityLabel="Award categories — rename, emoji, add, pause, or re-enable"
           >
-            <Text className="text-[14px] font-medium text-hum-text">award categories</Text>
+            <Text className="text-[14px] font-medium text-hum-text" maxFontSizeMultiplier={1.3}>
+              award categories
+            </Text>
             <Ionicons name="chevron-forward" size={16} color={theme.dim} style={{ opacity: 0.5 }} />
-          </TouchableOpacity>
+          </Pressable>
 
           <View className="flex-row gap-3">
-            <TouchableOpacity
+            <Pressable
               onPress={() => router.push('/awards/ceremony-calendar')}
-              className="min-h-[76px] flex-1 items-center justify-center gap-y-2 rounded-[18px] border border-hum-border/18 bg-hum-surface/28 px-3 py-3 active:opacity-88"
-              activeOpacity={0.88}
+              className="min-h-[76px] flex-1 items-center justify-center gap-y-2 rounded-[18px] border border-hum-border/18 bg-hum-surface/35 px-3 py-3 active:opacity-88"
+  
               accessibilityRole="button"
               accessibilityLabel="Season calendar — dates and reminders"
             >
               <Ionicons name="calendar-outline" size={18} color={theme.gold} style={{ opacity: 0.85 }} />
-              <Text className="text-center text-[13px] font-medium tracking-tight text-hum-text">calendar</Text>
-            </TouchableOpacity>
+              <Text
+                className="text-center text-[13px] font-medium tracking-tight text-hum-text"
+                maxFontSizeMultiplier={1.3}
+              >
+                calendar
+              </Text>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               onPress={() => router.push('/awards/past')}
-              className="min-h-[76px] flex-1 items-center justify-center gap-y-2 rounded-[18px] border border-hum-border/18 bg-hum-surface/28 px-3 py-3 active:opacity-88"
-              activeOpacity={0.88}
+              className="min-h-[76px] flex-1 items-center justify-center gap-y-2 rounded-[18px] border border-hum-border/18 bg-hum-surface/35 px-3 py-3 active:opacity-88"
+  
               accessibilityRole="button"
               accessibilityLabel="Past award seasons in the archive"
             >
               <Ionicons name="archive-outline" size={18} color={theme.gold} style={{ opacity: 0.85 }} />
-              <Text className="text-center text-[13px] font-medium tracking-tight text-hum-text">archive</Text>
-            </TouchableOpacity>
+              <Text
+                className="text-center text-[13px] font-medium tracking-tight text-hum-text"
+                maxFontSizeMultiplier={1.3}
+              >
+                archive
+              </Text>
+            </Pressable>
           </View>
         </View>
       </ScrollView>

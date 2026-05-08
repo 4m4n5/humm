@@ -4,8 +4,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScreenHeader } from '@/components/shared/ScreenHeader';
 import { Input } from '@/components/shared/Input';
 import { Button } from '@/components/shared/Button';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { scrollContentStandard } from '@/constants/screenLayout';
+import { errorsVoice, navVoice } from '@/constants/hummVoice';
 
 export default function DeleteAccountScreen() {
   const { deleteAccount, isLoading, error, clearError, profile } = useAuthStore();
@@ -14,7 +16,7 @@ export default function DeleteAccountScreen() {
   async function handleDelete() {
     clearError();
     if (!password) {
-      Alert.alert('password?', 'we need it to confirm it’s really you');
+      Alert.alert(errorsVoice.couldnt('confirm'), errorsVoice.needPassword);
       return;
     }
     Alert.alert(
@@ -23,7 +25,7 @@ export default function DeleteAccountScreen() {
         ? 'your account goes · partner unlinked · shared data removed for both of you'
         : 'your account goes · any invite-only data removed',
       [
-        { text: 'cancel', style: 'cancel' },
+        { text: navVoice.cancel, style: 'cancel' },
         {
           text: 'delete',
           style: 'destructive',
@@ -41,6 +43,7 @@ export default function DeleteAccountScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg" edges={['bottom']}>
+      <AmbientGlow tone="primary" />
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -56,7 +59,7 @@ export default function DeleteAccountScreen() {
           <View className="gap-y-5">
             <Text
               className="text-[13px] font-light leading-[20px] text-hum-muted"
-              maxFontSizeMultiplier={1.35}
+              maxFontSizeMultiplier={1.5}
             >
               confirm with your password · this signs you out for good
             </Text>
@@ -73,7 +76,7 @@ export default function DeleteAccountScreen() {
               <Text
                 className="text-center text-[14px] leading-[22px] text-red-400/90"
                 accessibilityLiveRegion="polite"
-                maxFontSizeMultiplier={1.35}
+                maxFontSizeMultiplier={1.5}
               >
                 {error}
               </Text>
@@ -88,7 +91,7 @@ export default function DeleteAccountScreen() {
             />
             <Text
               className="text-center text-[12px] font-light leading-[18px] text-hum-dim"
-              maxFontSizeMultiplier={1.35}
+              maxFontSizeMultiplier={1.3}
             >
               tap back · nothing saved yet
             </Text>

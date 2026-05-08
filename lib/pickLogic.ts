@@ -1,4 +1,4 @@
-import { BattleMatchup } from '@/types';
+import { PickMatchup } from '@/types';
 
 /** Fisher–Yates shuffle (deterministic seed not needed for gameplay) */
 export function shuffle<T>(arr: T[]): T[] {
@@ -91,7 +91,7 @@ export function buildFirstRoundSlots(
   return slots;
 }
 
-function emptyMatchup(round: number, position: number): BattleMatchup {
+function emptyMatchup(round: number, position: number): PickMatchup {
   return {
     round,
     position,
@@ -107,8 +107,8 @@ function emptyMatchup(round: number, position: number): BattleMatchup {
 /**
  * Allocate flat bracket (length = bracketSize - 1) with round/position on each cell.
  */
-export function allocateEmptyBracket(bracketSize: number): BattleMatchup[] {
-  const bracket: BattleMatchup[] = [];
+export function allocateEmptyBracket(bracketSize: number): PickMatchup[] {
+  const bracket: PickMatchup[] = [];
   let r = 0;
   let m = bracketSize / 2;
   while (m >= 1) {
@@ -123,7 +123,7 @@ export function allocateEmptyBracket(bracketSize: number): BattleMatchup[] {
 
 /** Fill round 0 from leaf slots; inner rounds stay '' until propagation. */
 export function seedRoundZero(
-  bracket: BattleMatchup[],
+  bracket: PickMatchup[],
   bracketSize: number,
   slots: (string | null)[],
 ): void {
@@ -139,7 +139,7 @@ export function seedRoundZero(
 }
 
 export function propagateWinnerToParent(
-  bracket: BattleMatchup[],
+  bracket: PickMatchup[],
   bracketSize: number,
   childRound: number,
   childPosition: number,
@@ -160,7 +160,7 @@ export function propagateWinnerToParent(
 }
 
 /** Bye or missing side: return instant winner label, or null if not auto-resolvable. */
-export function autoWinnerForMatchup(m: BattleMatchup): string | null {
+export function autoWinnerForMatchup(m: PickMatchup): string | null {
   if (m.winner) return null;
   const a = m.optionA.trim();
   const bSide = m.optionB;
@@ -177,7 +177,7 @@ export function autoWinnerForMatchup(m: BattleMatchup): string | null {
 /**
  * Resolve all bye / half-filled auto wins and propagate until stable.
  */
-export function applyAutoResolutions(bracket: BattleMatchup[], bracketSize: number): void {
+export function applyAutoResolutions(bracket: PickMatchup[], bracketSize: number): void {
   let changed = true;
   while (changed) {
     changed = false;
@@ -198,12 +198,12 @@ export function applyAutoResolutions(bracket: BattleMatchup[], bracketSize: numb
  * Build full bracket from option labels (min 4). Returns { bracket, bracketSize }.
  */
 export function buildBracket(optionLabels: string[]): {
-  bracket: BattleMatchup[];
+  bracket: PickMatchup[];
   bracketSize: number;
 } {
   const n = optionLabels.length;
   if (n < 4) {
-    throw new Error('battle needs at least 4 options');
+    throw new Error('need at least 4 options');
   }
   const bracketSize = nextPowerOfTwo(n);
   const slots = buildFirstRoundSlots(optionLabels, bracketSize);
@@ -220,10 +220,10 @@ export type ResolveVotesResult =
 
 /**
  * Both partners have voted (pick is exactly optionA or optionB string).
- * revoteRound: after disagree, increment; coin flip when revoteRound >= 2 and still disagree.
+ * revoteRound: after disagree, increment; tiebreaker fires when revoteRound >= 2 and still disagree.
  */
 export function resolveVotes(
-  m: BattleMatchup,
+  m: PickMatchup,
   pickA: string,
   pickB: string,
   revoteRound: number,
@@ -245,7 +245,7 @@ export function resolveVotes(
   return { type: 'coin', winner };
 }
 
-export function isMatchupPlayable(m: BattleMatchup): boolean {
+export function isMatchupPlayable(m: PickMatchup): boolean {
   if (m.winner) return false;
   const w = autoWinnerForMatchup(m);
   if (w) return false;
@@ -257,26 +257,26 @@ export function isMatchupPlayable(m: BattleMatchup): boolean {
 }
 
 /** First index in bracket order that needs human votes, or -1 if none (before complete). */
-export function nextPlayableMatchupIndex(bracket: BattleMatchup[]): number {
+export function nextPlayableMatchupIndex(bracket: PickMatchup[]): number {
   for (let i = 0; i < bracket.length; i++) {
     if (isMatchupPlayable(bracket[i])) return i;
   }
   return -1;
 }
 
-export function isBracketComplete(bracket: BattleMatchup[]): boolean {
+export function isBracketComplete(bracket: PickMatchup[]): boolean {
   if (bracket.length === 0) return false;
   return bracket.every((m) => m.winner != null && m.winner.trim() !== '');
 }
 
-export function tournamentWinner(bracket: BattleMatchup[]): string | null {
+export function tournamentWinner(bracket: PickMatchup[]): string | null {
   if (!isBracketComplete(bracket)) return null;
   const last = bracket[bracket.length - 1];
   return last.winner;
 }
 
 export function bracketProgress(
-  bracket: BattleMatchup[],
+  bracket: PickMatchup[],
   currentIdx: number,
 ): {
   totalMatchups: number;
@@ -307,7 +307,7 @@ export function bracketProgress(
 }
 
 /** Clear votes on a matchup for a new revote. */
-export function clearedVotesMatchup(m: BattleMatchup): BattleMatchup {
+export function clearedVotesMatchup(m: PickMatchup): PickMatchup {
   return {
     ...m,
     votesByUser: {},

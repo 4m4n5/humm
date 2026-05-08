@@ -35,13 +35,13 @@ function tierToDef(meta: { id: string; name: string; description: string; emoji:
 
 export const BADGES: BadgeDefinition[] = [
   // Decide — light ladder + classics
-  { id: 'first_spin', name: 'first spin', description: 'your first quick spin saved', emoji: '🎰' },
+  { id: 'first_spin', name: 'first pick', description: 'your first decide pick saved', emoji: '✨' },
   ...QUICKSPIN_COUPLE_TIERS.map(tierToDef),
   ...ALL_DECISIONS_COUPLE_TIERS.map(tierToDef),
   ...DECIDE_STREAK_TIERS.map(tierToDef),
   { id: 'decisive', name: 'decisive', description: '100 calls made together', emoji: '⚡' },
   { id: 'foodie', name: 'foodie', description: '50 food picks in the books', emoji: '🍴' },
-  { id: 'night_in', name: 'night in', description: '20 movie-category spins', emoji: '🎬' },
+  { id: 'night_in', name: 'night in', description: '20 movie-category picks', emoji: '🎬' },
   ...BATTLE_DECISION_TIERS.map(tierToDef),
 
   // Awards — nominations & jar (tiers)

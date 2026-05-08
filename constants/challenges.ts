@@ -14,8 +14,8 @@ export const WEEKLY_CHALLENGE_POOL: ChallengePoolEntry[] = [
     kind: 'both_nomination',
   },
   {
-    id: 'spin',
-    description: 'you both save a quick spin this week',
+    id: 'pick',
+    description: 'you both save a decision this week',
     kind: 'both_quickspin',
   },
   {

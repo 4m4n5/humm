@@ -8,7 +8,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  TouchableOpacity,
   Alert,
 } from 'react-native';
 import { BlurView } from 'expo-blur';
@@ -17,7 +16,9 @@ import type { Habit, HabitCadence, HabitScope } from '@/types';
 import { useHabitStore } from '@/lib/stores/habitStore';
 import { Input } from '@/components/shared/Input';
 import { Button } from '@/components/shared/Button';
+import { SectionLabel } from '@/components/shared/SectionLabel';
 import { scrollContentStandard } from '@/constants/screenLayout';
+import { navVoice } from '@/constants/hummVoice';
 
 type Props = {
   visible: boolean;
@@ -38,29 +39,32 @@ function PillGroup<T extends string>({
 }) {
   return (
     <View className="gap-y-2.5">
-      <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">{label}</Text>
+      <SectionLabel title={label} />
       <View className="flex-row flex-wrap gap-2.5">
         {options.map(({ key, label: l }) => {
           const on = value === key;
           return (
-            <TouchableOpacity
+            <Pressable
               key={key}
               onPress={() => onChange(key)}
-              className={`rounded-full border px-5 py-2.5 ${
+              accessibilityRole="button"
+              accessibilityState={{ selected: on }}
+              accessibilityLabel={`${label}: ${l}`}
+              className={`min-h-[44px] items-center justify-center rounded-full border px-5 active:opacity-88 ${
                 on
                   ? 'border-hum-primary/25 bg-hum-primary'
                   : 'border-hum-border/18 bg-hum-card/70'
               }`}
-              activeOpacity={0.88}
             >
               <Text
                 className={`text-[13px] font-medium tracking-wide ${
                   on ? 'text-hum-ink' : 'text-hum-muted'
                 }`}
+                maxFontSizeMultiplier={1.3}
               >
                 {l}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           );
         })}
       </View>
@@ -120,7 +124,7 @@ export function EditHabitSheet({ visible, habit, onClose }: Props) {
   const archive = () => {
     if (!habit) return;
     Alert.alert('archive?', 'you can add a new one anytime.', [
-      { text: 'cancel', style: 'cancel' },
+      { text: navVoice.cancel, style: 'cancel' },
       {
         text: 'archive',
         style: 'destructive',
@@ -147,7 +151,7 @@ export function EditHabitSheet({ visible, habit, onClose }: Props) {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         className="flex-1 justify-end bg-black/50"
       >
-        <Pressable className="flex-1" onPress={handleClose} accessibilityLabel="Dismiss" />
+        <Pressable className="flex-1" onPress={handleClose} accessibilityLabel="dismiss edit sheet" accessibilityRole="button" />
         <BlurView
           intensity={Platform.OS === 'ios' ? 70 : 0}
           tint="dark"
@@ -162,7 +166,7 @@ export function EditHabitSheet({ visible, habit, onClose }: Props) {
             <View className="h-[4px] w-9 rounded-full bg-hum-border/40" />
           </View>
 
-          <Text className="text-[18px] font-semibold tracking-tight text-hum-text">edit habit</Text>
+          <Text className="text-[18px] font-semibold tracking-tight text-hum-text" maxFontSizeMultiplier={1.3}>edit habit</Text>
 
           <ScrollView
             keyboardShouldPersistTaps="handled"
@@ -178,7 +182,7 @@ export function EditHabitSheet({ visible, habit, onClose }: Props) {
             />
 
             <View className="gap-y-2.5">
-              <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">emoji</Text>
+              <SectionLabel title="emoji" />
               <TextInput
                 className="min-h-[52px] rounded-[20px] border border-hum-border/18 bg-hum-surface/80 px-4 py-3.5 text-[22px] font-light text-hum-text"
                 placeholder="✨"

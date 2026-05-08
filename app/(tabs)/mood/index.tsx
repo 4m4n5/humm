@@ -9,7 +9,8 @@ import { useMoodStore } from '@/lib/stores/moodStore';
 import { usePartnerName } from '@/lib/usePartnerName';
 import { promptPushPermissionOnce } from '@/lib/pushPermission';
 import { ScreenTitle } from '@/components/shared/ScreenTitle';
-import { SectionLabel } from '@/components/habits/SectionLabel';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { SectionLabel } from '@/components/shared/SectionLabel';
 import { MoodTodayHero } from '@/components/mood/MoodTodayHero';
 import { WeekStrip } from '@/components/mood/WeekStrip';
 import { IntradayTrail } from '@/components/mood/IntradayTrail';
@@ -114,6 +115,14 @@ export default function MoodScreen() {
           <ScreenTitle
             title="mood"
           />
+          <EmptyState
+            className="px-0"
+            ionicon="people-outline"
+            ioniconColor={`${theme.bloom}B3`}
+            title="link your partner first"
+            description="invite them · mood is for two"
+            primaryAction={{ label: 'open profile', onPress: () => router.push('/profile') }}
+          />
         </ScrollView>
       </SafeAreaView>
     );
@@ -171,17 +180,14 @@ export default function MoodScreen() {
             ) : null}
           </View>
         ) : !loading ? (
-          <View className="items-center px-6 py-10">
-            <Text
-              className="mb-5 text-[44px] font-extralight leading-none text-hum-bloom/70"
-              allowFontScaling={false}
-            >
-              💭
-            </Text>
-            <Text className="max-w-[280px] text-center text-[13px] font-light leading-[20px] text-hum-muted">
-              earlier check-ins show up here
-            </Text>
-          </View>
+          <EmptyState
+            className="px-0"
+            ionicon="chatbubble-ellipses-outline"
+            ioniconColor={`${theme.bloom}B3`}
+            title="earlier check-ins show up here"
+            description="your week builds as you both keep logging"
+            primaryAction={{ label: 'log today', onPress: () => router.push('/mood/log') }}
+          />
         ) : null}
       </ScrollView>
     </SafeAreaView>
@@ -207,8 +213,8 @@ function ExpandToggle({
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={label}
-      className="mt-1 flex-row items-center justify-center gap-x-1.5 self-center rounded-full border border-hum-border/30 bg-hum-card/90 px-4 py-2 active:opacity-88"
+      accessibilityLabel={expanded ? 'collapse earlier mood check-ins' : `show ${hiddenCount} more mood check-ins`}
+      className="mt-1 min-h-[44px] flex-row items-center justify-center gap-x-1.5 self-center rounded-full border border-hum-border/30 bg-hum-card/90 px-4 active:opacity-88"
     >
       <Text
         className="text-[12px] font-light tabular-nums text-hum-muted"
@@ -245,12 +251,14 @@ function MoodEntryRow({
           <Text
             className="text-[15px] font-medium leading-[20px] tracking-tight text-hum-text"
             numberOfLines={1}
+            maxFontSizeMultiplier={1.3}
           >
             {entry.current.label}
           </Text>
           <Text
             className="text-[11px] font-light lowercase text-hum-dim"
             numberOfLines={1}
+            maxFontSizeMultiplier={1.25}
           >
             {label}
           </Text>
@@ -273,7 +281,7 @@ function DaySpine({ dayLabel }: { dayLabel: string }) {
       <Text
         className="text-[11px] font-light lowercase tracking-[-0.005em] tabular-nums text-hum-dim"
         numberOfLines={1}
-        allowFontScaling={false}
+        maxFontSizeMultiplier={1.25}
       >
         {dayLabel}
       </Text>
@@ -298,7 +306,7 @@ function DayCard({
   return (
     <View
       className={`overflow-hidden rounded-[22px] border bg-hum-card ${
-        inSync ? 'border-hum-bloom/30' : 'border-hum-border/18'
+        inSync ? 'border-hum-bloom/25' : 'border-hum-border/18'
       }`}
       style={cardShadow}
     >

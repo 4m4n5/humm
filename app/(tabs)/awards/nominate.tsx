@@ -4,7 +4,7 @@ import {
   Text,
   ScrollView,
   TextInput,
-  TouchableOpacity,
+  Pressable,
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,8 +13,11 @@ import { doc, getDoc } from 'firebase/firestore';
 import { AwardCategory, Nomination } from '@/types';
 import { ScreenHeader } from '@/components/shared/ScreenHeader';
 import { LoadingState } from '@/components/shared/LoadingState';
+import { EmptyState } from '@/components/shared/EmptyState';
 import { Button } from '@/components/shared/Button';
+import { LinkPartnerGate } from '@/components/shared/LinkPartnerGate';
 import { Input } from '@/components/shared/Input';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useNominationsStore } from '@/lib/stores/nominationsStore';
 import { nominationsCol } from '@/lib/firestore/nominations';
@@ -22,6 +25,7 @@ import { awardCategoryDescription, findAwardCategoryRow } from '@/lib/awardCateg
 import { canEditNomination } from '@/lib/nominationEditPolicy';
 import { theme } from '@/constants/theme';
 import { usePartnerName } from '@/lib/usePartnerName';
+import { errorsVoice, navVoice } from '@/constants/hummVoice';
 import { scrollContentStandard } from '@/constants/screenLayout';
 
 type Nominee = 'me' | 'partner' | 'both';
@@ -131,45 +135,49 @@ export default function NominateScreen() {
 
   if (!category || !catMeta) {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-hum-bg px-8">
-        <Text className="text-center text-[13px] text-hum-muted">not on your list</Text>
-        <Button label="go back" onPress={() => router.back()} variant="ghost" size="md" className="mt-6" />
+      <SafeAreaView className="flex-1 justify-center bg-hum-bg">
+        <EmptyState
+          ionicon="list-outline"
+          ioniconColor={`${theme.gold}B3`}
+          title="not on your list"
+          description="this category isn’t part of your active awards"
+          primaryAction={{ label: navVoice.backTo('awards'), onPress: () => router.back() }}
+        />
       </SafeAreaView>
     );
   }
 
   if (catRow && !catRow.enabled) {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-hum-bg px-8">
-        <Text className="mb-2 text-center text-[15px] font-medium text-hum-text">{catMeta.label}</Text>
-        <Text className="text-center text-[13px] text-hum-muted">
-          paused · re-enable to edit
-        </Text>
-        <Button
-          label="award categories"
-          onPress={() => router.replace('/awards/manage-categories')}
-          size="lg"
-          className="mt-6"
-        />
-        <Button label="go back" onPress={() => router.back()} variant="ghost" size="md" className="mt-3" />
+      <SafeAreaView className="flex-1 bg-hum-bg">
+        <View className="flex-1 justify-center">
+          <EmptyState
+            ionicon="pause-circle-outline"
+            ioniconColor={`${theme.gold}B3`}
+            title={catMeta.label.toLowerCase()}
+            description="paused · re-enable to edit"
+            primaryAction={{
+              label: 'award categories',
+              onPress: () => router.replace('/awards/manage-categories'),
+            }}
+          />
+        </View>
+        <View className="items-center px-6 pb-8">
+          <Button label={navVoice.backTo('awards')} onPress={() => router.back()} variant="ghost" size="md" />
+        </View>
       </SafeAreaView>
     );
   }
 
   if (!profile?.coupleId || !profile.partnerId) {
-    return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-hum-bg px-8">
-        <Text className="text-center text-[14px] text-hum-muted">link your partner first</Text>
-        <Button label="go back" onPress={() => router.back()} variant="ghost" size="md" className="mt-6" />
-      </SafeAreaView>
-    );
+    return <LinkPartnerGate backTo="awards" tone="gold" />;
   }
 
   if (!ceremony?.id) {
     return (
       <SafeAreaView className="flex-1 justify-center bg-hum-bg px-6">
         <LoadingState />
-        <Button label="go back" onPress={() => router.back()} variant="ghost" size="md" className="mt-4" />
+        <Button label={navVoice.backTo('awards')} onPress={() => router.back()} variant="ghost" size="md" className="mt-4" />
       </SafeAreaView>
     );
   }
@@ -178,25 +186,35 @@ export default function NominateScreen() {
     return (
       <SafeAreaView className="flex-1 justify-center bg-hum-bg px-6">
         <LoadingState />
-        <Button label="go back" onPress={() => router.back()} variant="ghost" size="md" className="mt-4" />
+        <Button label={navVoice.backTo('awards')} onPress={() => router.back()} variant="ghost" size="md" className="mt-4" />
       </SafeAreaView>
     );
   }
 
   if (rawNominationId && editState.kind === 'missing') {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-hum-bg px-8">
-        <Text className="text-center text-[14px] text-hum-muted">gone or wrong category</Text>
-        <Button label="go back" onPress={() => router.back()} variant="ghost" size="md" className="mt-6" />
+      <SafeAreaView className="flex-1 justify-center bg-hum-bg">
+        <EmptyState
+          ionicon="cloud-offline-outline"
+          ioniconColor={`${theme.gold}B3`}
+          title="gone or wrong category"
+          description="this nomination moved or was removed"
+          primaryAction={{ label: navVoice.backTo('awards'), onPress: () => router.back() }}
+        />
       </SafeAreaView>
     );
   }
 
   if (rawNominationId && editState.kind === 'forbidden') {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-hum-bg px-8">
-        <Text className="text-center text-[14px] text-hum-muted">can’t edit · theirs or wrong phase</Text>
-        <Button label="go back" onPress={() => router.back()} variant="ghost" size="md" className="mt-6" />
+      <SafeAreaView className="flex-1 justify-center bg-hum-bg">
+        <EmptyState
+          ionicon="ban-outline"
+          ioniconColor={`${theme.gold}B3`}
+          title="can’t edit · theirs or wrong phase"
+          description="only yours in nominating or when editing is allowed"
+          primaryAction={{ label: navVoice.backTo('awards'), onPress: () => router.back() }}
+        />
       </SafeAreaView>
     );
   }
@@ -205,7 +223,7 @@ export default function NominateScreen() {
 
   async function handleSubmit() {
     if (!title.trim()) {
-      Alert.alert('need a title', 'a few words help you find it later');
+      Alert.alert(errorsVoice.couldnt('save'), errorsVoice.needTitle);
       return;
     }
     if (!profile?.coupleId || !profile.partnerId || !ceremony?.id || !category) return;
@@ -236,7 +254,7 @@ export default function NominateScreen() {
       router.back();
     } catch (e) {
       console.error(e);
-      Alert.alert('couldn’t save', 'check connection, try again');
+      Alert.alert(errorsVoice.couldntSave, errorsVoice.checkConnection);
     } finally {
       setSaving(false);
     }
@@ -244,6 +262,7 @@ export default function NominateScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
+      <AmbientGlow tone="gold" />
       <ScreenHeader title={isEdit ? 'edit nomination' : 'new nomination'} />
       <ScrollView
         className="flex-1"
@@ -252,7 +271,12 @@ export default function NominateScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View className="gap-y-3">
-          <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">nominee</Text>
+          <Text
+            className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
+            maxFontSizeMultiplier={1.25}
+          >
+            nominee
+          </Text>
           <View className="flex-row flex-wrap gap-2.5">
             {(
               [
@@ -261,27 +285,27 @@ export default function NominateScreen() {
                 { key: 'both' as const, label: 'both of us' },
               ] as const
             ).map(({ key, label }) => (
-              <TouchableOpacity
+              <Pressable
                 key={key}
                 onPress={() => setNominee(key)}
-                className={`rounded-full border px-5 py-2.5 ${
+                className={`min-h-[44px] justify-center rounded-full border px-5 py-2.5 active:opacity-88 ${
                   nominee === key
                     ? 'border-hum-primary/25 bg-hum-primary'
                     : 'border-hum-border/18 bg-hum-card/70'
                 }`}
                 accessibilityRole="button"
                 accessibilityState={{ selected: nominee === key }}
-                accessibilityLabel={`Nominee ${label}`}
-                activeOpacity={0.88}
+                accessibilityLabel={`Set nominee to ${label}`}
               >
                 <Text
                   className={`text-[13px] font-medium tracking-wide ${
                     nominee === key ? 'text-hum-ink' : 'text-hum-muted'
                   }`}
+                  maxFontSizeMultiplier={1.3}
                 >
                   {label}
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             ))}
           </View>
         </View>
@@ -289,7 +313,12 @@ export default function NominateScreen() {
         <Input label="title" placeholder="what happened" value={title} onChangeText={setTitle} />
 
         <View className="gap-y-2">
-          <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim">story</Text>
+          <Text
+            className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
+            maxFontSizeMultiplier={1.25}
+          >
+            story
+          </Text>
           <TextInput
             className="min-h-[120px] rounded-[20px] border border-hum-border/18 bg-hum-surface/80 px-4 py-3.5 text-[14px] font-light leading-[22px] text-hum-text"
             placeholder="the moment"

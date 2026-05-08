@@ -1,9 +1,28 @@
-import React, { useEffect, useRef } from 'react';
-import { Alert, Pressable, Text, TouchableOpacity, View, Animated } from 'react-native';
+import React, { useEffect } from 'react';
+import { Alert, Pressable, Text, View } from 'react-native';
+import Animated, {
+  cancelAnimation,
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withSpring,
+  withTiming,
+  interpolate,
+  Easing,
+} from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { theme } from '@/constants/theme';
 import { cardShadow } from '@/constants/elevation';
+import { navVoice } from '@/constants/hummVoice';
+import {
+  M3_EMPHASIZED,
+  REDUCE_MOTION_NEVER,
+  SPRING_EXPRESSIVE_BLOOM,
+  SPRING_EXPRESSIVE_SETTLE,
+  SPRING_FAST_SPATIAL,
+  TIMING_EXPRESSIVE_MS,
+} from '@/lib/motion';
 
 export type HabitCardVariant =
   | 'shared-daily'
@@ -34,7 +53,7 @@ function StartsChip({ label }: { label: string }) {
   return (
     <View className="flex-row items-center gap-1 rounded-full border border-hum-border/30 bg-hum-bg/40 px-2 py-0.5">
       <Ionicons name="calendar-outline" size={10} color={theme.dim} />
-      <Text className="text-[10px] font-medium tabular-nums text-hum-dim">{label}</Text>
+      <Text className="text-[10px] font-medium tabular-nums text-hum-dim" maxFontSizeMultiplier={1.25}>{label}</Text>
     </View>
   );
 }
@@ -53,31 +72,26 @@ function ParticipantPill({
   // Tap-bloom on the participant check disc when this person flips to done.
   // Suppressed for readOnly (partner) display so it only blooms for its
   // owner's actual interaction, not for arriving snapshots.
-  const scale = useRef(new Animated.Value(1)).current;
-  const prev = useRef<boolean | null>(null);
+  const scale = useSharedValue(1);
+  const prev = React.useRef<boolean | null>(null);
   useEffect(() => {
     if (prev.current === null) {
       prev.current = checked;
       return;
     }
     if (!readOnly && checked && prev.current === false) {
-      Animated.sequence([
-        Animated.spring(scale, {
-          toValue: 1.18,
-          friction: 3.5,
-          tension: 220,
-          useNativeDriver: true,
-        }),
-        Animated.spring(scale, {
-          toValue: 1,
-          friction: 5,
-          tension: 160,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      cancelAnimation(scale);
+      scale.value = withSequence(
+        withSpring(1.18, { ...SPRING_EXPRESSIVE_BLOOM, reduceMotion: REDUCE_MOTION_NEVER }),
+        withSpring(1, { ...SPRING_EXPRESSIVE_SETTLE, reduceMotion: REDUCE_MOTION_NEVER }),
+      );
     }
     prev.current = checked;
   }, [checked, readOnly, scale]);
+
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
   return (
     <Pressable
@@ -98,12 +112,12 @@ function ParticipantPill({
             ? 'bg-hum-primary/45'
             : 'border border-hum-border/25 bg-hum-card/50'
         }`}
-        style={{ transform: [{ scale }] }}
+        style={animStyle}
       >
         {checked ? (
           <Ionicons name="checkmark" size={13} color={theme.text} />
         ) : (
-          <Text className="text-[11px] font-semibold text-hum-muted">
+          <Text className="text-[11px] font-semibold text-hum-muted" maxFontSizeMultiplier={1.25}>
             {initialOf(label)}
           </Text>
         )}
@@ -113,6 +127,7 @@ function ParticipantPill({
         className={`flex-1 text-[13px] tracking-[-0.01em] ${
           checked ? 'font-medium text-hum-text' : 'font-light text-hum-muted'
         }`}
+        maxFontSizeMultiplier={1.3}
       >
         {label}
       </Text>
@@ -125,12 +140,12 @@ function AnimatedEmojiTile({ emoji, completed, bothJustCompleted }: {
   completed: boolean;
   bothJustCompleted: boolean;
 }) {
-  const bounce = useRef(new Animated.Value(1)).current;
-  const glow = useRef(new Animated.Value(0)).current;
+  const bounce = useSharedValue(1);
+  const glow = useSharedValue(0);
   /** null = not hydrated yet; skip animation on mount when already both-done */
-  const prevBoth = useRef<boolean | null>(null);
+  const prevBoth = React.useRef<boolean | null>(null);
   /** null = not hydrated; track to bloom on the first solo check */
-  const prevCompleted = useRef<boolean | null>(null);
+  const prevCompleted = React.useRef<boolean | null>(null);
 
   useEffect(() => {
     if (prevBoth.current === null) {
@@ -138,21 +153,18 @@ function AnimatedEmojiTile({ emoji, completed, bothJustCompleted }: {
       return;
     }
     if (bothJustCompleted && prevBoth.current === false) {
-      bounce.setValue(0.7);
-      glow.setValue(1);
-      Animated.parallel([
-        Animated.spring(bounce, {
-          toValue: 1,
-          friction: 3,
-          tension: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(glow, {
-          toValue: 0,
-          duration: 1200,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      cancelAnimation(bounce);
+      cancelAnimation(glow);
+      bounce.value = 0.7;
+      glow.value = 1;
+      bounce.value = withSpring(1, {
+        ...SPRING_EXPRESSIVE_BLOOM,
+        reduceMotion: REDUCE_MOTION_NEVER,
+      });
+      glow.value = withTiming(0, {
+        duration: TIMING_EXPRESSIVE_MS * 2.5, // 1200ms — sustained glow
+        easing: Easing.out(Easing.quad),
+      });
     }
     prevBoth.current = bothJustCompleted;
   }, [bothJustCompleted, bounce, glow]);
@@ -166,44 +178,45 @@ function AnimatedEmojiTile({ emoji, completed, bothJustCompleted }: {
       return;
     }
     if (completed && prevCompleted.current === false && !bothJustCompleted) {
-      Animated.sequence([
-        Animated.spring(bounce, {
-          toValue: 1.22,
-          friction: 3.5,
-          tension: 220,
-          useNativeDriver: true,
-        }),
-        Animated.spring(bounce, {
-          toValue: 1,
-          friction: 5,
-          tension: 160,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      cancelAnimation(bounce);
+      bounce.value = withSequence(
+        withSpring(1.22, { ...SPRING_EXPRESSIVE_BLOOM, reduceMotion: REDUCE_MOTION_NEVER }),
+        withSpring(1, { ...SPRING_EXPRESSIVE_SETTLE, reduceMotion: REDUCE_MOTION_NEVER }),
+      );
     }
     prevCompleted.current = completed;
   }, [completed, bothJustCompleted, bounce]);
+
+  const tileStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: bounce.value }],
+  }));
+
+  const glowStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(glow.value, [0, 1], [0, 0.25]),
+  }));
 
   return (
     <View className="relative">
       <Animated.View
         pointerEvents="none"
-        style={{
-          position: 'absolute',
-          top: -4,
-          left: -4,
-          right: -4,
-          bottom: -4,
-          borderRadius: 16,
-          backgroundColor: theme.primary,
-          opacity: Animated.multiply(glow, new Animated.Value(0.25)),
-        }}
+        style={[
+          {
+            position: 'absolute',
+            top: -4,
+            left: -4,
+            right: -4,
+            bottom: -4,
+            borderRadius: 16,
+            backgroundColor: theme.primary,
+          },
+          glowStyle,
+        ]}
       />
       <Animated.View
         className={`h-10 w-10 items-center justify-center rounded-xl ${
           completed ? 'bg-hum-primary/18' : 'bg-hum-bg/55'
         }`}
-        style={{ transform: [{ scale: bounce }] }}
+        style={tileStyle}
       >
         <Text className="text-[20px]" allowFontScaling={false}>{emoji}</Text>
       </Animated.View>
@@ -212,8 +225,8 @@ function AnimatedEmojiTile({ emoji, completed, bothJustCompleted }: {
 }
 
 function BloomingCheck({ checked }: { checked: boolean }) {
-  const scale = useRef(new Animated.Value(1)).current;
-  const prev = useRef<boolean | null>(null);
+  const scale = useSharedValue(1);
+  const prev = React.useRef<boolean | null>(null);
 
   useEffect(() => {
     if (prev.current === null) {
@@ -221,23 +234,18 @@ function BloomingCheck({ checked }: { checked: boolean }) {
       return;
     }
     if (checked && prev.current === false) {
-      Animated.sequence([
-        Animated.spring(scale, {
-          toValue: 1.18,
-          friction: 3.5,
-          tension: 220,
-          useNativeDriver: true,
-        }),
-        Animated.spring(scale, {
-          toValue: 1,
-          friction: 5,
-          tension: 160,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      cancelAnimation(scale);
+      scale.value = withSequence(
+        withSpring(1.18, { ...SPRING_EXPRESSIVE_BLOOM, reduceMotion: REDUCE_MOTION_NEVER }),
+        withSpring(1, { ...SPRING_EXPRESSIVE_SETTLE, reduceMotion: REDUCE_MOTION_NEVER }),
+      );
     }
     prev.current = checked;
   }, [checked, scale]);
+
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
   return (
     <Animated.View
@@ -246,7 +254,7 @@ function BloomingCheck({ checked }: { checked: boolean }) {
           ? 'bg-hum-primary/45'
           : 'border-[1.5px] border-hum-border/25 bg-hum-bg/35'
       }`}
-      style={{ transform: [{ scale }] }}
+      style={animStyle}
     >
       {checked ? <Ionicons name="checkmark" size={15} color={theme.text} /> : null}
     </Animated.View>
@@ -254,8 +262,8 @@ function BloomingCheck({ checked }: { checked: boolean }) {
 }
 
 function CardPulseWrapper({ children, pulse }: { children: React.ReactNode; pulse: boolean }) {
-  const scale = useRef(new Animated.Value(1)).current;
-  const prevPulse = useRef<boolean | null>(null);
+  const scale = useSharedValue(1);
+  const prevPulse = React.useRef<boolean | null>(null);
 
   useEffect(() => {
     if (prevPulse.current === null) {
@@ -263,22 +271,21 @@ function CardPulseWrapper({ children, pulse }: { children: React.ReactNode; puls
       return;
     }
     if (pulse && prevPulse.current === false) {
-      scale.setValue(0.97);
-      Animated.spring(scale, {
-        toValue: 1,
-        friction: 4,
-        tension: 160,
-        useNativeDriver: true,
-      }).start();
+      cancelAnimation(scale);
+      scale.value = 0.97;
+      scale.value = withSpring(1, {
+        ...SPRING_FAST_SPATIAL,
+        reduceMotion: REDUCE_MOTION_NEVER,
+      });
     }
     prevPulse.current = pulse;
   }, [pulse, scale]);
 
-  return (
-    <Animated.View style={{ transform: [{ scale }] }}>
-      {children}
-    </Animated.View>
-  );
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return <Animated.View style={animStyle}>{children}</Animated.View>;
 }
 
 export function HabitCard({
@@ -307,7 +314,7 @@ export function HabitCard({
         ? 'you can check again before the week ends.'
         : 'you can check again any time today.';
       Alert.alert(t, m, [
-        { text: 'cancel', style: 'cancel' },
+        { text: navVoice.cancel, style: 'cancel' },
         {
           text: 'undo',
           style: 'destructive',
@@ -341,7 +348,8 @@ export function HabitCard({
         <Pressable
           onLongPress={onEditPress}
           delayLongPress={420}
-          accessibilityLabel={title}
+          accessibilityLabel={`shared habit: ${title}`}
+          accessibilityHint="long press to edit"
           className={cardBaseClass}
           style={cardShadow}
         >
@@ -351,18 +359,20 @@ export function HabitCard({
               numberOfLines={1}
               className="flex-1 text-[15px] font-medium leading-[20px] tracking-tight text-hum-text"
               style={titleStyle}
+              maxFontSizeMultiplier={1.3}
             >
               {title}
             </Text>
             {inactive && startsLabel ? <StartsChip label={startsLabel} /> : null}
-            <TouchableOpacity
+            <Pressable
               onPress={onEditPress}
               hitSlop={10}
-              accessibilityLabel="edit habit"
-              className="h-8 w-8 items-center justify-center rounded-full"
+              accessibilityRole="button"
+              accessibilityLabel={`edit habit ${title}`}
+              className="h-11 w-11 items-center justify-center rounded-full active:opacity-70"
             >
               <Ionicons name="ellipsis-horizontal" size={17} color={theme.dim} style={{ opacity: 0.45 }} />
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           <View
@@ -394,7 +404,7 @@ export function HabitCard({
       delayLongPress={420}
       accessibilityRole="checkbox"
       accessibilityState={{ checked: myChecked, disabled: inactive }}
-      accessibilityLabel={title}
+      accessibilityLabel={`habit: ${title}`}
       className={`${cardBaseClass} flex-row items-center gap-3 px-3.5 py-3`}
       style={cardShadow}
     >
@@ -403,18 +413,20 @@ export function HabitCard({
         numberOfLines={1}
         className="flex-1 text-[15px] font-medium leading-[20px] tracking-tight text-hum-text"
         style={titleStyle}
+        maxFontSizeMultiplier={1.3}
       >
         {title}
       </Text>
       {inactive && startsLabel ? <StartsChip label={startsLabel} /> : null}
-      <TouchableOpacity
+      <Pressable
         onPress={onEditPress}
         hitSlop={10}
-        accessibilityLabel="edit habit"
-        className="h-8 w-8 items-center justify-center rounded-full"
+        accessibilityRole="button"
+        accessibilityLabel={`edit habit ${title}`}
+        className="h-11 w-11 items-center justify-center rounded-full active:opacity-70"
       >
         <Ionicons name="ellipsis-horizontal" size={17} color={theme.dim} style={{ opacity: 0.45 }} />
-      </TouchableOpacity>
+      </Pressable>
       <BloomingCheck checked={myChecked} />
     </Pressable>
   );

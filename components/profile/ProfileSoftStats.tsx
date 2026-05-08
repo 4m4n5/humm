@@ -69,7 +69,7 @@ function CredStatRow(props: { items: CredStatItem[]; accessibilityLabel: string 
                 ? 'text-[18px] leading-[22px] text-hum-text'
                 : 'text-[18px] font-light tabular-nums leading-[22px] text-hum-text'
             }
-            allowFontScaling={false}
+            maxFontSizeMultiplier={1.25}
           >
             {item.value}
           </Text>

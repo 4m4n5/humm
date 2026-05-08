@@ -121,20 +121,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch (e: unknown) {
       const code = typeof e === 'object' && e !== null && 'code' in e ? String((e as { code?: string }).code) : '';
       if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
-        set({ error: 'wrong password — try again', isLoading: false });
+        set({ error: 'wrong password · try again', isLoading: false });
       } else if (code === 'auth/network-request-failed') {
-        set({ error: 'network hiccup — check connection', isLoading: false });
+        set({ error: 'network hiccup · check connection', isLoading: false });
       } else if (code === 'auth/too-many-requests') {
-        set({ error: 'too many tries — wait a bit, then retry', isLoading: false });
+        set({ error: 'too many tries · wait a bit, then retry', isLoading: false });
       } else if (code === 'auth/requires-recent-login') {
-        set({ error: 'sign in again, then retry delete', isLoading: false });
+        set({ error: 'sign in again · then retry delete', isLoading: false });
       } else if (code === 'permission-denied') {
         set({
-          error: 'couldn’t complete delete (server rules) — try again or contact support',
+          error: 'couldn\u2019t complete delete · server rules · contact support',
           isLoading: false,
         });
       } else {
-        set({ error: 'couldn’t delete account — try again', isLoading: false });
+        set({ error: 'couldn\u2019t delete account · try again', isLoading: false });
       }
       throw e;
     }
@@ -148,16 +148,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       return;
     }
     if (code.toUpperCase() === profile.inviteCode) {
-      set({ error: 'that’s your own code — send it to your partner, not yourself' });
+      set({ error: 'that\u2019s your own code · send it to your partner' });
       return;
     }
     const partner = await findUserByInviteCode(code);
     if (!partner) {
-      set({ error: 'code not found — check with them and try again' });
+      set({ error: 'code not found · check with them and try again' });
       return;
     }
     if (partner.coupleId) {
-      set({ error: 'they’re already linked with someone else' });
+      set({ error: 'they\u2019re already linked with someone else' });
       return;
     }
     const coupleId = await createCouple(firebaseUser.uid, partner.uid);
@@ -170,26 +170,26 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 function friendlyAuthError(code: string): string {
   switch (code) {
     case 'auth/invalid-email':
-      return 'that email doesn’t look right — typo?';
+      return 'that email doesn\u2019t look right · typo?';
     case 'auth/user-not-found':
-      return 'no account on that email — sign up or try another';
+      return 'no account on that email · sign up or try another';
     case 'auth/wrong-password':
-      return 'wrong password — try again or reset with your provider';
+      return 'wrong password · try again or reset with your provider';
     case 'auth/email-already-in-use':
-      return 'that email’s taken — want to sign in instead?';
+      return 'that email\u2019s taken · sign in instead?';
     case 'auth/weak-password':
       return 'needs a stronger password (6+ characters)';
     case 'auth/too-many-requests':
-      return 'too many tries — breathe, then retry';
+      return 'too many tries · breathe, then retry';
     case 'auth/invalid-credential':
-      return 'email or password didn’t match — double-check both';
+      return 'email or password didn\u2019t match · double-check both';
     case 'auth/network-request-failed':
-      return 'network hiccup — check connection';
+      return 'network hiccup · check connection';
     case 'auth/user-disabled':
-      return 'this account can’t sign in right now';
+      return 'this account can\u2019t sign in right now';
     case 'auth/operation-not-allowed':
-      return 'this sign-in method isn’t on for the app';
+      return 'this sign-in method isn\u2019t on for the app';
     default:
-      return 'something went sideways — try again';
+      return 'something went sideways · try again';
   }
 }

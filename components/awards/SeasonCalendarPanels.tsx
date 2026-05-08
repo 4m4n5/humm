@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { router } from 'expo-router';
 import { Ceremony } from '@/types';
+import { Card } from '@/components/shared/Card';
 import { theme } from '@/constants/theme';
 import {
   alignmentStartsSummary,
@@ -26,7 +27,7 @@ function Eyebrow(props: { children: string }) {
   return (
     <Text
       className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
-      maxFontSizeMultiplier={1.15}
+      maxFontSizeMultiplier={1.25}
     >
       {props.children}
     </Text>
@@ -41,12 +42,12 @@ export function SeasonTimelinePanels(props: { ceremony: Ceremony; now: Date }) {
   const alignmentLine = alignmentStartsSummary(props.now, props.ceremony);
 
   return (
-    <View className="rounded-[22px] border border-hum-border/18 bg-hum-card px-5 py-5">
+    <Card>
       <View className="flex-row items-baseline justify-between">
-        <Text className="text-[22px] font-light text-hum-text" maxFontSizeMultiplier={1.15}>
+        <Text className="text-[22px] font-light text-hum-text" maxFontSizeMultiplier={1.3}>
           {half.half}
         </Text>
-        <Text className="text-[13px] text-hum-muted" maxFontSizeMultiplier={1.2}>
+        <Text className="text-[13px] text-hum-muted" maxFontSizeMultiplier={1.25}>
           {half.range}
         </Text>
       </View>
@@ -54,7 +55,10 @@ export function SeasonTimelinePanels(props: { ceremony: Ceremony; now: Date }) {
       <View className="mt-5">
         <View className="mb-2 flex-row items-baseline justify-between">
           <Eyebrow>through the season</Eyebrow>
-          <Text className="text-[13px] font-medium tabular-nums text-hum-muted" maxFontSizeMultiplier={1.2}>
+          <Text
+            className="text-[13px] font-medium tabular-nums text-hum-muted"
+            maxFontSizeMultiplier={1.25}
+          >
             {pct}%
           </Text>
         </View>
@@ -76,21 +80,21 @@ export function SeasonTimelinePanels(props: { ceremony: Ceremony; now: Date }) {
       </View>
 
       <View className="mt-5 flex-row items-baseline justify-between">
-        <Text className="text-[13px] text-hum-muted" maxFontSizeMultiplier={1.2}>
+        <Text className="text-[13px] text-hum-muted" maxFontSizeMultiplier={1.25}>
           closes
         </Text>
-        <Text className="text-[13px] font-medium text-hum-text" maxFontSizeMultiplier={1.2}>
+        <Text className="text-[13px] font-medium text-hum-text" maxFontSizeMultiplier={1.3}>
           {end ? formatShortDate(end) : '—'}
         </Text>
       </View>
 
       <View className="mt-4 border-t border-hum-border/18 pt-4">
         <Eyebrow>alignment</Eyebrow>
-        <Text className="mt-1.5 text-[14px] font-light text-hum-text" maxFontSizeMultiplier={1.25}>
+        <Text className="mt-1.5 text-[14px] font-light text-hum-text" maxFontSizeMultiplier={1.5}>
           {alignmentLine}
         </Text>
       </View>
-    </View>
+    </Card>
   );
 }
 
@@ -112,12 +116,12 @@ export function CategoryNominationChart(props: {
           return (
             <Pressable
               key={c.id}
-              className="mb-3 flex-row items-center gap-2.5 active:opacity-88"
+              className="mb-3 min-h-[44px] flex-row items-center gap-2.5 active:opacity-88"
               onPress={() => router.push(`/awards/${c.id}`)}
               accessibilityRole="button"
-              accessibilityLabel={`${c.label} category`}
+              accessibilityLabel={`Open ${c.label} category, ${n} nomination${n === 1 ? '' : 's'}`}
             >
-              <Text className="w-6 text-center text-[15px]">
+              <Text className="w-6 text-center text-[15px]" allowFontScaling={false}>
                 {c.emoji}
               </Text>
               <View className="min-w-0 flex-1">
@@ -125,11 +129,14 @@ export function CategoryNominationChart(props: {
                   <Text
                     className={`text-[12px] ${hot ? 'font-semibold text-hum-text' : 'text-hum-muted'}`}
                     numberOfLines={1}
-                    maxFontSizeMultiplier={1.2}
+                    maxFontSizeMultiplier={1.25}
                   >
                     {c.label}
                   </Text>
-                  <Text className="text-[12px] tabular-nums text-hum-text" maxFontSizeMultiplier={1.2}>
+                  <Text
+                    className="text-[12px] tabular-nums text-hum-text"
+                    maxFontSizeMultiplier={1.25}
+                  >
                     {n}
                   </Text>
                 </View>
@@ -179,16 +186,16 @@ function NomineeSpotlightRow(props: {
           { n: props.both, label: 'both' },
         ].map((item) => (
           <View key={item.label} className="flex-1 rounded-[18px] bg-hum-surface/42 px-3 py-2.5">
-            <Text className="text-[20px] font-extralight tabular-nums text-hum-text" maxFontSizeMultiplier={1.1}>
+            <Text className="text-[20px] font-extralight tabular-nums text-hum-text" maxFontSizeMultiplier={1.25}>
               {item.n}
             </Text>
-            <Text className="mt-0.5 text-[10px] text-hum-dim" numberOfLines={1} maxFontSizeMultiplier={1.15}>
+            <Text className="mt-0.5 text-[10px] text-hum-dim" numberOfLines={1} maxFontSizeMultiplier={1.25}>
               {item.label}
             </Text>
           </View>
         ))}
       </View>
-      <Text className="mt-2 text-[11px] font-light italic text-hum-dim" maxFontSizeMultiplier={1.2}>
+      <Text className="mt-2 text-[11px] font-light italic text-hum-dim" maxFontSizeMultiplier={1.5}>
         {lead ? `most about ${lead}` : 'balanced spotlight'}
       </Text>
     </View>
@@ -210,18 +217,18 @@ export function PartnerNominationSplit(props: {
       <Eyebrow>who wrote them</Eyebrow>
       <View className="mt-3 flex-row gap-2">
         <View className="flex-1 rounded-[18px] bg-hum-surface/42 px-3 py-2.5">
-          <Text className="text-[20px] font-extralight tabular-nums text-hum-text" maxFontSizeMultiplier={1.1}>
+          <Text className="text-[20px] font-extralight tabular-nums text-hum-text" maxFontSizeMultiplier={1.25}>
             {props.mine}
           </Text>
-          <Text className="mt-0.5 text-[10px] text-hum-dim" numberOfLines={1} maxFontSizeMultiplier={1.15}>
+          <Text className="mt-0.5 text-[10px] text-hum-dim" numberOfLines={1} maxFontSizeMultiplier={1.25}>
             {props.labelMine}
           </Text>
         </View>
         <View className="flex-1 rounded-[18px] bg-hum-surface/42 px-3 py-2.5">
-          <Text className="text-[20px] font-extralight tabular-nums text-hum-text" maxFontSizeMultiplier={1.1}>
+          <Text className="text-[20px] font-extralight tabular-nums text-hum-text" maxFontSizeMultiplier={1.25}>
             {props.partner}
           </Text>
-          <Text className="mt-0.5 text-[10px] text-hum-dim" numberOfLines={1} maxFontSizeMultiplier={1.15}>
+          <Text className="mt-0.5 text-[10px] text-hum-dim" numberOfLines={1} maxFontSizeMultiplier={1.25}>
             {props.labelPartner}
           </Text>
         </View>
@@ -236,7 +243,7 @@ export function PartnerNominationSplit(props: {
           ) : null}
         </View>
       ) : null}
-      <Text className="mt-2 text-[11px] font-light text-hum-dim" maxFontSizeMultiplier={1.2}>
+      <Text className="mt-2 text-[11px] font-light text-hum-dim" maxFontSizeMultiplier={1.5}>
         {vibe}
       </Text>
     </View>
@@ -271,14 +278,22 @@ export function SeasonStatsInfographic(props: {
     <View>
       {hotDisplay && hot && (counts[hot] ?? 0) > 0 ? (
         <View className="mb-6 flex-row items-center gap-2.5">
-          <Text className="text-[20px]">{hotDisplay.emoji}</Text>
+          <Text className="text-[20px]" allowFontScaling={false}>
+            {hotDisplay.emoji}
+          </Text>
           <View>
-            <Text className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim" maxFontSizeMultiplier={1.12}>
+            <Text
+              className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
+              maxFontSizeMultiplier={1.25}
+            >
               most active
             </Text>
-            <Text className="text-[15px] font-medium text-hum-text" maxFontSizeMultiplier={1.2}>
+            <Text className="text-[15px] font-medium text-hum-text" maxFontSizeMultiplier={1.3}>
               {hotDisplay.label}
-              <Text className="text-hum-dim"> · {counts[hot]}</Text>
+              <Text className="text-hum-dim" maxFontSizeMultiplier={1.25}>
+                {' '}
+                · {counts[hot]}
+              </Text>
             </Text>
           </View>
         </View>

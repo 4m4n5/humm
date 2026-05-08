@@ -6,13 +6,16 @@ import {
   Platform,
   ScrollView,
   Alert,
+  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Input } from '@/components/shared/Input';
 import { Button } from '@/components/shared/Button';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { AUTH_SCREEN_PADDING_TOP } from '@/constants/screenLayout';
+import { errorsVoice } from '@/constants/hummVoice';
 
 export default function SignUp() {
   const { signUp, isLoading, error, clearError } = useAuthStore();
@@ -23,11 +26,11 @@ export default function SignUp() {
   async function handleSignUp() {
     clearError();
     if (!name.trim()) {
-      Alert.alert('name?', 'we need something to call you');
+      Alert.alert(errorsVoice.couldnt('sign you up'), errorsVoice.needName);
       return;
     }
     if (!email.trim()) {
-      Alert.alert('email?', 'drop the address you’ll sign in with');
+      Alert.alert(errorsVoice.couldnt('sign you up'), errorsVoice.needEmail);
       return;
     }
     try {
@@ -39,6 +42,7 @@ export default function SignUp() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg" edges={['top', 'bottom']}>
+      <AmbientGlow tone="primary" />
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -56,13 +60,13 @@ export default function SignUp() {
             <View className="items-center gap-y-3">
               <Text
                 className="text-center text-[40px] font-extralight leading-[44px] tracking-[-0.02em] text-hum-primary"
-                maxFontSizeMultiplier={1.2}
+                maxFontSizeMultiplier={1.3}
               >
                 Hum - rituals
               </Text>
               <Text
                 className="text-center text-[14px] font-light tracking-wide text-hum-muted"
-                maxFontSizeMultiplier={1.35}
+                maxFontSizeMultiplier={1.3}
               >
                 let’s set up your corner
               </Text>
@@ -101,7 +105,7 @@ export default function SignUp() {
                 <Text
                   className="text-center text-[14px] leading-[22px] text-red-400/90"
                   accessibilityLiveRegion="polite"
-                  maxFontSizeMultiplier={1.35}
+                  maxFontSizeMultiplier={1.5}
                 >
                   {error}
                 </Text>
@@ -116,18 +120,20 @@ export default function SignUp() {
               />
             </View>
 
-            <View className="items-center">
-              <Text className="text-[14px] font-light text-hum-muted" maxFontSizeMultiplier={1.35}>
+            <View className="flex-row flex-wrap items-center justify-center gap-x-1">
+              <Text className="text-[14px] font-light text-hum-muted" maxFontSizeMultiplier={1.3}>
                 already have one?{' '}
-                <Text
-                  className="font-medium text-hum-primary"
-                  onPress={() => router.back()}
-                  accessibilityRole="link"
-                  accessibilityLabel="back to sign in"
-                >
+              </Text>
+              <Pressable
+                onPress={() => router.back()}
+                accessibilityRole="link"
+                accessibilityLabel="Sign in with existing account"
+                className="min-h-[44px] items-center justify-center px-1"
+              >
+                <Text className="text-[14px] font-medium text-hum-primary" maxFontSizeMultiplier={1.3}>
                   sign in
                 </Text>
-              </Text>
+              </Pressable>
             </View>
           </View>
         </ScrollView>

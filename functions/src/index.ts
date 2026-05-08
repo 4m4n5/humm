@@ -99,9 +99,12 @@ export const onNominationCreated = onDocumentCreated(
   },
 );
 
-// ─── Battles ────────────────────────────────────────────────────────────────
+// ─── Pick Together (live vote) ─────────────────────────────────────────────
+//
+// Firestore collection name `battles` is preserved for backwards compat with
+// existing in-flight sessions; user-facing copy says "pick together".
 
-export const onBattleCreated = onDocumentCreated(
+export const onPickCreated = onDocumentCreated(
   "battles/{docId}",
   async (event) => {
     const data = event.data?.data();
@@ -117,16 +120,19 @@ export const onBattleCreated = onDocumentCreated(
       const partnerUid = userSnap.data()?.partnerId;
       if (!partnerUid) continue;
       const name = firstName(userSnap.data()?.displayName);
-      await sendPushToUser(partnerUid, "decide", `${name} started a battle — join in`, {
+      await sendPushToUser(partnerUid, "decide", `${name} started a pick — join in`, {
         feature: "decide",
-        screen: "/decide/battle-lobby",
+        screen: "/decide/pick-lobby",
       });
       break;
     }
   },
 );
 
-// ─── Decisions (quickspin only) ─────────────────────────────────────────────
+// ─── Decisions (quickspin solo path) ───────────────────────────────────────
+//
+// `mode: 'quickspin'` literal is preserved on Decision docs for backwards compat
+// (history rendering + gamification counters) — UI never shows "spin".
 
 export const onDecisionCreated = onDocumentCreated(
   "decisions/{docId}",
@@ -140,8 +146,10 @@ export const onDecisionCreated = onDocumentCreated(
     if (!partnerUid) return;
 
     const name = await firstNameOf(creatorUid);
+    const result: string | undefined = data.result;
+    const body = result ? `${name} picked: ${result}` : `${name} made a pick`;
 
-    await sendPushToUser(partnerUid, "decide", `${name} spun the wheel`, {
+    await sendPushToUser(partnerUid, "decide", body, {
       feature: "decide",
       screen: "/decide",
     });

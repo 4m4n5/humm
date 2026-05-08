@@ -144,24 +144,27 @@ couples/{coupleId}
   user2Id:          string               // partner when linked
   createdAt:        Timestamp
   activeCeremonyId: string | null
-  activeBattleId:   string | null        // in-progress battle session doc (if any)
+  activeBattleId:   string | null        // in-progress pick-together session doc (legacy field name preserved)
   // Optional habit/mood aggregates — see types.Couple (streaks, weeklyChallenge, dailyStreaks, jointDailyStreak, habitsModelVersion, bothLoggedDayStreak, …)
   // Invite codes live on users/* — not on couples
 
-battles/{battleId}
+battles/{battleId}                      // collection name preserved for backwards compat;
+                                        // user-facing label is "pick together"
   coupleId, category, status: 'collecting' | 'battling' | 'complete'
   options: string[], optionsByUser: { [uid]: string[] }, readyByUser: { [uid]: boolean }
-  bracket: BattleMatchup[] (flat single-elim tree), currentMatchupIndex, winner, createdAt
+  bracket: PickMatchup[] (flat single-elim tree), currentMatchupIndex, winner
+  pickedSoloByUserId?: string           // set when "pick for us" resolved this session
+  createdAt
 
 decisions/{decisionId}
   coupleId:         string
   category:         'food' | 'activity' | 'movie' | 'other'
-  mode:             'quickspin' | 'battle'
+  mode:             'quickspin' | 'battle'   // 'quickspin' = solo pick, 'battle' = live vote
   options:          string[]
   result:           string
-  vetoedOptions:    string[]             // labels vetoed during Quick Spin (see types.Decision)
+  vetoedOptions:    string[]             // legacy field — empty for new picks
   createdAt:        Timestamp
-  createdByUserId?: string               // who saved (Quick Spin); battles omit or legacy
+  createdByUserId?: string               // acting user (set on solo path; live-vote may omit)
 
 decisionOptions/{coupleId}
   // Single doc per couple — fields keyed by category (food, activity, movie, other)
@@ -268,42 +271,30 @@ match /nominations/{nominationId} {
 
 Resolves decision paralysis by providing structured, fun ways to pick between options. Designed to handle food decisions first, extensible to activities, movies, and more.
 
-**Current app (trimmed Decide tab):** only **Quick Spin** and **Battle mode** are exposed. A former standalone **movie suggest** flow (vibe tags → curated list → add to spin) was removed to reduce clutter; **Movie** remains a normal **Quick Spin** category with default options in Firestore. **Battle mode** is implemented: shared option pool, Firestore-synced bracket (`battles/{battleId}` + `couples.activeBattleId`), head-to-head votes with revote + coin tie-break, winner saved as `decisions` with `mode: 'battle'`.
+**Current app (trimmed Decide tab):** only **Pick Together** is exposed. A former standalone **movie suggest** flow (vibe tags → curated list → add to pool) was removed to reduce clutter; **Movie** remains a normal category with default options in the per-couple `decisionOptions` library. Pick Together has two paths: live "vote together" (head-to-head bracket, Firestore-synced via `battles/{id}` + `couples.activeBattleId`) and solo "pick for us" (instant recency-weighted pick from the shared pool).
 
 ---
 
-### Mode 1: Quick Spin
+### Pick Together
 
-**Use case:** "We can't decide what to eat tonight."
-
-**Flow:**
-1. Navigate to Decide → Quick Spin
-2. Select category (Food, Activity, Movie, Other)
-3. App shows a spinning wheel / card shuffle animation over the saved options list for that category
-4. Either partner can hit **Veto** once — the result re-spins (each person gets 1 veto per session)
-5. After both vetoes used or either partner accepts, result is locked and saved to history
-6. For Food: tapping the result deep-links to Google Maps or Yelp for that cuisine/restaurant
-
-**Weighted Logic:**
-- Options not picked in the last 4+ weeks are weighted higher
-- Options picked in the last 2 weeks are weighted lower
-- Creates natural variety without being fully random
-
----
-
-### Mode 2: Battle Mode
-
-**Use case:** "We're in Tokyo — what should we do today?" (custom options, real discussion needed)
+**Use case (live):** "We're in Tokyo — what should we do today?" (custom options, real discussion needed)
+**Use case (solo):** "We can't decide what to eat tonight, just pick something."
 
 **Flow:**
-1. Both partners add options to a shared pool (min 4, no max)
-2. App generates a bracket of head-to-head matchups
-3. Each matchup is shown to both partners simultaneously — each picks their preferred
-4. If both agree → winner advances. If they disagree → both see the split and vote again (max 2 rounds per matchup)
-5. Persistent tie-break: animated coin flip, result is final
-6. Bracket resolves to a winner
+1. Decide → Pick Together → choose a category. The pool is auto-seeded from the couple's `decisionOptions` library for that category.
+2. Both partners can add or remove options (min 4 to lock in). New labels also grow the long-lived library (fire-and-forget).
+3. Two paths from the lobby:
+   - **Vote together** (primary): app generates a head-to-head bracket, each matchup shown to both partners simultaneously, each picks their preferred. Both agree → advance. Disagree → revote (max 2 rounds per matchup). Persistent split → app picks the winner from the two finalists (the `decidedByCoinFlip` data field is preserved for backwards-compat; UI shows "we picked").
+   - **Pick for us** (secondary, after 4+ options): one tap, recency-weighted pick from the pool. Solo session marks `pickedSoloByUserId`; partner gets an informational push ("[Name] picked: [result]").
+4. Bracket resolves to a winner; result screen offers save / start over.
+5. For Food: tapping save can deep-link to Maps for the result.
 
-**UI:** Real-time — partner's vote shows as a pulsing indicator while waiting, reveals once both voted.
+**Weighted (solo path):**
+- Labels not picked in the last 4+ weeks → 3× weight
+- Labels picked recently → 1× weight
+- Natural variety without being fully random
+
+**UI:** Real-time on the live path — partner's vote shows as a pulsing indicator while waiting, reveals once both voted. Solo reveal is a static spring-in card — no roulette / wheel / coin animation.
 
 ---
 
@@ -320,8 +311,8 @@ Resolves decision paralysis by providing structured, fun ways to pick between op
 | Feature | Detail |
 |---|---|
 | Cuisine tags | Italian, Thai, Mexican, Japanese, Indian, American, Mediterranean, Korean, etc. |
-| "Not today" exclusions | Temporarily remove an option from today's spin without deleting it |
-| Restaurant mode | Store specific restaurant names under a cuisine, spin picks a restaurant |
+| "Not today" exclusions | Temporarily remove an option from today's pool without deleting it |
+| Restaurant mode | Store specific restaurant names under a cuisine, pick lands on a restaurant |
 | Maps integration | Tap result → opens Google Maps / Yelp for that cuisine or restaurant name |
 | Add/edit options | Either partner can manage the options list for each category |
 
@@ -330,7 +321,7 @@ Resolves decision paralysis by providing structured, fun ways to pick between op
 ### Decision History
 
 - Scrollable list of all past decisions
-- Shows: date, category, mode used, options that were vetoed, final result
+- Shows: date, category, mode used, final result
 - Tap any entry to see full details
 - "Pick this again" shortcut to re-use an option
 
@@ -525,10 +516,9 @@ Streaks are couple-level (either partner's action counts). Breaking a streak sho
 
 | Badge | Condition |
 |---|---|
-| First Spin | Made your first Quick Spin decision |
+| First Pick | Saved your first Pick Together decision |
 | Decisive | 100 decisions made total |
-| Battle-Tested | Completed 10 Battle Mode sessions |
-| Veto King/Queen | Used a veto that changed the outcome 5 times |
+| Pick Tested | Completed 10 live Pick Together votes |
 
 **Nomination Badges:**
 
@@ -566,8 +556,8 @@ Issued every Monday, expire Sunday. Both partners must complete for the couple t
 
 **Example challenges:**
 - "Add 3 nominations this week"
-- "Try a cuisine you haven't had in the last month (use Quick Spin)"
-- "Use Battle Mode for a decision"
+- "Try a cuisine you haven't had in the last month (use Pick Together)"
+- "Vote together on a Pick Together decision"
 - "Add a photo to a nomination"
 - "Both open the app every day this week"
 - "Make a decision using the Weighted History suggestion"
@@ -656,9 +646,9 @@ App Shell (authenticated)
 │   └── Log / picker screen → saves moodEntries
 │
 ├── Tab: decide (app/(tabs)/decide/*)
-│   ├── Hub → Quick Spin | Battle | History
-│   ├── Quick Spin — categories, options, spin, veto, save
-│   ├── Battle — lobby → vote → result (Firestore battles/*)
+│   ├── Hub → Pick Together | History
+│   ├── Pick Together — lobby (auto-seeded pool, add/remove) → vote together OR pick for us → result
+│   │     (Firestore battles/* — collection name preserved for backwards compat)
 │   └── History
 │
 ├── Tab: awards (app/(tabs)/awards/*)
@@ -690,7 +680,7 @@ App Shell (authenticated)
 **Implemented in this repo:**
 - **Local** ceremony-window reminders (`lib/ceremonyReminders.ts` + `uiPreferencesStore`).
 - **Expo push token** stored as `users.fcmToken`.
-- **Firestore-triggered partner pings** (`functions/src/index.ts`): mood sticker change, reason created, nomination created, battle created, quick-spin decision saved, **habit created, habit checked-in, ceremony picks submitted / category locked / ceremony complete, couple linked welcome**, weekly challenge completion. Each push carries an explicit `feature` field on its `data` payload that maps 1:1 to a `NotificationPreferences` toggle.
+- **Firestore-triggered partner pings** (`functions/src/index.ts`): mood sticker change, reason created, nomination created, pick-together session created, solo pick saved, **habit created, habit checked-in, ceremony picks submitted / category locked / ceremony complete, couple linked welcome**, weekly challenge completion. Each push carries an explicit `feature` field on its `data` payload that maps 1:1 to a `NotificationPreferences` toggle.
 - **Server-scheduled daily reminders** (`functions/src/dailyReminders.ts`): `dailyReminderTick` runs every 30 minutes via Cloud Scheduler; per-user, per-channel (mood + habits) configuration in `users.dailyReminders` with half-hour granularity in the user's IANA tz; skip-if-logged guard checks `moodEntries` / `habitCheckins` for the current local `dayKey`.
 
 Users opt out per surface via **`notificationPreferences`** (`mood`, `habits`, `decide`, `reasons`, `awards`, `weeklyChallenge`, `reminders`).
@@ -808,12 +798,12 @@ The app will cost ~$0 to operate given 2 users. Firebase free tier has 1GB Fires
 - [ ] Auth screens: Sign Up, Sign In, Forgot Password
 - [ ] Couple linking flow: user A generates invite code → user B enters code → couple document created
 - [ ] Tab navigation shell (Home, Decide, Awards, Profile)
-- [ ] Decision Engine: Quick Spin with food categories
+- [ ] Decision Engine: Pick Together with food categories
 - [ ] Options list management (add/remove cuisine options)
 - [ ] Decision history log
 - [ ] Basic Home dashboard (placeholder content)
 
-**Deliverable:** Both partners can log in, link accounts, and use Quick Spin for food decisions.
+**Deliverable:** Both partners can log in, link accounts, and use Pick Together for food decisions.
 
 ---
 
@@ -860,7 +850,7 @@ The app will cost ~$0 to operate given 2 users. Firebase free tier has 1GB Fires
 - [ ] Cloud Functions: Firestore-triggered notifications (nomination added, picks submitted)
 - [ ] FCM setup for Android push
 - [ ] APNs setup via Firebase for iOS push (requires Apple Dev account)
-- [x] Battle Mode for decisions *(shipped in app; push/notifications still TBD)*
+- [x] Pick Together (live + solo paths) *(shipped in app; push live)*
 - [ ] Maps/Yelp deep-link integration for food decisions
 - [ ] Shareable ceremony winner cards (`react-native-view-shot`)
 - [ ] TestFlight distribution (iOS) + APK build (Android)
@@ -879,7 +869,7 @@ The app will cost ~$0 to operate given 2 users. Firebase free tier has 1GB Fires
 - [ ] Shared bucket list / trip planning module
 - [ ] Photo albums per ceremony (gallery of all nomination photos)
 - [ ] Couple timeline / scrapbook (all events logged over time)
-- [ ] Collaborative Quick Spin — both partners see the spin in real-time, each gets a veto, result locks only when both accept. Uses Firestore real-time doc for spin state sync.
+- [ ] Real-time co-pick — both partners see each others' adds in the lobby with subtle "they're typing" cues.
 - [ ] AI-suggested decisions based on history ("You haven't tried Ethiopian in a while")
 - [ ] Mood-based filtering for decisions ("I want something light tonight")
 - [ ] More award categories (user-configurable)

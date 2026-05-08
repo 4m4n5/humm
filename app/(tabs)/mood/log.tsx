@@ -3,6 +3,8 @@ import { View, Text, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { ScreenHeader } from '@/components/shared/ScreenHeader';
+import { AmbientGlow } from '@/components/shared/AmbientGlow';
+import { Card } from '@/components/shared/Card';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useMoodStore } from '@/lib/stores/moodStore';
 import { upsertMoodEntry } from '@/lib/firestore/moodEntries';
@@ -12,8 +14,8 @@ import { MoodGrid } from '@/components/mood/MoodGrid';
 import { MoodConfirmModal } from '@/components/mood/MoodConfirmModal';
 import { getMoodStickerById } from '@/constants/moodStickers';
 import { scrollContentStandard } from '@/constants/screenLayout';
-import { cardShadow } from '@/constants/elevation';
 import type { MoodStickerOption } from '@/types';
+import { errorsVoice } from '@/constants/hummVoice';
 
 export default function MoodLogScreen() {
   const { profile } = useAuthStore();
@@ -61,9 +63,9 @@ export default function MoodLogScreen() {
           ? (e as { code: string }).code
           : '';
       if (code === 'permission-denied') {
-        Alert.alert("couldn't save", 'permissions issue · try again later');
+        Alert.alert(errorsVoice.couldntSave, errorsVoice.permissions);
       } else {
-        Alert.alert("couldn't save", 'check connection · try again');
+        Alert.alert(errorsVoice.couldntSave, errorsVoice.checkConnection);
       }
       setSavingId(null);
     }
@@ -77,6 +79,7 @@ export default function MoodLogScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-hum-bg">
+      <AmbientGlow tone="bloom" />
       <ScreenHeader title="log mood" />
       <ScrollView
         className="flex-1"
@@ -84,10 +87,7 @@ export default function MoodLogScreen() {
         showsVerticalScrollIndicator={false}
       >
         {myToday && (
-          <View
-            className="flex-row items-center gap-3 self-start rounded-[22px] border border-hum-bloom/40 bg-hum-card px-3.5 py-3"
-            style={cardShadow}
-          >
+          <Card tone="bloom" padding="dense" className="flex-row items-center gap-3 self-start">
             <View className="h-10 w-10 items-center justify-center rounded-xl bg-hum-bloom/18">
               <Text className="text-[20px]" allowFontScaling={false}>
                 {myToday.current.emoji}
@@ -107,7 +107,7 @@ export default function MoodLogScreen() {
                 {myToday.current.label}
               </Text>
             </View>
-          </View>
+          </Card>
         )}
         <MoodGrid currentId={currentId} savingId={savingId} onSelect={handleSelect} />
       </ScrollView>

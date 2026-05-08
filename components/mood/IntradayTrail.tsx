@@ -43,7 +43,7 @@ export function IntradayTrail({ timeline, ownerLabel, compact = false }: Props) 
         hitSlop={compact ? 8 : undefined}
       >
         {hidden > 0 && !compact && (
-          <Text className="mr-0.5 text-[10px] font-light tabular-nums text-hum-dim/55">
+          <Text className="mr-0.5 text-[10px] font-light tabular-nums text-hum-dim/55" maxFontSizeMultiplier={1.25}>
             +{hidden}
           </Text>
         )}
@@ -59,7 +59,7 @@ export function IntradayTrail({ timeline, ownerLabel, compact = false }: Props) 
           </View>
         ))}
         {hidden > 0 && compact && (
-          <Text className="ml-0.5 text-[10px] font-light tabular-nums text-hum-dim/55">
+          <Text className="ml-0.5 text-[10px] font-light tabular-nums text-hum-dim/55" maxFontSizeMultiplier={1.25}>
             +{hidden}
           </Text>
         )}
@@ -95,8 +95,8 @@ export function IntradayTrail({ timeline, ownerLabel, compact = false }: Props) 
               onPress={() => setExpanded(false)}
               hitSlop={16}
               accessibilityRole="button"
-              accessibilityLabel="close"
-              className="h-10 w-10 shrink-0 items-center justify-center rounded-full border border-hum-border/18 bg-hum-card/90 active:opacity-88"
+              accessibilityLabel={`close ${ownerLabel}'s mood history`}
+              className="h-11 w-11 shrink-0 items-center justify-center rounded-full border border-hum-border/18 bg-hum-card/90 active:opacity-88"
             >
               <Ionicons name="close" size={18} color={theme.text} style={{ opacity: 0.85 }} />
             </Pressable>
