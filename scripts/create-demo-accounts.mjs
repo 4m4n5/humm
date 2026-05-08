@@ -66,7 +66,6 @@ function defaultAwardCategoryRows() {
   return [
     { id: 'best_found_food', label: 'best found food', emoji: '🍽️', enabled: true },
     { id: 'best_purchase', label: 'best purchase', emoji: '🛍️', enabled: true },
-    { id: 'sexy_time_initiation', label: 'sexy time initiation', emoji: '🔥', enabled: true },
     { id: 'best_planning', label: 'best planning', emoji: '🗺️', enabled: true },
     { id: 'best_surprise', label: 'best surprise', emoji: '🎁', enabled: true },
     { id: 'best_movie', label: 'best movie', emoji: '🎞️', enabled: true },
