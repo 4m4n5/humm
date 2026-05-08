@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#0F0E14" />
     <meta name="color-scheme" content="dark" />
-    <title>hum · your relationship's private corner</title>
+    <title>hum &middot; your relationship's private corner</title>
     <meta
       name="description"
       content="hum is a calm, invite-only space for two. share moods, build habits, decide together, host awards, and trade reasons you love each other. no public feed. no ads."
@@ -13,7 +13,7 @@
 
     <!-- Open Graph (WhatsApp / Instagram / iMessage / Facebook) -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="hum · rituals" />
+    <meta property="og:site_name" content="hum &middot; rituals" />
     <meta property="og:title" content="hum · your relationship's private corner" />
     <meta
       property="og:description"
@@ -24,21 +24,19 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:type" content="image/png" />
-    <meta
-      property="og:image:alt"
-      content="hum app — a private corner for two, on iPhone"
-    />
+    <meta property="og:image:alt" content="hum app — a private corner for two, on iPhone" />
 
-    <!-- Twitter / X cards -->
+    <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="hum · your relationship's private corner" />
     <meta
       name="twitter:description"
-      content="a calm, invite-only space for two. share moods, build habits, decide together, and trade reasons you love each other."
+      content="a calm, invite-only space for two."
     />
     <meta name="twitter:image" content="https://4m4n5.github.io/humm/store/images/og-cover.png" />
 
     <link rel="canonical" href="https://4m4n5.github.io/humm/store/" />
+    <link rel="preload" as="image" href="images/marketing/01-home.png" fetchpriority="high" />
     <link rel="stylesheet" href="style.css" />
   </head>
 
@@ -46,10 +44,10 @@
     <div class="halo" aria-hidden="true"></div>
 
     <header class="topbar">
-      <div class="brand">
+      <a href="#top" class="brand" aria-label="hum home">
         <span class="brand-mark" aria-hidden="true"></span>
         <span class="brand-name">hum</span>
-      </div>
+      </a>
       <nav class="topnav" aria-label="primary">
         <a href="#features">features</a>
         <a href="support.html">support</a>
@@ -57,34 +55,21 @@
       </nav>
     </header>
 
-    <main>
+    <main id="top">
       <!-- HERO ─────────────────────────────────────────────────────── -->
-      <section class="hero" aria-labelledby="hero-title">
+      <section class="hero">
         <p class="eyebrow">hum &middot; rituals</p>
-        <h1 id="hero-title">
+        <h1>
           your relationship&rsquo;s<br />
           <span class="hero-accent">private corner</span>
         </h1>
-        <p class="hero-sub">
-          a calm, intimate space for two. share moods, build habits,
-          decide together, host awards, and trade reasons you love each other.
-        </p>
+        <p class="hero-sub">a calm, intimate space for two.</p>
 
-        <div class="cta-row">
-          <a class="cta cta-primary" href="#features" aria-label="see what hum looks like">
-            see what it looks like
-            <span aria-hidden="true">&rarr;</span>
-          </a>
-          <a class="cta cta-ghost" href="#how" aria-label="learn how to start">
-            how to start
-          </a>
-        </div>
-
-        <div class="hero-stage" aria-hidden="false">
-          <div class="phone phone--hero" role="img" aria-label="hum home screen on iPhone">
+        <div class="hero-stage">
+          <div class="phone phone--hero">
             <img
               src="images/marketing/01-home.png"
-              alt="hum home screen — a time-aware greeting, partner presence, and quick access to mood, habits, decide, awards, reasons, and you"
+              alt="hum home screen"
               width="1206"
               height="2622"
               loading="eager"
@@ -94,40 +79,34 @@
           </div>
         </div>
 
-        <ul class="trust-row" aria-label="what hum is and isn't">
-          <li><span aria-hidden="true">&middot;</span> invite-only</li>
-          <li><span aria-hidden="true">&middot;</span> no public feed</li>
-          <li><span aria-hidden="true">&middot;</span> no ads</li>
+        <ul class="trust-row" aria-label="what hum is">
+          <li>private</li>
+          <li>just for two</li>
+          <li>no feed</li>
+          <li>no ads</li>
         </ul>
       </section>
 
       <!-- FEATURES ─────────────────────────────────────────────────── -->
-      <section id="features" class="features" aria-labelledby="features-title">
+      <section id="features" class="features">
         <p class="eyebrow eyebrow-center">six rituals</p>
-        <h2 id="features-title">small things, every day</h2>
-        <p class="section-sub">
-          one private space, six gentle rituals to share with the person you chose.
-        </p>
+        <h2>small things, every day</h2>
 
         <div class="feature-rail" role="list">
           <article class="feature feature--mood" role="listitem">
             <div class="phone">
               <img
                 src="images/marketing/02-mood.png"
-                alt="mood tab — partner sync, seven-day strip, and an in-sync celebration"
-                loading="lazy"
-                decoding="async"
+                alt="mood — partner sync, seven-day strip, in-sync moments"
                 width="1206"
                 height="2622"
+                loading="lazy"
+                decoding="async"
               />
             </div>
             <div class="feature-meta">
               <span class="feature-tag">mood</span>
-              <h3>how you&rsquo;re feeling, in real time</h3>
-              <p>
-                check in throughout the day. see your partner&rsquo;s mood live,
-                track a seven-day strip, and celebrate when you both feel the same.
-              </p>
+              <h3>feel it, together.</h3>
             </div>
           </article>
 
@@ -135,21 +114,16 @@
             <div class="phone">
               <img
                 src="images/marketing/04-habits.png"
-                alt="habits — shared and personal goals with a six-week heatmap and joint streaks"
-                loading="lazy"
-                decoding="async"
+                alt="habits — shared and personal goals, six-week heatmap"
                 width="1206"
                 height="2622"
+                loading="lazy"
+                decoding="async"
               />
             </div>
             <div class="feature-meta">
               <span class="feature-tag">habits</span>
-              <h3>build the life you want, together</h3>
-              <p>
-                shared or personal habits. a six-week heatmap shows your shared
-                progress, joint streaks build, and finishing the day together
-                earns a gentle celebration.
-              </p>
+              <h3>show up, side by side.</h3>
             </div>
           </article>
 
@@ -157,21 +131,16 @@
             <div class="phone">
               <img
                 src="images/marketing/03-decide.png"
-                alt="decide — vote together round by round, or let the app pick from a curated list"
-                loading="lazy"
-                decoding="async"
+                alt="decide — vote together, or pick for us"
                 width="1206"
                 height="2622"
+                loading="lazy"
+                decoding="async"
               />
             </div>
             <div class="feature-meta">
               <span class="feature-tag">decide</span>
-              <h3>land on a choice without the back-and-forth</h3>
-              <p>
-                a shared pool of ideas per category. vote together round by round,
-                or tap <em>pick for us</em> to suggest one from your own list.
-                no chance, no wagers &mdash; just a calm way to decide.
-              </p>
+              <h3>land on a choice. easily.</h3>
             </div>
           </article>
 
@@ -179,21 +148,16 @@
             <div class="phone">
               <img
                 src="images/marketing/06-awards.png"
-                alt="awards — nominate stories by category, align private picks, cheer winners"
-                loading="lazy"
-                decoding="async"
+                alt="awards — nominate, align, cheer"
                 width="1206"
                 height="2622"
+                loading="lazy"
+                decoding="async"
               />
             </div>
             <div class="feature-meta">
               <span class="feature-tag">awards</span>
-              <h3>your favourite moments, twice a year</h3>
-              <p>
-                nominate little stories and inside jokes. when the season closes,
-                align your private picks, cheer the winners, and keep past
-                seasons in your private vault.
-              </p>
+              <h3>celebrate the small stuff.</h3>
             </div>
           </article>
 
@@ -201,21 +165,16 @@
             <div class="phone">
               <img
                 src="images/marketing/05-reasons.png"
-                alt="reasons — write a line about why you love them; reveal three when the moment is right"
-                loading="lazy"
-                decoding="async"
+                alt="reasons — write a line, reveal three"
                 width="1206"
                 height="2622"
+                loading="lazy"
+                decoding="async"
               />
             </div>
             <div class="feature-meta">
               <span class="feature-tag">reasons</span>
-              <h3>a quiet place for gratitude</h3>
-              <p>
-                write a simple reason why you love them. when the moment&rsquo;s
-                right, reveal three reasons they&rsquo;ve written about you.
-                always private, always between two.
-              </p>
+              <h3>why you love them.</h3>
             </div>
           </article>
 
@@ -223,72 +182,24 @@
             <div class="phone">
               <img
                 src="images/marketing/07-you.png"
-                alt="you — XP, level, badges, weekly challenges, and a soft snapshot of how you show up"
-                loading="lazy"
-                decoding="async"
+                alt="you — XP, badges, weekly challenges"
                 width="1206"
                 height="2622"
+                loading="lazy"
+                decoding="async"
               />
             </div>
             <div class="feature-meta">
               <span class="feature-tag">you</span>
-              <h3>a soft snapshot of your journey</h3>
-              <p>
-                track your XP and weekly challenges, unlock badges, and see a
-                gentle reflection of how you&rsquo;re showing up for each other.
-              </p>
+              <h3>your gentle reflection.</h3>
             </div>
           </article>
         </div>
+
+        <p class="rail-hint" aria-hidden="true">swipe &rarr;</p>
       </section>
 
-      <!-- HOW IT WORKS ─────────────────────────────────────────────── -->
-      <section id="how" class="how" aria-labelledby="how-title">
-        <p class="eyebrow eyebrow-center">how it works</p>
-        <h2 id="how-title">three steps in</h2>
-
-        <ol class="steps">
-          <li>
-            <span class="step-num">01</span>
-            <h3>create your account</h3>
-            <p>email and password. that&rsquo;s it. no contacts, no socials, no profile to fill out.</p>
-          </li>
-          <li>
-            <span class="step-num">02</span>
-            <h3>link your partner</h3>
-            <p>share a short invite code. once they&rsquo;re in, you share the same private space.</p>
-          </li>
-          <li>
-            <span class="step-num">03</span>
-            <h3>share your rituals</h3>
-            <p>start with a mood. add a habit you both want to keep. write one reason. let the rest unfold.</p>
-          </li>
-        </ol>
-      </section>
-
-      <!-- IS / ISN'T ───────────────────────────────────────────────── -->
-      <section class="manifest" aria-label="what hum is and isn't">
-        <div class="manifest-col manifest-is">
-          <h3>hum is</h3>
-          <ul>
-            <li>private, just for two</li>
-            <li>calm, on a dark canvas</li>
-            <li>built for everyday rituals</li>
-            <li>celebratory at the right moments</li>
-          </ul>
-        </div>
-        <div class="manifest-col manifest-isnt">
-          <h3>hum isn&rsquo;t</h3>
-          <ul>
-            <li>a public feed or social network</li>
-            <li>a place for ads or tracking</li>
-            <li>a game of chance or wagers</li>
-            <li>about who else is on the app</li>
-          </ul>
-        </div>
-      </section>
-
-      <!-- PULL QUOTE ──────────────────────────────────────────────── -->
+      <!-- PULL QUOTE ─────────────────────────────────────────────── -->
       <section class="quote" aria-hidden="true">
         <p>
           <span class="quote-mark">&ldquo;</span>
@@ -297,18 +208,10 @@
         </p>
       </section>
 
-      <!-- FINAL CTA ───────────────────────────────────────────────── -->
+      <!-- FINAL CTA ──────────────────────────────────────────────── -->
       <section class="final-cta">
-        <h2>ready when you are</h2>
-        <p>coming to the App Store. invite your person, then start a ritual.</p>
-        <div class="cta-row cta-row--center">
-          <a class="cta cta-primary" href="support.html">
-            get help
-          </a>
-          <a class="cta cta-ghost" href="#features">
-            see features again
-          </a>
-        </div>
+        <h2>start a ritual.</h2>
+        <p>coming to the App Store soon.</p>
       </section>
     </main>
 
@@ -319,7 +222,7 @@
         <a href="privacy.html">privacy</a>
         <a href="mailto:aman.srivastava999@gmail.com">contact</a>
       </nav>
-      <p class="footer-meta">operator: aman shrivastava &middot; updated may 8, 2026</p>
+      <p class="footer-meta">aman shrivastava &middot; may 2026</p>
     </footer>
   </body>
 </html>
