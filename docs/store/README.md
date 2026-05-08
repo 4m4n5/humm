@@ -36,9 +36,11 @@ Use **`…/store/support.html`** and **`…/store/privacy.html`** (full `https:/
 
 For this repository (**`4m4n5/humm`**), after Pages is enabled, the URLs will be:
 
-- `https://4m4n5.github.io/humm/store/support.html`
-- `https://4m4n5.github.io/humm/store/privacy.html`
-- `https://4m4n5.github.io/humm/store/index.html` *(optional hub)*
+- `https://aaam.dev/humm/support.html`
+- `https://aaam.dev/humm/privacy.html`
+- `https://aaam.dev/humm/` *(marketing hub)*
+
+**Legacy GitHub Pages URLs** (`4m4n5.github.io/humm/store/...`) may still resolve but are no longer the primary. Use the `aaam.dev` URLs above in all store listings.
 
 **Optional:** Use **`…/store/`** (trailing slash) only if you add a default document behavior you prefer; raw `support.html` / `privacy.html` links are clearest.
 

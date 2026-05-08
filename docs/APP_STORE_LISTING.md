@@ -22,16 +22,16 @@ Single reference for **App Store Connect** metadata, URLs, privacy, review, and 
 | **Primary language**                 | English (U.S.)                                                                                                       |
 | **Marketing version** (user-visible) | `1.0.0` (from `expo.version`)                                                                                        |
 | **Build** (`CFBundleVersion`)        | `5` — must increase every upload (see EAS / Xcode)                                                                   |
-| **Privacy Policy URL**               | `https://4m4n5.github.io/humm/store/privacy.html`                                                                    |
-| **Support URL**                      | `https://4m4n5.github.io/humm/store/support.html`                                                                    |
-| **Marketing URL** (optional)         | `https://4m4n5.github.io/humm/store/index.html`                                                                      |
+| **Privacy Policy URL**               | `https://aaam.dev/humm/privacy.html`                                                                                 |
+| **Support URL**                      | `https://aaam.dev/humm/support.html`                                                                                 |
+| **Marketing URL** (optional)         | `https://aaam.dev/humm/`                                                                                             |
 | **Copyright**                        | `© 2026 Aman Shrivastava`                                                                                            |
 | **Category (primary)**               | **Lifestyle** (recommended: couple rituals, not a public social network)                                             |
 | **Category (secondary)**             | **Entertainment** or **Social Networking** only if you are comfortable with that framing; **Lifestyle** alone is OK. |
 | **License agreement**                | Apple's standard EULA unless you supply a custom one                                                                 |
 
 
-**GitHub Pages:** Repo is `github.com:4m4n5/humm`. Pages must be enabled with source **`/docs`** so the paths above return **200** over **https**. If your username or repo name differs, replace `4m4n5` / `humm` in URLs. Private repo: confirm [GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits).
+**Website hosting:** Store pages live at `https://aaam.dev/humm/` via **Cloudflare Pages** (repo: `github.com/4m4n5/aaam.dev`, auto-deploys on push to `main`). The `docs/store/` directory in this repo is the source; the `aaam.dev` repo copies from here. See `aaam.dev/README.md` for full infrastructure details.
 
 **Pricing:** Paid one-time (e.g. **~$3.99 USD**) — set **Price schedule** in Connect; complete **Paid Applications Agreement**, tax, and banking first.
 
@@ -337,18 +337,44 @@ Thank you for your time. Please let us know if any further changes are needed.
 
 ---
 
-## 19. Related repo docs
+## 19. Infrastructure & accounts
 
+| Service | Account / value |
+|---|---|
+| **Domain** | `aaam.dev` (Cloudflare Registrar, registered 2026-05-08) |
+| **Email** | `support@aaam.dev` → forwards to `aamd3v@gmail.com` (Cloudflare Email Routing) |
+| **Website** | Cloudflare Pages, project `aaam-dev`, repo `github.com/4m4n5/aaam.dev`, auto-deploys on push to `main` |
+| **App repo** | `github.com/4m4n5/humm` |
+| **Website repo** | `github.com/4m4n5/aaam.dev` |
+| **Apple Developer** | Individual account, Team ID `D92AD98B9B`, Seller: Aman Shrivastava |
+| **App Store Connect** | App ID `6763845513`, Bundle ID `com.humtum.app` |
+| **EAS** | Project ID `30c5357d-ddd0-490b-a158-fd22c872392e`, Expo slug `humm` |
+| **Firebase** | Project env vars via `EXPO_PUBLIC_*` in EAS "production" environment |
 
-| Doc                                                    | Use                                               |
-| ------------------------------------------------------ | ------------------------------------------------- |
-| `[STORE_LAUNCH.md](./STORE_LAUNCH.md)`                 | Play + Apple costs, EAS builds, broader checklist |
-| `[store/README.md](./store/README.md)`                 | Enabling GitHub Pages from `/docs`                |
-| `[APPS_AND_FEATURES.md](./APPS_AND_FEATURES.md)`       | Shipped features for accurate copy                |
-| `[AWARDS_SEASON_RULES.md](./AWARDS_SEASON_RULES.md)`   | Awards season behavior detail                     |
-| `[CEREMONY_TERMINOLOGY.md](./CEREMONY_TERMINOLOGY.md)` | User-facing "align" vs internal status names      |
-| `[scripts/create-demo-accounts.mjs](../scripts/create-demo-accounts.mjs)` | Seed App Store review demo users (`npm run demo:create`) |
+### Live URLs (paste into App Store Connect / Play Console)
 
+| Purpose | URL |
+|---|---|
+| **Support** | `https://aaam.dev/humm/support.html` |
+| **Privacy** | `https://aaam.dev/humm/privacy.html` |
+| **Marketing** | `https://aaam.dev/humm/` |
+| **Studio landing** | `https://aaam.dev` |
+
+Legacy URLs (`4m4n5.github.io/humm/store/...`) may still resolve but are deprecated.
+
+---
+
+## 20. Related repo docs
+
+| Doc | Use |
+|---|---|
+| [`STORE_LAUNCH.md`](./STORE_LAUNCH.md) | Play + Apple costs, EAS builds, broader checklist |
+| [`store/README.md`](./store/README.md) | Store page source files + local preview |
+| [`APPS_AND_FEATURES.md`](./APPS_AND_FEATURES.md) | Shipped features for accurate copy |
+| [`AWARDS_SEASON_RULES.md`](./AWARDS_SEASON_RULES.md) | Awards season behavior detail |
+| [`CEREMONY_TERMINOLOGY.md`](./CEREMONY_TERMINOLOGY.md) | User-facing "align" vs internal status names |
+| [`scripts/create-demo-accounts.mjs`](../scripts/create-demo-accounts.mjs) | Seed App Store review demo users (`npm run demo:create`) |
+| [`aaam.dev/README.md`](https://github.com/4m4n5/aaam.dev/blob/main/README.md) | Full infrastructure docs (domain, email, hosting, accounts) |
 
 ---
 
