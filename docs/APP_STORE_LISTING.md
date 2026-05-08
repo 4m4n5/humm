@@ -4,7 +4,7 @@ Single reference for **App Store Connect** metadata, URLs, privacy, review, and 
 
 **Not legal advice:** Have a lawyer review privacy policy and paid-app terms before you charge money.
 
-**Operator (listed on hosted pages):** Aman Shrivastava · **Support email:** `aman.srivastava999@gmail.com` · **Policy/support pages last updated:** May 8, 2026 (`docs/store/`).
+**Operator (listed on hosted pages):** aaam.dev · **Support email:** `support@aaam.dev` · **Policy/support pages last updated:** May 8, 2026 (`docs/store/`).
 
 **Binary source of truth:** [`app.json`](../app.json) — name, version, iOS bundle ID, build number, orientation, dark UI, plugins (`expo-router`, `expo-font`, `expo-image-picker`, `expo-notifications`). Firebase is wired via **`EXPO_PUBLIC_*`** env vars at runtime, not an `app.json` plugin.
 
@@ -250,10 +250,10 @@ NETWORK & ACCOUNT
 Requires network for Firebase sync. Email/password sign-in.
 
 CONTACT
-aman.srivastava999@gmail.com
+support@aaam.dev
 ```
 
-**Contact email (Connect field):** `aman.srivastava999@gmail.com`  
+**Contact email (Connect field):** `support@aaam.dev`  
 **Phone:** optional.
 
 ---
@@ -324,7 +324,7 @@ The app remains an invite-only utility for two linked partners to share moods, h
 
 Thank you for your time. Please let us know if any further changes are needed.
 
-— Aman Shrivastava (aman.srivastava999@gmail.com)
+— Aman Shrivastava (support@aaam.dev)
 ```
 
 ---
