@@ -1,124 +1,325 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Hum - rituals</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0F0E14" />
+    <meta name="color-scheme" content="dark" />
+    <title>hum · your relationship's private corner</title>
     <meta
       name="description"
-      content="Hum - rituals — your relationship's private corner. A calm, intimate space for two to share moods, build habits, decide together, host awards, and trade reasons you love each other."
+      content="hum is a calm, invite-only space for two. share moods, build habits, decide together, host awards, and trade reasons you love each other. no public feed. no ads."
     />
+
+    <!-- Open Graph (WhatsApp / Instagram / iMessage / Facebook) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="hum · rituals" />
+    <meta property="og:title" content="hum · your relationship's private corner" />
+    <meta
+      property="og:description"
+      content="a calm, invite-only space for two. share moods, build habits, decide together, and trade reasons you love each other."
+    />
+    <meta property="og:url" content="https://4m4n5.github.io/humm/store/" />
+    <meta property="og:image" content="https://4m4n5.github.io/humm/store/images/og-cover.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta
+      property="og:image:alt"
+      content="hum app — a private corner for two, on iPhone"
+    />
+
+    <!-- Twitter / X cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="hum · your relationship's private corner" />
+    <meta
+      name="twitter:description"
+      content="a calm, invite-only space for two. share moods, build habits, decide together, and trade reasons you love each other."
+    />
+    <meta name="twitter:image" content="https://4m4n5.github.io/humm/store/images/og-cover.png" />
+
+    <link rel="canonical" href="https://4m4n5.github.io/humm/store/" />
     <link rel="stylesheet" href="style.css" />
   </head>
+
   <body>
-    <header>
-      <h1>Hum - rituals</h1>
-      <p>Your relationship's private corner &middot; support, privacy &amp; product overview</p>
+    <div class="halo" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-name">hum</span>
+      </div>
+      <nav class="topnav" aria-label="primary">
+        <a href="#features">features</a>
+        <a href="support.html">support</a>
+        <a href="privacy.html">privacy</a>
+      </nav>
     </header>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="support.html">Support</a>
-      <a href="privacy.html">Privacy</a>
-    </nav>
-    <main class="wide">
-      <p class="intro-lead">
-        <strong>Hum - rituals</strong> is your relationship&rsquo;s private corner&mdash;not a social network. It is a calm, intimate space designed exclusively for two people to deepen their connection through shared daily habits. Link with a short
-        invite code, then share small rituals: <strong>mood check-ins</strong>, <strong>shared habits</strong>, <strong>decide</strong> (vote together round by round, or pick for us from your curated list), bi-annual
-        <strong>awards</strong> (nominate &rarr; align &rarr; cheer), and <strong>reasons</strong> you love each other. There are no mechanics of chance, no wagers, no public feed, and no ads. Your data lives on
-        <strong>Google Firebase</strong>; see the <a href="privacy.html">privacy policy</a> for details.
-      </p>
 
-      <div class="card">
-        <h2>What you can do</h2>
-        <dl class="features">
-          <dt>Home</dt>
-          <dd>A time-aware greeting, your partner&rsquo;s live presence, and quick access to everything. The ambient glow warms as your streaks grow together.</dd>
-          <dt>Mood</dt>
-          <dd>Check in with how you&rsquo;re feeling throughout the day. See your partner&rsquo;s mood in real time, track a seven-day strip, and celebrate &ldquo;in sync&rdquo; moments when you both feel the same way.</dd>
-          <dt>Habits</dt>
-          <dd>Create daily or weekly habits&mdash;shared or personal. Track completion side-by-side, watch a six-week heatmap track your shared progress, and build joint streaks. When both of you finish all shared habits, enjoy a celebration moment.</dd>
-          <dt>Decide</dt>
-          <dd>Build a shared pool of ideas per category (e.g. restaurants, weekend plans). <strong>Vote together</strong> round by round to find the perfect compromise, or tap <strong>pick for us</strong> to let the app suggest one from your curated list when you can&rsquo;t decide. No mechanics of chance, no wagers&mdash;just landing on a choice.</dd>
-          <dt>Awards</dt>
-          <dd>Celebrate your favorite moments. Nominate little stories and inside jokes by category for each season. When you&rsquo;re ready, align your private picks, cheer the winners together, and keep past seasons in your vault.</dd>
-          <dt>Reasons</dt>
-          <dd>A space for gratitude. Write a simple reason why you love them; when the moment&rsquo;s right, they can reveal three reasons you&rsquo;ve written about them.</dd>
-          <dt>You</dt>
-          <dd>Track your journey together. Earn XP, level up, unlock badges, and view a soft snapshot of how you&rsquo;re showing up for each other.</dd>
-        </dl>
-      </div>
-
-      <div class="card">
-        <h2>Your data &amp; account</h2>
-        <p>
-          You can <strong>delete your account</strong> and all associated data at any time from within the app (profile &rarr; scroll down &rarr; &ldquo;delete account&rdquo;). See the <a href="support.html">support page</a> for step-by-step instructions or email <a href="mailto:aman.srivastava999@gmail.com">aman.srivastava999@gmail.com</a> if you cannot access the app.
+    <main>
+      <!-- HERO ─────────────────────────────────────────────────────── -->
+      <section class="hero" aria-labelledby="hero-title">
+        <p class="eyebrow">hum &middot; rituals</p>
+        <h1 id="hero-title">
+          your relationship&rsquo;s<br />
+          <span class="hero-accent">private corner</span>
+        </h1>
+        <p class="hero-sub">
+          a calm, intimate space for two. share moods, build habits,
+          decide together, host awards, and trade reasons you love each other.
         </p>
-      </div>
 
-      <div class="card">
-        <h2>Store listings</h2>
-        <p>
-          For <strong>App Store Connect</strong> and <strong>Google Play</strong>, use these HTTPS pages as your
-          <strong>Support</strong> and <strong>Privacy Policy</strong> URLs after
-          <a href="https://pages.github.com/">GitHub Pages</a> is enabled from the repo&rsquo;s <code>docs/</code> folder (see
-          <code>docs/store/README.md</code>).
-        </p>
-        <ul>
-          <li><a href="support.html">Support</a> &mdash; contact &amp; FAQ, account deletion</li>
-          <li><a href="privacy.html">Privacy policy</a> &mdash; data collection, retention &amp; deletion</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <h2>Screenshots</h2>
-        <p>
-          Captures from the <strong>iOS Simulator</strong> (iPhone 17 Pro, dark mode).
-        </p>
-        <div class="gallery">
-          <figure>
-            <img src="images/screen-01-home.png" alt="Hum home screen" loading="lazy" decoding="async" />
-            <figcaption>Home</figcaption>
-          </figure>
-          <figure>
-            <img src="images/screen-02-mood.png" alt="Mood tab with partner sync" loading="lazy" decoding="async" />
-            <figcaption>Mood</figcaption>
-          </figure>
-          <figure>
-            <img src="images/screen-03-mood-picker.png" alt="Mood check-in picker" loading="lazy" decoding="async" />
-            <figcaption>Mood picker</figcaption>
-          </figure>
-          <figure>
-            <img src="images/screen-04-habits.png" alt="Habits board" loading="lazy" decoding="async" />
-            <figcaption>Habits</figcaption>
-          </figure>
-          <figure>
-            <img src="images/screen-05-decide.png" alt="Decide hub" loading="lazy" decoding="async" />
-            <figcaption>Decide</figcaption>
-          </figure>
-          <figure>
-            <img src="images/screen-06-pick-together.png" alt="Decide lobby" loading="lazy" decoding="async" />
-            <figcaption>Decide</figcaption>
-          </figure>
-          <figure>
-            <img src="images/screen-07-awards.png" alt="Awards season hub" loading="lazy" decoding="async" />
-            <figcaption>Awards</figcaption>
-          </figure>
-          <figure>
-            <img src="images/screen-08-reasons.png" alt="Reasons write and draw" loading="lazy" decoding="async" />
-            <figcaption>Reasons</figcaption>
-          </figure>
-          <figure>
-            <img src="images/screen-09-profile.png" alt="Profile with XP and badges" loading="lazy" decoding="async" />
-            <figcaption>Profile</figcaption>
-          </figure>
-          <figure>
-            <img src="images/screen-10-vote-together.png" alt="Decide live vote" loading="lazy" decoding="async" />
-            <figcaption>Vote together</figcaption>
-          </figure>
+        <div class="cta-row">
+          <a class="cta cta-primary" href="#features" aria-label="see what hum looks like">
+            see what it looks like
+            <span aria-hidden="true">&rarr;</span>
+          </a>
+          <a class="cta cta-ghost" href="#how" aria-label="learn how to start">
+            how to start
+          </a>
         </div>
-      </div>
 
-      <p class="meta">Operator: Aman Shrivastava · Contact: <a href="mailto:aman.srivastava999@gmail.com">aman.srivastava999@gmail.com</a></p>
+        <div class="hero-stage" aria-hidden="false">
+          <div class="phone phone--hero" role="img" aria-label="hum home screen on iPhone">
+            <img
+              src="images/marketing/01-home.png"
+              alt="hum home screen — a time-aware greeting, partner presence, and quick access to mood, habits, decide, awards, reasons, and you"
+              width="1206"
+              height="2622"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+            />
+          </div>
+        </div>
+
+        <ul class="trust-row" aria-label="what hum is and isn't">
+          <li><span aria-hidden="true">&middot;</span> invite-only</li>
+          <li><span aria-hidden="true">&middot;</span> no public feed</li>
+          <li><span aria-hidden="true">&middot;</span> no ads</li>
+        </ul>
+      </section>
+
+      <!-- FEATURES ─────────────────────────────────────────────────── -->
+      <section id="features" class="features" aria-labelledby="features-title">
+        <p class="eyebrow eyebrow-center">six rituals</p>
+        <h2 id="features-title">small things, every day</h2>
+        <p class="section-sub">
+          one private space, six gentle rituals to share with the person you chose.
+        </p>
+
+        <div class="feature-rail" role="list">
+          <article class="feature feature--mood" role="listitem">
+            <div class="phone">
+              <img
+                src="images/marketing/02-mood.png"
+                alt="mood tab — partner sync, seven-day strip, and an in-sync celebration"
+                loading="lazy"
+                decoding="async"
+                width="1206"
+                height="2622"
+              />
+            </div>
+            <div class="feature-meta">
+              <span class="feature-tag">mood</span>
+              <h3>how you&rsquo;re feeling, in real time</h3>
+              <p>
+                check in throughout the day. see your partner&rsquo;s mood live,
+                track a seven-day strip, and celebrate when you both feel the same.
+              </p>
+            </div>
+          </article>
+
+          <article class="feature feature--habits" role="listitem">
+            <div class="phone">
+              <img
+                src="images/marketing/04-habits.png"
+                alt="habits — shared and personal goals with a six-week heatmap and joint streaks"
+                loading="lazy"
+                decoding="async"
+                width="1206"
+                height="2622"
+              />
+            </div>
+            <div class="feature-meta">
+              <span class="feature-tag">habits</span>
+              <h3>build the life you want, together</h3>
+              <p>
+                shared or personal habits. a six-week heatmap shows your shared
+                progress, joint streaks build, and finishing the day together
+                earns a gentle celebration.
+              </p>
+            </div>
+          </article>
+
+          <article class="feature feature--decide" role="listitem">
+            <div class="phone">
+              <img
+                src="images/marketing/03-decide.png"
+                alt="decide — vote together round by round, or let the app pick from a curated list"
+                loading="lazy"
+                decoding="async"
+                width="1206"
+                height="2622"
+              />
+            </div>
+            <div class="feature-meta">
+              <span class="feature-tag">decide</span>
+              <h3>land on a choice without the back-and-forth</h3>
+              <p>
+                a shared pool of ideas per category. vote together round by round,
+                or tap <em>pick for us</em> to suggest one from your own list.
+                no chance, no wagers &mdash; just a calm way to decide.
+              </p>
+            </div>
+          </article>
+
+          <article class="feature feature--awards" role="listitem">
+            <div class="phone">
+              <img
+                src="images/marketing/06-awards.png"
+                alt="awards — nominate stories by category, align private picks, cheer winners"
+                loading="lazy"
+                decoding="async"
+                width="1206"
+                height="2622"
+              />
+            </div>
+            <div class="feature-meta">
+              <span class="feature-tag">awards</span>
+              <h3>your favourite moments, twice a year</h3>
+              <p>
+                nominate little stories and inside jokes. when the season closes,
+                align your private picks, cheer the winners, and keep past
+                seasons in your private vault.
+              </p>
+            </div>
+          </article>
+
+          <article class="feature feature--reasons" role="listitem">
+            <div class="phone">
+              <img
+                src="images/marketing/05-reasons.png"
+                alt="reasons — write a line about why you love them; reveal three when the moment is right"
+                loading="lazy"
+                decoding="async"
+                width="1206"
+                height="2622"
+              />
+            </div>
+            <div class="feature-meta">
+              <span class="feature-tag">reasons</span>
+              <h3>a quiet place for gratitude</h3>
+              <p>
+                write a simple reason why you love them. when the moment&rsquo;s
+                right, reveal three reasons they&rsquo;ve written about you.
+                always private, always between two.
+              </p>
+            </div>
+          </article>
+
+          <article class="feature feature--you" role="listitem">
+            <div class="phone">
+              <img
+                src="images/marketing/07-you.png"
+                alt="you — XP, level, badges, weekly challenges, and a soft snapshot of how you show up"
+                loading="lazy"
+                decoding="async"
+                width="1206"
+                height="2622"
+              />
+            </div>
+            <div class="feature-meta">
+              <span class="feature-tag">you</span>
+              <h3>a soft snapshot of your journey</h3>
+              <p>
+                track your XP and weekly challenges, unlock badges, and see a
+                gentle reflection of how you&rsquo;re showing up for each other.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- HOW IT WORKS ─────────────────────────────────────────────── -->
+      <section id="how" class="how" aria-labelledby="how-title">
+        <p class="eyebrow eyebrow-center">how it works</p>
+        <h2 id="how-title">three steps in</h2>
+
+        <ol class="steps">
+          <li>
+            <span class="step-num">01</span>
+            <h3>create your account</h3>
+            <p>email and password. that&rsquo;s it. no contacts, no socials, no profile to fill out.</p>
+          </li>
+          <li>
+            <span class="step-num">02</span>
+            <h3>link your partner</h3>
+            <p>share a short invite code. once they&rsquo;re in, you share the same private space.</p>
+          </li>
+          <li>
+            <span class="step-num">03</span>
+            <h3>share your rituals</h3>
+            <p>start with a mood. add a habit you both want to keep. write one reason. let the rest unfold.</p>
+          </li>
+        </ol>
+      </section>
+
+      <!-- IS / ISN'T ───────────────────────────────────────────────── -->
+      <section class="manifest" aria-label="what hum is and isn't">
+        <div class="manifest-col manifest-is">
+          <h3>hum is</h3>
+          <ul>
+            <li>private, just for two</li>
+            <li>calm, on a dark canvas</li>
+            <li>built for everyday rituals</li>
+            <li>celebratory at the right moments</li>
+          </ul>
+        </div>
+        <div class="manifest-col manifest-isnt">
+          <h3>hum isn&rsquo;t</h3>
+          <ul>
+            <li>a public feed or social network</li>
+            <li>a place for ads or tracking</li>
+            <li>a game of chance or wagers</li>
+            <li>about who else is on the app</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- PULL QUOTE ──────────────────────────────────────────────── -->
+      <section class="quote" aria-hidden="true">
+        <p>
+          <span class="quote-mark">&ldquo;</span>
+          for two people who already chose each other.
+          <span class="quote-mark">&rdquo;</span>
+        </p>
+      </section>
+
+      <!-- FINAL CTA ───────────────────────────────────────────────── -->
+      <section class="final-cta">
+        <h2>ready when you are</h2>
+        <p>coming to the App Store. invite your person, then start a ritual.</p>
+        <div class="cta-row cta-row--center">
+          <a class="cta cta-primary" href="support.html">
+            get help
+          </a>
+          <a class="cta cta-ghost" href="#features">
+            see features again
+          </a>
+        </div>
+      </section>
     </main>
+
+    <footer class="site-footer">
+      <p class="footer-brand">hum &middot; rituals</p>
+      <nav aria-label="footer">
+        <a href="support.html">support</a>
+        <a href="privacy.html">privacy</a>
+        <a href="mailto:aman.srivastava999@gmail.com">contact</a>
+      </nav>
+      <p class="footer-meta">operator: aman shrivastava &middot; updated may 8, 2026</p>
+    </footer>
   </body>
 </html>
