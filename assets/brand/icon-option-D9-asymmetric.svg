@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  D9 - asymmetric dots (one bigger, one smaller)
+  Same wave as original D, but one dot is larger than the other.
+  Introduces tir-style asymmetry while keeping D's resonance
+  concept. Reads as "two different people on the same wavelength."
+-->
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" fill="#0B0B12"/>
+  <path d="M 232 512
+           C 296 320, 424 320, 488 512
+           C 552 704, 680 704, 744 512"
+        stroke="#FF8E9B" stroke-width="36" stroke-linecap="round" fill="none"/>
+  <circle cx="360" cy="360" r="56" fill="#FF8E9B"/>
+  <circle cx="616" cy="664" r="36" fill="#FF8E9B"/>
+</svg>

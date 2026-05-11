@@ -66,11 +66,17 @@ async function sendPushToUser(uid, title, body, opts) {
         body,
         data,
         sound: "default",
+        channelId: "default",
     };
     try {
+        console.log(`[push] sending to ${uid}, token=${token.slice(0, 30)}…`);
         const tickets = await expo.sendPushNotificationsAsync([message]);
         for (const ticket of tickets) {
-            if (ticket.status === "error") {
+            if (ticket.status === "ok") {
+                console.log(`[push] ✓ sent to ${uid}, ticketId=${ticket.id}`);
+            }
+            else if (ticket.status === "error") {
+                console.error(`[push] ✗ error for ${uid}:`, ticket.message, ticket.details);
                 if (((_f = ticket.details) === null || _f === void 0 ? void 0 : _f.error) === "DeviceNotRegistered") {
                     await admin.firestore().doc(`users/${uid}`).update({ fcmToken: null });
                 }

@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.dailyReminderTick = exports.onWeeklyChallengeCompleted = exports.onCoupleWritten = exports.onCeremonyUpdated = exports.onHabitCheckinCreated = exports.onHabitCreated = exports.onDecisionCreated = exports.onBattleCreated = exports.onNominationCreated = exports.onReasonCreated = exports.onMoodEntryWritten = void 0;
+exports.dailyReminderTick = exports.onWeeklyChallengeCompleted = exports.onCoupleWritten = exports.onCeremonyUpdated = exports.onHabitCheckinCreated = exports.onHabitCreated = exports.onDecisionCreated = exports.onPickCreated = exports.onNominationCreated = exports.onReasonCreated = exports.onMoodEntryWritten = void 0;
 const admin = __importStar(require("firebase-admin"));
 const firestore_1 = require("firebase-functions/v2/firestore");
 const push_1 = require("./push");
@@ -114,8 +114,11 @@ exports.onNominationCreated = (0, firestore_1.onDocumentCreated)("nominations/{d
         screen: "/awards",
     });
 });
-// ─── Battles ────────────────────────────────────────────────────────────────
-exports.onBattleCreated = (0, firestore_1.onDocumentCreated)("battles/{docId}", async (event) => {
+// ─── Pick Together (live vote) ─────────────────────────────────────────────
+//
+// Firestore collection name `battles` is preserved for backwards compat with
+// existing in-flight sessions; user-facing copy says "pick together".
+exports.onPickCreated = (0, firestore_1.onDocumentCreated)("battles/{docId}", async (event) => {
     var _a, _b, _c;
     const data = (_a = event.data) === null || _a === void 0 ? void 0 : _a.data();
     if (!data)
@@ -132,14 +135,17 @@ exports.onBattleCreated = (0, firestore_1.onDocumentCreated)("battles/{docId}", 
         if (!partnerUid)
             continue;
         const name = firstName((_c = userSnap.data()) === null || _c === void 0 ? void 0 : _c.displayName);
-        await (0, push_1.sendPushToUser)(partnerUid, "decide", `${name} started a battle — join in`, {
+        await (0, push_1.sendPushToUser)(partnerUid, "decide", `${name} started a pick — join in`, {
             feature: "decide",
-            screen: "/decide/battle-lobby",
+            screen: "/decide/pick-lobby",
         });
         break;
     }
 });
-// ─── Decisions (quickspin only) ─────────────────────────────────────────────
+// ─── Decisions (quickspin solo path) ───────────────────────────────────────
+//
+// `mode: 'quickspin'` literal is preserved on Decision docs for backwards compat
+// (history rendering + gamification counters) — UI never shows "spin".
 exports.onDecisionCreated = (0, firestore_1.onDocumentCreated)("decisions/{docId}", async (event) => {
     var _a;
     const data = (_a = event.data) === null || _a === void 0 ? void 0 : _a.data();
@@ -152,7 +158,9 @@ exports.onDecisionCreated = (0, firestore_1.onDocumentCreated)("decisions/{docId
     if (!partnerUid)
         return;
     const name = await firstNameOf(creatorUid);
-    await (0, push_1.sendPushToUser)(partnerUid, "decide", `${name} spun the wheel`, {
+    const result = data.result;
+    const body = result ? `${name} picked: ${result}` : `${name} made a pick`;
+    await (0, push_1.sendPushToUser)(partnerUid, "decide", body, {
         feature: "decide",
         screen: "/decide",
     });

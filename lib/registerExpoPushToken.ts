@@ -18,15 +18,23 @@ export async function registerExpoPushToken(uid: string): Promise<void> {
 
   try {
     const { status } = await Notifications.getPermissionsAsync();
-    if (status !== 'granted') return;
+    if (status !== 'granted') {
+      console.log(`[Hum] push: permission not granted (status=${status}), skipping token registration`);
+      return;
+    }
 
     const projectId = resolveProjectId();
+    console.log(`[Hum] push: requesting Expo push token (projectId=${projectId ?? 'none'}, platform=${Platform.OS})`);
     const tokenData = projectId
       ? await Notifications.getExpoPushTokenAsync({ projectId })
       : await Notifications.getExpoPushTokenAsync();
     const token = tokenData.data;
-    if (!token) return;
+    if (!token) {
+      console.warn('[Hum] push: getExpoPushTokenAsync returned empty token');
+      return;
+    }
 
+    console.log(`[Hum] push: ✓ got token ${token.slice(0, 30)}… — saving to Firestore for uid=${uid}`);
     await updateUserProfile(uid, { fcmToken: token });
   } catch (e) {
     console.warn('[Hum] push token registration skipped:', e);

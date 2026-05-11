@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  humm - Option A . "pair within"
+  ============================================================
+  Concept
+    The studio ring (= the shared space / orbit) holds TWO dots
+    (= the couple) instead of tir's single dot. Direct structural
+    transformation of tir's "captured target" composition: where
+    tir says "one player reached the destination", humm says "two
+    people together inside their shared orbit".
+
+  Family DNA (matches tir)
+    - Two geometric primitives (ring stroke + filled dots)
+    - Warm-near-black canvas #0B0B12
+    - Single saturated accent
+    - 15% safe inset to ring outer edge
+    - No shadows / glows / gradients in source - Liquid Glass
+      adds depth at render time (Apple HIG, iOS 26)
+
+  Per-app variation
+    - Accent color shifts from tir's electric cyan to humm's
+      saturated rose
+    - One dot becomes two, rotated ~30- apart, offset toward the
+      upper-right (preserves tir's asymmetric "1-2 o'clock" feel)
+
+  Verified against
+    - developer.apple.com/documentation/Xcode/creating-your-app-icon-using-icon-composer
+    - Apple HIG App Icons (2026)
+-->
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" fill="#0B0B12"/>
+  <circle cx="512" cy="512" r="340" stroke="#FF8E9B" stroke-width="24" fill="none"/>
+  <circle cx="572" cy="404" r="64" fill="#FF8E9B"/>
+  <circle cx="452" cy="450" r="64" fill="#FF8E9B"/>
+</svg>

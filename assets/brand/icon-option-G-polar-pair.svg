@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  humm - Option G - "polar pair"
+  Outer ring + two dots at opposite poles inside the ring. Reads
+  as "two people orbiting each other within their shared space."
+  Same primitives as A but with the dots arranged as opposites
+  rather than as a cluster - inverts A's intimacy into balance.
+-->
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" fill="#0B0B12"/>
+  <circle cx="512" cy="512" r="340" stroke="#FF8E9B" stroke-width="24" fill="none"/>
+  <circle cx="512" cy="288" r="64" fill="#FF8E9B"/>
+  <circle cx="512" cy="736" r="64" fill="#FF8E9B"/>
+</svg>
