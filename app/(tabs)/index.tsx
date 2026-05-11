@@ -114,8 +114,32 @@ function PresenceDot({ level }: { level: PresenceLevel }) {
   );
 }
 
-// ─── greeting + partner row ──────────────────────────────────────────────────
+// ─── greeting + partner-presence subtitle ───────────────────────────────────
 
+/**
+ * Large-title-with-subtitle pattern, after iOS 17 `UINavigationItem.subtitle`
+ * and M3 `LargeFlexibleTopAppBar.subtitle`. The greeting is the large title;
+ * the partner-presence row is the subtitle. Both live inside ONE header
+ * block whose **total flow height = 98pt**, byte-equivalent to `ScreenTitle`,
+ * so the home tab's first card aligns to the same Y as every other tab's
+ * first card.
+ *
+ * Math:
+ *   no subtitle:  paddingTop 28 + greeting 42 + paddingBottom 28          = 98
+ *   w/ subtitle:  paddingTop 28 + greeting 42 + mt 6 + row 16 + padBot 6  = 98
+ *
+ * The bottom padding compresses from 28→6 when the subtitle is present —
+ * the canonical iOS 17 / M3 spec: the subtitle row occupies part of the
+ * title-area height, it does not push content downward. Per Slack/Discord
+ * canon the presence dot is anchored to the partner's first name on the
+ * SAME row, so the dot reads as the partner's status, not the user's.
+ *
+ * Sources: Apple HIG `UINavigationItem` —
+ *   https://developer.apple.com/documentation/uikit/uinavigationitem
+ * M3 LargeFlexibleTopAppBar —
+ *   https://m3.material.io/components/app-bars/overview
+ * Slack §Presence — https://slack.com/help/articles/4412421674259
+ */
 function GreetingBlock({
   displayName,
   partnerFirst,
@@ -127,9 +151,15 @@ function GreetingBlock({
 }) {
   const greeting = useTimeGreeting(displayName);
   const presence = usePartnerPresence();
+  const showSubtitle = partnerLinked && presence !== 'off';
 
   return (
-    <View className="pb-7" style={{ paddingTop: HEADER_BLOCK_PADDING_TOP }}>
+    <View
+      style={{
+        paddingTop: HEADER_BLOCK_PADDING_TOP,
+        paddingBottom: showSubtitle ? 6 : 28,
+      }}
+    >
       <Text
         className="text-[36px] font-extralight leading-[42px] tracking-[-0.025em] text-hum-text"
         maxFontSizeMultiplier={1.3}
@@ -139,11 +169,12 @@ function GreetingBlock({
       >
         {greeting}
       </Text>
-      {partnerLinked && presence !== 'off' && (
-        <View className="mt-1.5 flex-row items-center">
+      {showSubtitle && (
+        <View className="mt-1.5 flex-row items-center gap-x-2">
           <PresenceDot level={presence} />
           <Text
-            className="ml-2 text-[14px] font-light tracking-[-0.01em] text-hum-dim"
+            className="text-[13px] font-light leading-[16px] tracking-[-0.01em] text-hum-dim"
+            numberOfLines={1}
             maxFontSizeMultiplier={1.25}
             accessibilityLabel={`${partnerFirst}, ${presence === 'online' ? 'active now' : presence === 'recent' ? 'recently active' : 'active earlier'}`}
           >
@@ -177,7 +208,7 @@ const MAIN_TILES: FeatureTile[] = [
     href: '/decide',
     a11y: 'decide',
     tone: 'spark',
-    iconBgClass: 'bg-hum-spark/14',
+    iconBgClass: 'bg-hum-spark/22',
   },
   {
     key: 'habits',
@@ -187,7 +218,7 @@ const MAIN_TILES: FeatureTile[] = [
     href: '/habits',
     a11y: 'habits',
     tone: 'sage',
-    iconBgClass: 'bg-hum-sage/14',
+    iconBgClass: 'bg-hum-sage/22',
   },
   {
     key: 'reasons',
@@ -197,7 +228,7 @@ const MAIN_TILES: FeatureTile[] = [
     href: '/reasons',
     a11y: 'reasons',
     tone: 'crimson',
-    iconBgClass: 'bg-hum-crimson/14',
+    iconBgClass: 'bg-hum-crimson/22',
   },
   {
     key: 'awards',
@@ -207,7 +238,7 @@ const MAIN_TILES: FeatureTile[] = [
     href: '/awards',
     a11y: 'awards',
     tone: 'gold',
-    iconBgClass: 'bg-hum-gold/14',
+    iconBgClass: 'bg-hum-gold/22',
   },
 ];
 
@@ -226,6 +257,9 @@ function TileGrid() {
               key={t.key}
               pressable
               tone={t.tone}
+              tier="bold"
+              tonalTint={t.tone}
+              topHighlight
               padding="standard"
               onPress={() => router.push(t.href)}
               accessibilityLabel={t.a11y}
@@ -282,6 +316,9 @@ export default function Home() {
           <Card
             pressable
             tone="bloom"
+            tier="bold"
+            tonalTint="bloom"
+            topHighlight
             padding="standard"
             onPress={() => router.push('/mood')}
             accessibilityLabel="open mood"
@@ -289,7 +326,7 @@ export default function Home() {
             className="gap-y-4"
           >
             <View className="flex-row items-center gap-x-3">
-              <View className="h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-hum-bloom/14">
+              <View className="h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-hum-bloom/22">
                 <Ionicons name="heart-half-outline" size={20} color={theme.bloom} />
               </View>
               <Text
@@ -314,13 +351,16 @@ export default function Home() {
         <Card
           pressable
           tone="primary"
+          tier="bold"
+          tonalTint="primary"
+          topHighlight
           padding="list-row"
           onPress={() => router.push('/profile')}
           accessibilityLabel="profile and settings"
           accessibilityHint="xp, badges, and relationship cred"
           className="flex-row items-center gap-x-3"
         >
-          <View className="h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-hum-primary/14">
+          <View className="h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-hum-primary/22">
             <Ionicons name="person-outline" size={20} color={theme.primary} />
           </View>
           <Text

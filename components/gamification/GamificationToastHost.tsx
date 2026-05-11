@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { XP_BANNER_ABOVE_TAB_GAP, tabBarTotalHeight } from '@/constants/tabBar';
 import { useXpFeedbackStore } from '@/lib/stores/xpFeedbackStore';
+import { useCelebrationOverlayStore } from '@/lib/stores/celebrationOverlayStore';
 import type { GrantXpResult } from '@/lib/firestore/gamification';
 import { getBadge } from '@/constants/badges';
 import { MODAL_SHEET_PADDING_H, MODAL_SHEET_PADDING_V } from '@/constants/screenLayout';
@@ -24,6 +25,7 @@ export function GamificationToastHost() {
   const insets = useSafeAreaInsets();
   const queue = useXpFeedbackStore((s) => s.queue);
   const shift = useXpFeedbackStore((s) => s.shift);
+  const celebrationActive = useCelebrationOverlayStore((s) => s.active);
   const head = queue[0];
   const [banner, setBanner] = useState<string | null>(null);
   const [modal, setModal] = useState<ModalPayload | null>(null);
@@ -76,6 +78,11 @@ export function GamificationToastHost() {
   useEffect(() => {
     if (modal) return;
     if (!head) return;
+    // Hold the queue while a peak-moment celebration overlay (emoji shower)
+    // is on screen so XP banners and level/badge modals don't compete with
+    // the celebration. The effect re-runs when `celebrationActive` flips
+    // back to 0 and processes whatever was waiting.
+    if (celebrationActive > 0) return;
 
     if (head.kind === 'xp') {
       const leveledUp = head.result.newLevel > head.result.previousLevel;
@@ -94,7 +101,7 @@ export function GamificationToastHost() {
       shift();
       setModal({ kind: 'badges', ids: head.ids });
     }
-  }, [head, modal, shift, showBanner]);
+  }, [head, modal, shift, showBanner, celebrationActive]);
 
   const closeModal = () => setModal(null);
 

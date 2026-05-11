@@ -18,13 +18,19 @@ export interface UserProfile {
   /** Updated on app foreground; drives partner-presence indicator. */
   lastActiveAt?: Timestamp;
   /**
-   * Reasons tab (legacy): draw count under the old stacking model.
-   * Used only to infer checkpoint when partner count checkpoints are absent.
+   * @deprecated Legacy "draws consumed" counter under the old stacking model.
+   * Persisted on old user docs but NO LONGER READ — see
+   * `lib/reasonsDrawCredits.ts` for why (drifted above current byMe count
+   * on legacy accounts and locked the unlock forever).
    */
   becauseDrawsConsumed?: number;
   /** Reasons tab: “by you for partner” count after your last “deal three” (canonical Firestore field). */
   reasonPartnerCountAtLastDraw?: number;
-  /** @deprecated Legacy field; prefer `reasonPartnerCountAtLastDraw` (still read for old docs). */
+  /**
+   * @deprecated Legacy clone of `reasonPartnerCountAtLastDraw`. Persisted
+   * on old user docs but NO LONGER READ — same reason as
+   * `becauseDrawsConsumed` above.
+   */
   becausePartnerReasonCountAtLastDraw?: number;
   /** @deprecated Legacy field; migrated to `moodEntries` collection. Kept for migration read. */
   moodSticker?: { id: string; emoji: string; label: string; updatedAt: Timestamp } | null;

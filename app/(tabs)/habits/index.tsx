@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { Alert, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { router } from 'expo-router';
@@ -26,8 +26,8 @@ import { HabitsActionBar } from '@/components/habits/HabitsActionBar';
 import { HabitCard } from '@/components/habits/HabitCard';
 import { InlineAddHabitTile } from '@/components/habits/InlineAddHabitTile';
 import { SectionLabel } from '@/components/shared/SectionLabel';
-import { EditHabitSheet } from '@/components/habits/EditHabitSheet';
 import { HabitsAdherenceLog } from '@/components/habits/HabitsAdherenceLog';
+import { navVoice } from '@/constants/hummVoice';
 import { purgeLegacyHabitsIfNeeded } from '@/lib/firestore/habitsLegacyPurge';
 
 function sortSharedDailyKeys(
@@ -132,9 +132,29 @@ export default function HabitsBoardScreen() {
   const toggleDailyCheckin = useHabitStore((s) => s.toggleDailyCheckin);
   const toggleWeeklyCheckin = useHabitStore((s) => s.toggleWeeklyCheckin);
 
-  const [editHabit, setEditHabit] = useState<Habit | null>(null);
+  const archiveHabit = useHabitStore((s) => s.archiveHabit);
   const [purging, setPurging] = useState(false);
   const purgeLock = useRef(false);
+
+  const confirmDeleteHabit = useCallback(
+    (h: Habit) => {
+      Alert.alert(
+        'delete this habit?',
+        `"${h.title}" will be removed. you can add a new one anytime.`,
+        [
+          { text: navVoice.cancel, style: 'cancel' },
+          {
+            text: 'delete',
+            style: 'destructive',
+            onPress: () => {
+              void archiveHabit(h.id);
+            },
+          },
+        ],
+      );
+    },
+    [archiveHabit],
+  );
 
   const myUid = profile?.uid ?? '';
   const coupleId = profile?.coupleId ?? '';
@@ -399,7 +419,7 @@ export default function HabitsBoardScreen() {
                       !!partnerId && hasDailyCheckin(checkinKeys, h.id, partnerId, todayKey)
                     }
                     onToggleMine={() => void toggleDailyCheckin(h.id, coupleId, myUid)}
-                    onEditPress={() => setEditHabit(h)}
+                    onDeletePress={() => confirmDeleteHabit(h)}
                   />
                 ))}
               </View>
@@ -417,7 +437,7 @@ export default function HabitsBoardScreen() {
                     myLabel={myFirst}
                     myChecked={hasDailyCheckin(checkinKeys, h.id, myUid, todayKey)}
                     onToggleMine={() => void toggleDailyCheckin(h.id, coupleId, myUid)}
-                    onEditPress={() => setEditHabit(h)}
+                    onDeletePress={() => confirmDeleteHabit(h)}
                   />
                 ))}
               </View>
@@ -449,7 +469,7 @@ export default function HabitsBoardScreen() {
                       inactive={!active}
                       startsLabel={starts}
                       onToggleMine={() => void toggleWeeklyCheckin(h.id, coupleId, myUid)}
-                      onEditPress={() => setEditHabit(h)}
+                      onDeletePress={() => confirmDeleteHabit(h)}
                     />
                   );
                 })}
@@ -476,7 +496,7 @@ export default function HabitsBoardScreen() {
                       inactive={!active}
                       startsLabel={starts}
                       onToggleMine={() => void toggleWeeklyCheckin(h.id, coupleId, myUid)}
-                      onEditPress={() => setEditHabit(h)}
+                      onDeletePress={() => confirmDeleteHabit(h)}
                     />
                   );
                 })}
@@ -512,7 +532,6 @@ export default function HabitsBoardScreen() {
         ) : null}
       </ScrollView>
 
-      <EditHabitSheet visible={!!editHabit} habit={editHabit} onClose={() => setEditHabit(null)} />
     </SafeAreaView>
   );
 }

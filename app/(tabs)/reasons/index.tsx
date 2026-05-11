@@ -22,7 +22,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { Button } from '@/components/shared/Button';
 import { Card } from '@/components/shared/Card';
 import { ScreenTitle } from '@/components/shared/ScreenTitle';
-import { EmptyState } from '@/components/shared/EmptyState';
 import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useReasonStore } from '@/lib/stores/reasonStore';
@@ -470,7 +469,7 @@ export default function ReasonsScreen() {
           </View>
         </View>
 
-        {myUid && partnerId ? (
+        {myUid && partnerId && byMe.length > 0 ? (
           <Card className="gap-y-3">
             <Text
               className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
@@ -478,35 +477,21 @@ export default function ReasonsScreen() {
             >
               {reasonsVoice.listForPartnerEyebrow(partnerName)}
             </Text>
-            {byMe.length === 0 ? (
-              <EmptyState
-                className="px-0 py-2"
-                ionicon="heart-outline"
-                ioniconColor={`${theme.crimson}B3`}
-                title={reasonsVoice.listForPartnerEmpty}
-                description={reasonsVoice.writeFirstBody}
-                primaryAction={{
-                  label: reasonsVoice.primaryWriteFor(partnerName),
-                  onPress: openWrite,
-                }}
-              />
-            ) : (
-              <View className="gap-y-2.5">
-                {byMe.map((r) => (
-                  <View
-                    key={r.id}
-                    className="rounded-[18px] border border-hum-crimson/18 bg-hum-surface/45 px-4 py-3.5"
+            <View className="gap-y-2.5">
+              {byMe.map((r) => (
+                <View
+                  key={r.id}
+                  className="rounded-[18px] border border-hum-crimson/18 bg-hum-surface/45 px-4 py-3.5"
+                >
+                  <Text
+                    className="text-[14px] font-light leading-[21px] text-hum-text"
+                    maxFontSizeMultiplier={1.5}
                   >
-                    <Text
-                      className="text-[14px] font-light leading-[21px] text-hum-text"
-                      maxFontSizeMultiplier={1.5}
-                    >
-                      {r.text}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            )}
+                    {r.text}
+                  </Text>
+                </View>
+              ))}
+            </View>
           </Card>
         ) : null}
       </ScrollView>

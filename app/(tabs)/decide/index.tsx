@@ -165,14 +165,6 @@ export default function Decide() {
         ) : (
           <>
             <Text
-              className="text-center text-[13px] font-light leading-[20px] text-hum-muted"
-              maxFontSizeMultiplier={1.3}
-              numberOfLines={1}
-            >
-              decide together · or randomize
-            </Text>
-
-            <Text
               className="px-1 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
               maxFontSizeMultiplier={1.25}
               numberOfLines={1}

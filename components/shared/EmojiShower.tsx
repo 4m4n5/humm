@@ -10,6 +10,7 @@ import Animated, {
   ReduceMotion,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
+import { useCelebrationOverlayStore } from '@/lib/stores/celebrationOverlayStore';
 
 export type ShowerIntensity = 'gentle' | 'standard' | 'lavish';
 export type ShowerPattern = 'fountain' | 'rain' | 'sides' | 'burst';
@@ -380,6 +381,13 @@ export function EmojiShower({
       clearTimeout(hapticTimer);
     };
   }, [visible, fireConfig, onFinished, fireHaptic, intensity]);
+
+  useEffect(() => {
+    if (!visible) return;
+    const { push, pop } = useCelebrationOverlayStore.getState();
+    push();
+    return () => pop();
+  }, [visible]);
 
   if (!visible || !fireConfig) return null;
 

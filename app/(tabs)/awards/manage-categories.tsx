@@ -8,6 +8,7 @@ import { Button } from '@/components/shared/Button';
 import { Input } from '@/components/shared/Input';
 import { LinkPartnerGate } from '@/components/shared/LinkPartnerGate';
 import { AmbientGlow } from '@/components/shared/AmbientGlow';
+import { SectionLabel } from '@/components/shared/SectionLabel';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { useNominationsStore } from '@/lib/stores/nominationsStore';
 import {
@@ -156,20 +157,30 @@ export default function ManageAwardCategoriesScreen() {
             >
               {editingId === row.id ? (
                 <>
-                  <TextInput
-                    className="rounded-[20px] border border-hum-border/18 bg-hum-surface/70 px-4 py-3 text-[15px] text-hum-text"
-                    placeholder="emoji"
-                    placeholderTextColor={theme.dim}
-                    value={draftEmoji}
-                    onChangeText={setDraftEmoji}
-                    maxLength={8}
+                  <Input
+                    label="name"
+                    value={draftLabel}
+                    onChangeText={setDraftLabel}
+                    autoCapitalize="sentences"
+                    placeholder="cooking moment"
                   />
-                  <Input label="name" value={draftLabel} onChangeText={setDraftLabel} />
-                  <View className="flex-row gap-2">
+                  <View className="gap-y-2.5">
+                    <SectionLabel title="emoji" />
+                    <TextInput
+                      className="min-h-[52px] rounded-[20px] border border-hum-gold/18 bg-hum-surface/80 px-4 py-3.5 text-[22px] font-light text-hum-text"
+                      placeholder="✨"
+                      placeholderTextColor={theme.dim}
+                      value={draftEmoji}
+                      onChangeText={setDraftEmoji}
+                      maxLength={8}
+                    />
+                  </View>
+                  <View className="flex-row gap-2 pt-1">
                     <Button
                       label="save"
                       onPress={() => void saveEdit()}
                       loading={busy === `edit-${row.id}`}
+                      disabled={!draftLabel.trim() || !draftEmoji.trim()}
                       size="sm"
                       className="flex-1"
                     />
@@ -255,29 +266,40 @@ export default function ManageAwardCategoriesScreen() {
           </View>
         ) : null}
 
-        <View className="gap-y-3 rounded-[20px] border border-hum-border/18 bg-hum-surface/28 px-4 py-5">
-          <Text
-            className="text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim"
-            maxFontSizeMultiplier={1.25}
-          >
-            new category
-          </Text>
-          <Text className="text-[12px] text-hum-dim" maxFontSizeMultiplier={1.3}>
-            an emoji · a short name
-          </Text>
-          <TextInput
-            className="rounded-[20px] border border-hum-border/18 bg-hum-card px-4 py-3 text-[15px] text-hum-text"
-            placeholder="emoji"
-            placeholderTextColor={theme.dim}
-            value={newEmoji}
-            onChangeText={setNewEmoji}
-            maxLength={8}
+        <View className="h-px bg-hum-border/12" />
+
+        <View className="gap-y-3.5">
+          <SectionLabel title="new category" />
+          <Input
+            label="name"
+            placeholder="cooking moment"
+            value={newLabel}
+            onChangeText={setNewLabel}
+            autoCapitalize="sentences"
           />
-          <Input label="name" value={newLabel} onChangeText={setNewLabel} />
-          <Button label="add category" onPress={() => void onAdd()} loading={busy === 'add'} disabled={!newLabel.trim() || !newEmoji.trim()} size="lg" />
+          <View className="gap-y-2.5">
+            <SectionLabel title="emoji" />
+            <TextInput
+              className="min-h-[52px] rounded-[20px] border border-hum-gold/18 bg-hum-surface/80 px-4 py-3.5 text-[22px] font-light text-hum-text"
+              placeholder="✨"
+              placeholderTextColor={theme.dim}
+              value={newEmoji}
+              onChangeText={setNewEmoji}
+              maxLength={8}
+            />
+          </View>
+          <View className="pt-1">
+            <Button
+              label="add category"
+              onPress={() => void onAdd()}
+              loading={busy === 'add'}
+              disabled={!newLabel.trim() || !newEmoji.trim()}
+              size="lg"
+            />
+          </View>
         </View>
 
-          <Button label={navVoice.done} variant="secondary" size="lg" onPress={() => router.back()} />
+        <Button label={navVoice.done} variant="secondary" size="lg" onPress={() => router.back()} />
       </ScrollView>
     </SafeAreaView>
   );

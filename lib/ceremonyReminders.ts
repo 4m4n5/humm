@@ -5,7 +5,12 @@ import { Ceremony } from '@/types';
 let handlerSet = false;
 
 /**
- * Register foreground behavior once (required for local notifications to show while app is open).
+ * Register foreground behavior once (required for local notifications to show
+ * while app is open) and ensure a `default` Android channel exists with HIGH
+ * importance so server-driven pushes (which don't carry a `channelId`) are
+ * actually rendered when the app is backgrounded. Without an explicit default
+ * channel, Android 8+ silently drops server pushes that target the implicit
+ * "Miscellaneous" channel at low importance.
  */
 export function ensureNotificationHandler(): void {
   if (Platform.OS === 'web') return;
@@ -19,6 +24,15 @@ export function ensureNotificationHandler(): void {
       shouldSetBadge: false,
     }),
   });
+
+  if (Platform.OS === 'android') {
+    void Notifications.setNotificationChannelAsync('default', {
+      name: 'Hum',
+      importance: Notifications.AndroidImportance.HIGH,
+      lightColor: '#E8A09A',
+      vibrationPattern: [0, 220, 180, 220],
+    }).catch(() => {});
+  }
 }
 
 const PREFIX = 'humtum-ceremony-';

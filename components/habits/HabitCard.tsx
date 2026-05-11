@@ -41,7 +41,7 @@ type Props = {
   inactive?: boolean;
   startsLabel?: string;
   onToggleMine: () => void;
-  onEditPress: () => void;
+  onDeletePress: () => void;
 };
 
 function initialOf(s: string): string {
@@ -299,7 +299,7 @@ export function HabitCard({
   inactive,
   startsLabel,
   onToggleMine,
-  onEditPress,
+  onDeletePress,
 }: Props) {
   const isShared = variant === 'shared-daily' || variant === 'shared-weekly';
   const isWeekly = variant === 'shared-weekly' || variant === 'personal-weekly';
@@ -345,11 +345,8 @@ export function HabitCard({
   if (isShared) {
     return (
       <CardPulseWrapper pulse={both}>
-        <Pressable
-          onLongPress={onEditPress}
-          delayLongPress={420}
+        <View
           accessibilityLabel={`shared habit: ${title}`}
-          accessibilityHint="long press to edit"
           className={cardBaseClass}
           style={cardShadow}
         >
@@ -365,13 +362,13 @@ export function HabitCard({
             </Text>
             {inactive && startsLabel ? <StartsChip label={startsLabel} /> : null}
             <Pressable
-              onPress={onEditPress}
+              onPress={onDeletePress}
               hitSlop={10}
               accessibilityRole="button"
-              accessibilityLabel={`edit habit ${title}`}
+              accessibilityLabel={`delete habit ${title}`}
               className="h-11 w-11 items-center justify-center rounded-full active:opacity-70"
             >
-              <Ionicons name="ellipsis-horizontal" size={17} color={theme.dim} style={{ opacity: 0.45 }} />
+              <Ionicons name="trash-outline" size={17} color={theme.dim} style={{ opacity: 0.55 }} />
             </Pressable>
           </View>
 
@@ -392,42 +389,44 @@ export function HabitCard({
               readOnly
             />
           </View>
-        </Pressable>
+        </View>
       </CardPulseWrapper>
     );
   }
 
   return (
-    <Pressable
-      onPress={inactive ? undefined : handleToggle}
-      onLongPress={onEditPress}
-      delayLongPress={420}
-      accessibilityRole="checkbox"
-      accessibilityState={{ checked: myChecked, disabled: inactive }}
-      accessibilityLabel={`habit: ${title}`}
+    <View
       className={`${cardBaseClass} flex-row items-center gap-3 px-3.5 py-3`}
       style={cardShadow}
     >
-      <AnimatedEmojiTile emoji={emoji} completed={completed} bothJustCompleted={false} />
-      <Text
-        numberOfLines={1}
-        className="flex-1 text-[15px] font-medium leading-[20px] tracking-tight text-hum-text"
-        style={titleStyle}
-        maxFontSizeMultiplier={1.3}
-      >
-        {title}
-      </Text>
-      {inactive && startsLabel ? <StartsChip label={startsLabel} /> : null}
       <Pressable
-        onPress={onEditPress}
+        onPress={inactive ? undefined : handleToggle}
+        accessibilityRole="checkbox"
+        accessibilityState={{ checked: myChecked, disabled: inactive }}
+        accessibilityLabel={`habit: ${title}`}
+        className="flex-1 flex-row items-center gap-3"
+      >
+        <AnimatedEmojiTile emoji={emoji} completed={completed} bothJustCompleted={false} />
+        <Text
+          numberOfLines={1}
+          className="flex-1 text-[15px] font-medium leading-[20px] tracking-tight text-hum-text"
+          style={titleStyle}
+          maxFontSizeMultiplier={1.3}
+        >
+          {title}
+        </Text>
+        {inactive && startsLabel ? <StartsChip label={startsLabel} /> : null}
+        <BloomingCheck checked={myChecked} />
+      </Pressable>
+      <Pressable
+        onPress={onDeletePress}
         hitSlop={10}
         accessibilityRole="button"
-        accessibilityLabel={`edit habit ${title}`}
+        accessibilityLabel={`delete habit ${title}`}
         className="h-11 w-11 items-center justify-center rounded-full active:opacity-70"
       >
-        <Ionicons name="ellipsis-horizontal" size={17} color={theme.dim} style={{ opacity: 0.45 }} />
+        <Ionicons name="trash-outline" size={17} color={theme.dim} style={{ opacity: 0.55 }} />
       </Pressable>
-      <BloomingCheck checked={myChecked} />
-    </Pressable>
+    </View>
   );
 }
