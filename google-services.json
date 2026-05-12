@@ -40,6 +40,42 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:445351612319:android:253af4188c3513576277aa",
+        "android_client_info": {
+          "package_name": "dev.aaam.hum"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "445351612319-ok3apo8cncogjhrn28la08m3mh00cff6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQa0e2J0l3rXPTQ3B2jJNbheBOROsBI6I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "445351612319-ok3apo8cncogjhrn28la08m3mh00cff6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "445351612319-ci40pudshbn6jp1j4vsduotk8c1b2drj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.humtum.app"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"
