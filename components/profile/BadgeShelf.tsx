@@ -3,7 +3,7 @@ import { View, Text, ScrollView, useWindowDimensions } from 'react-native';
 import { Card } from '@/components/shared/Card';
 import { getBadge } from '@/constants/badges';
 
-const DEFAULT_EMPTY_MESSAGE = 'no badges yet · reasons · habits · spins · seasons';
+const DEFAULT_EMPTY_MESSAGE = 'no badges yet · reasons · habits · decisions · seasons';
 
 type Props = {
   earnedIds: string[];

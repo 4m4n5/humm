@@ -317,7 +317,7 @@ export const onCoupleWritten = onDocumentWritten(
       const partnerName = names[1 - i];
       await sendPushToUser(
         uids[i],
-        "humm",
+        "hum",
         `you and ${partnerName} are linked — welcome 💞`,
         { feature: "awards", screen: "/" },
       );

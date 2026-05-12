@@ -301,7 +301,7 @@ exports.onCoupleWritten = (0, firestore_1.onDocumentWritten)("couples/{coupleId}
     const names = await Promise.all(uids.map(firstNameOf));
     for (let i = 0; i < uids.length; i++) {
         const partnerName = names[1 - i];
-        await (0, push_1.sendPushToUser)(uids[i], "humm", `you and ${partnerName} are linked — welcome 💞`, { feature: "awards", screen: "/" });
+        await (0, push_1.sendPushToUser)(uids[i], "hum", `you and ${partnerName} are linked — welcome 💞`, { feature: "awards", screen: "/" });
     }
 });
 // ─── Weekly challenge completed ─────────────────────────────────────────────

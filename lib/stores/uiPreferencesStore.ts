@@ -37,7 +37,7 @@ export const useUiPreferencesStore = create<State>()(
       setPushPromptShown: (pushPromptShown) => set({ pushPromptShown }),
     }),
     {
-      name: 'humtum-ui-prefs',
+      name: 'hum-ui-prefs',
       storage: createJSONStorage(() => AsyncStorage),
     },
   ),

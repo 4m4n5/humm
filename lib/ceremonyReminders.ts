@@ -35,7 +35,7 @@ export function ensureNotificationHandler(): void {
   }
 }
 
-const PREFIX = 'humtum-ceremony-';
+const PREFIX = 'hum-ceremony-';
 
 export async function cancelAllCeremonyReminders(): Promise<void> {
   if (Platform.OS === 'web') return;

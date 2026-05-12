@@ -1,5 +1,5 @@
 /**
- * Shared UI voice for Hum (store: "Hum - rituals"): lowercase, warm, light metaphors.
+ * Shared UI voice for Hum: lowercase, warm, light metaphors.
  * Prefer short fragments; lean on UI (chips, color, layout) over prose.
  *
  * Award ceremony product names vs Firestore: ../docs/CEREMONY_TERMINOLOGY.md

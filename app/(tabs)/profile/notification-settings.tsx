@@ -252,7 +252,7 @@ export default function NotificationSettingsScreen() {
             <View className="border-t border-hum-border/12" />
           <ReminderRow
             label="habit check-in"
-            hint="don\u2019t forget today\u2019s rituals"
+            hint="a gentle nudge for your habits"
             cfg={reminders.habits}
             onToggle={() => toggleReminder('habits')}
             onPickTime={() => setPicker('habits')}

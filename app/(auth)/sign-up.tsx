@@ -62,7 +62,7 @@ export default function SignUp() {
                 className="text-center text-[40px] font-extralight leading-[44px] tracking-[-0.02em] text-hum-primary"
                 maxFontSizeMultiplier={1.3}
               >
-                Hum - rituals
+                Hum
               </Text>
               <Text
                 className="text-center text-[14px] font-light tracking-wide text-hum-muted"
