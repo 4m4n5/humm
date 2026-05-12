@@ -9,18 +9,35 @@ function resolveProjectId(): string | undefined {
 }
 
 /**
- * Saves Expo push token to `users/{uid}.fcmToken` for future server-driven pushes
- * (Cloud Functions + Expo Push API or FCM). Safe no-op on web, denied permission,
- * missing EAS projectId, or simulator / Expo Go limitations.
+ * Outcomes of a single registration attempt. Used by the settings screen to
+ * decide what to show / what button action to expose.
  */
-export async function registerExpoPushToken(uid: string): Promise<void> {
-  if (Platform.OS === 'web') return;
+export type RegisterPushResult =
+  | { status: 'web-noop' }
+  | { status: 'permission-undetermined' }
+  | { status: 'permission-denied' }
+  | { status: 'token-empty' }
+  | { status: 'error'; error: string }
+  | { status: 'ok'; token: string };
+
+/**
+ * Saves Expo push token to `users/{uid}.fcmToken` for future server-driven pushes
+ * (Cloud Functions + Expo Push API or FCM). Idempotent: safe to call repeatedly
+ * on every app foreground / every auth state change. The returned `status`
+ * tells callers what (if anything) needs the user's attention.
+ */
+export async function registerExpoPushToken(uid: string): Promise<RegisterPushResult> {
+  if (Platform.OS === 'web') return { status: 'web-noop' };
 
   try {
     const { status } = await Notifications.getPermissionsAsync();
+    if (status === 'undetermined') {
+      console.log('[Hum] push: permission undetermined, skipping silent registration');
+      return { status: 'permission-undetermined' };
+    }
     if (status !== 'granted') {
       console.log(`[Hum] push: permission not granted (status=${status}), skipping token registration`);
-      return;
+      return { status: 'permission-denied' };
     }
 
     const projectId = resolveProjectId();
@@ -31,12 +48,15 @@ export async function registerExpoPushToken(uid: string): Promise<void> {
     const token = tokenData.data;
     if (!token) {
       console.warn('[Hum] push: getExpoPushTokenAsync returned empty token');
-      return;
+      return { status: 'token-empty' };
     }
 
     console.log(`[Hum] push: ✓ got token ${token.slice(0, 30)}… — saving to Firestore for uid=${uid}`);
     await updateUserProfile(uid, { fcmToken: token });
+    return { status: 'ok', token };
   } catch (e) {
-    console.warn('[Hum] push token registration skipped:', e);
+    const message = e instanceof Error ? e.message : String(e);
+    console.warn('[Hum] push token registration error:', message);
+    return { status: 'error', error: message };
   }
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Platform } from 'react-native';
+import { AppState, Platform } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
@@ -73,13 +73,39 @@ export default function AppRoot() {
 
   useEffect(() => {
     if (!profile?.uid) return;
+    const uid = profile.uid;
+
     if (Platform.OS !== 'web') {
+      // Initial attempt on auth/profile readiness.
       import('@/lib/registerExpoPushToken').then(({ registerExpoPushToken }) =>
-        registerExpoPushToken(profile.uid).catch((e) =>
+        registerExpoPushToken(uid).catch((e) =>
           console.warn('[AppRoot] registerExpoPushToken', e),
         ),
       );
+
+      // Self-healing path: re-attempt registration whenever the app comes
+      // back to the foreground. Covers the common case where a user toggles
+      // the OS notification permission in Settings and returns to the app —
+      // we pick up the new state and persist the token without requiring
+      // any explicit UI interaction.
+      const sub = AppState.addEventListener('change', (next) => {
+        if (next !== 'active') return;
+        import('@/lib/registerExpoPushToken').then(({ registerExpoPushToken }) =>
+          registerExpoPushToken(uid).catch((e) =>
+            console.warn('[AppRoot] registerExpoPushToken on resume', e),
+          ),
+        );
+      });
+
+      if (profile) {
+        void migrateLegacyMoodSticker(profile).catch((e) =>
+          console.warn('[AppRoot] migrateLegacyMoodSticker', e),
+        );
+      }
+
+      return () => sub.remove();
     }
+
     if (profile) {
       void migrateLegacyMoodSticker(profile).catch((e) =>
         console.warn('[AppRoot] migrateLegacyMoodSticker', e),

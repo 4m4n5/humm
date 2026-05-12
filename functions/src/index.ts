@@ -6,6 +6,7 @@ import {
 } from "firebase-functions/v2/firestore";
 import { sendPushToUser } from "./push";
 import { dailyReminderTick } from "./dailyReminders";
+import { diagnosePush } from "./diagnosePush";
 
 /**
  * Firestore-triggered partner notifications via Expo Push API (`expo-server-sdk`).
@@ -350,3 +351,7 @@ export const onWeeklyChallengeCompleted = onDocumentUpdated(
 // ─── Daily reminders (scheduled) ────────────────────────────────────────────
 
 export { dailyReminderTick };
+
+// ─── One-shot diagnostic (TEMPORARY — remove after debugging) ───────────────
+
+export { diagnosePush };

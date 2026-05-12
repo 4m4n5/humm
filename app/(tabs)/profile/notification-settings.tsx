@@ -14,6 +14,7 @@ import { ScreenHeader } from '@/components/shared/ScreenHeader';
 import { AmbientGlow } from '@/components/shared/AmbientGlow';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { updateUserProfile } from '@/lib/firestore/users';
+import { usePushSetupStatus, type PushSetupState } from '@/lib/usePushSetupStatus';
 import { scrollContentStandard } from '@/constants/screenLayout';
 import { theme } from '@/constants/theme';
 import { cardShadow } from '@/constants/elevation';
@@ -194,6 +195,9 @@ export default function NotificationSettingsScreen() {
         contentContainerStyle={scrollContentStandard}
         showsVerticalScrollIndicator={false}
       >
+        {/* ─── Push setup ─── */}
+        <PushSetupSection />
+
         {/* ─── Partner activity ─── */}
         <Text className="mb-2 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim" maxFontSizeMultiplier={1.25}>
           partner activity
@@ -281,6 +285,85 @@ export default function NotificationSettingsScreen() {
     </SafeAreaView>
   );
 }
+
+function PushSetupSection() {
+  const { state, busy, repair } = usePushSetupStatus();
+  if (state === 'web' || state === 'unknown') return null;
+
+  const copy = COPY_FOR_STATE[state];
+  const showButton = state !== 'ok';
+
+  return (
+    <View className="mb-4">
+      <Text className="mb-2 text-[10px] font-medium uppercase tracking-[0.18em] text-hum-dim" maxFontSizeMultiplier={1.25}>
+        push setup
+      </Text>
+      <View
+        className="overflow-hidden rounded-[22px] border border-hum-border/18 bg-hum-card"
+        style={cardShadow}
+      >
+        <View className="px-4 py-3.5">
+          <View className="flex-row items-center justify-between">
+            <View className="mr-3 flex-1">
+              <View className="flex-row items-center">
+                <View
+                  className={`mr-2 h-2 w-2 rounded-full ${state === 'ok' ? 'bg-hum-sage' : 'bg-hum-primary/70'}`}
+                />
+                <Text className="text-[14px] font-medium text-hum-text" maxFontSizeMultiplier={1.3}>
+                  {copy.title}
+                </Text>
+              </View>
+              <Text className="mt-1 text-[11.5px] font-light text-hum-dim" maxFontSizeMultiplier={1.25}>
+                {copy.hint}
+              </Text>
+            </View>
+            {showButton ? (
+              <Pressable
+                onPress={() => void repair()}
+                accessibilityRole="button"
+                accessibilityLabel={copy.button}
+                disabled={busy}
+                className={`min-h-[44px] items-center justify-center rounded-full border border-hum-primary/40 bg-hum-primary/12 px-3.5 ${busy ? 'opacity-50' : 'active:opacity-70'}`}
+              >
+                <Text className="text-[12.5px] font-semibold text-hum-primary" maxFontSizeMultiplier={1.25}>
+                  {busy ? 'working…' : copy.button}
+                </Text>
+              </Pressable>
+            ) : null}
+          </View>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+const COPY_FOR_STATE: Record<Exclude<PushSetupState, 'web' | 'unknown'>, { title: string; hint: string; button: string }> = {
+  ok: {
+    title: 'notifications working',
+    hint: 'this device is registered for partner activity and reminders.',
+    button: '',
+  },
+  'needs-permission': {
+    title: 'permission not asked yet',
+    hint: 'tap to allow notifications so your partner\u2019s pings get through.',
+    button: 'enable',
+  },
+  'permission-blocked': {
+    title: 'notifications blocked',
+    hint: 'turn them on in system settings, then return here.',
+    button: 'open settings',
+  },
+  'needs-token': {
+    title: 'finishing setup',
+    hint: 'permission is on but this device isn\u2019t registered yet — tap to fix.',
+    button: 'finish',
+  },
+  'working-on-it': {
+    title: 'finishing setup\u2026',
+    hint: 'one moment.',
+    button: '',
+  },
+};
 
 function ReminderRow(props: {
   label: string;

@@ -33,12 +33,14 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.dailyReminderTick = exports.onWeeklyChallengeCompleted = exports.onCoupleWritten = exports.onCeremonyUpdated = exports.onHabitCheckinCreated = exports.onHabitCreated = exports.onDecisionCreated = exports.onPickCreated = exports.onNominationCreated = exports.onReasonCreated = exports.onMoodEntryWritten = void 0;
+exports.diagnosePush = exports.dailyReminderTick = exports.onWeeklyChallengeCompleted = exports.onCoupleWritten = exports.onCeremonyUpdated = exports.onHabitCheckinCreated = exports.onHabitCreated = exports.onDecisionCreated = exports.onPickCreated = exports.onNominationCreated = exports.onReasonCreated = exports.onMoodEntryWritten = void 0;
 const admin = __importStar(require("firebase-admin"));
 const firestore_1 = require("firebase-functions/v2/firestore");
 const push_1 = require("./push");
 const dailyReminders_1 = require("./dailyReminders");
 Object.defineProperty(exports, "dailyReminderTick", { enumerable: true, get: function () { return dailyReminders_1.dailyReminderTick; } });
+const diagnosePush_1 = require("./diagnosePush");
+Object.defineProperty(exports, "diagnosePush", { enumerable: true, get: function () { return diagnosePush_1.diagnosePush; } });
 /**
  * Firestore-triggered partner notifications via Expo Push API (`expo-server-sdk`).
  * Reads `users/{uid}.fcmToken` (Expo push token) and respects `notificationPreferences`.
