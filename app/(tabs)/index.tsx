@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { router, Href } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -36,31 +36,59 @@ function useTimeGreeting(displayName: string): string {
 
 // ─── partner presence ───────────────────────────────────────────────────────
 
-type PresenceLevel = 'online' | 'recent' | 'away' | 'gone' | 'off';
+type PresenceLevel = 'online' | 'recent' | 'away' | 'off';
 
-function usePartnerPresence(): PresenceLevel {
+interface Presence {
+  level: PresenceLevel;
+  /**
+   * Static opacity for non-online levels. For `recent`, linearly fades
+   * 1.0 → 0 across the 15 min – 3 h window so the dot quietly dims as
+   * time passes. Ignored when `level === 'online'` (breathing animation
+   * supersedes it).
+   */
+  staticOpacity: number;
+}
+
+const ONLINE_MAX_MIN = 15;
+const RECENT_MAX_MIN = 180; // 3 h
+const AWAY_MAX_MIN = 360; // 6 h
+
+function usePartnerPresence(): Presence {
   const lastActiveAt = useNominationsStore((s) => s.partnerProfile?.lastActiveAt);
+  // Wall-clock tick so the memo re-evaluates even when the partner's
+  // `lastActiveAt` hasn't moved (e.g. they closed the app). Cheap: one
+  // setState every 30 s.
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), 30_000);
+    return () => clearInterval(id);
+  }, []);
+
   return useMemo(() => {
-    if (!lastActiveAt) return 'off';
-    const agoMs = Date.now() - lastActiveAt.toMillis();
-    const agoMin = agoMs / 60_000;
-    if (agoMin < 5) return 'online';
-    if (agoMin < 30) return 'recent';
-    if (agoMin < 360) return 'away';
-    return 'off';
-  }, [lastActiveAt]);
+    if (!lastActiveAt) return { level: 'off', staticOpacity: 0 };
+    const agoMin = (Date.now() - lastActiveAt.toMillis()) / 60_000;
+    if (agoMin < ONLINE_MAX_MIN) return { level: 'online', staticOpacity: 1 };
+    if (agoMin < RECENT_MAX_MIN) {
+      const span = RECENT_MAX_MIN - ONLINE_MAX_MIN;
+      const fade = (RECENT_MAX_MIN - agoMin) / span; // 1.0 at 15 min → 0 at 180 min
+      return { level: 'recent', staticOpacity: Math.max(0, Math.min(1, fade)) };
+    }
+    if (agoMin < AWAY_MAX_MIN) return { level: 'away', staticOpacity: 0.35 };
+    return { level: 'off', staticOpacity: 0 };
+    // `tick` intentionally in deps to drive recomputation on the wall clock.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lastActiveAt, tick]);
 }
 
 const PRESENCE_COLORS: Record<PresenceLevel, string> = {
   online: '#4ADE80',
-  recent: '#6EE7A0',
+  recent: '#4ADE80',
   away: '#475569',
-  gone: '#334155',
   off: 'transparent',
 };
 
-function PresenceDot({ level }: { level: PresenceLevel }) {
-  const opacity = useSharedValue(level === 'online' ? 0.9 : 0.6);
+function PresenceDot({ level, staticOpacity }: { level: PresenceLevel; staticOpacity: number }) {
+  const opacity = useSharedValue(level === 'online' ? 0.9 : staticOpacity);
 
   React.useEffect(() => {
     if (level === 'online') {
@@ -71,7 +99,7 @@ function PresenceDot({ level }: { level: PresenceLevel }) {
             easing: Easing.inOut(Easing.sin),
             reduceMotion: ReduceMotion.Never,
           }),
-          withTiming(0.55, {
+          withTiming(0.25, {
             duration: 2400,
             easing: Easing.inOut(Easing.sin),
             reduceMotion: ReduceMotion.Never,
@@ -81,12 +109,12 @@ function PresenceDot({ level }: { level: PresenceLevel }) {
         false,
       );
     } else {
-      opacity.value = withTiming(level === 'off' ? 0 : level === 'recent' ? 0.7 : 0.35, {
+      opacity.value = withTiming(staticOpacity, {
         duration: 600,
         reduceMotion: ReduceMotion.Never,
       });
     }
-  }, [level, opacity]);
+  }, [level, staticOpacity, opacity]);
 
   const animStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
@@ -151,7 +179,7 @@ function GreetingBlock({
 }) {
   const greeting = useTimeGreeting(displayName);
   const presence = usePartnerPresence();
-  const showSubtitle = partnerLinked && presence !== 'off';
+  const showSubtitle = partnerLinked && presence.level !== 'off';
 
   return (
     <View
@@ -171,12 +199,12 @@ function GreetingBlock({
       </Text>
       {showSubtitle && (
         <View className="mt-1.5 flex-row items-center gap-x-2">
-          <PresenceDot level={presence} />
+          <PresenceDot level={presence.level} staticOpacity={presence.staticOpacity} />
           <Text
             className="text-[13px] font-light leading-[16px] tracking-[-0.01em] text-hum-dim"
             numberOfLines={1}
             maxFontSizeMultiplier={1.25}
-            accessibilityLabel={`${partnerFirst}, ${presence === 'online' ? 'active now' : presence === 'recent' ? 'recently active' : 'active earlier'}`}
+            accessibilityLabel={`${partnerFirst}, ${presence.level === 'online' ? 'active now' : presence.level === 'recent' ? 'recently active' : 'active earlier'}`}
           >
             {partnerFirst}
           </Text>
