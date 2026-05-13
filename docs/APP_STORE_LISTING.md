@@ -1,86 +1,57 @@
-# App Store listing — Hum - rituals (`com.humtum.app`)
+# App Store listing — Hum: for two (`dev.aaam.hum`)
 
-Single reference for **App Store Connect** metadata, URLs, privacy, review, and assets. **Apple changes limits and required screenshot slots** — always verify against [App Store Connect Help](https://developer.apple.com/help/app-store-connect/) and [Screenshot specifications](https://developer.apple.com/help/app-store-connect/reference/screenshot-specifications/) before submit.
+Single reference for **App Store Connect** metadata, URLs, privacy, review, and assets.
 
-**Not legal advice:** Have a lawyer review privacy policy and paid-app terms before you charge money.
+**Operator:** aaam.dev · **Support email:** `support@aaam.dev`
 
-**Operator (listed on hosted pages):** aaam.dev · **Support email:** `support@aaam.dev` · **Policy/support pages last updated:** May 8, 2026 (`docs/store/`).
-
-**Binary source of truth:** [`app.json`](../app.json) — name, version, iOS bundle ID, build number, orientation, dark UI, plugins (`expo-router`, `expo-font`, `expo-image-picker`, `expo-notifications`). Firebase is wired via **`EXPO_PUBLIC_*`** env vars at runtime, not an `app.json` plugin.
+**Binary source of truth:** [`app.json`](../app.json) — name, version, iOS bundle ID, build number, orientation, dark UI, plugins (`expo-router`, `expo-font`, `expo-image-picker`, `expo-notifications`). Firebase is wired via **`EXPO_PUBLIC_*`** env vars at runtime.
 
 ---
 
 ## 0. At-a-glance (copy into Connect)
 
 
-| Connect / Apple field                | Value                                                                                                                |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| **App name** (≤30)                   | `Hum - rituals`                                                                                                      |
-| **Subtitle** (≤30)                   | `Private rituals for two`                                                                                            |
-| **Bundle ID**                        | `com.humtum.app` (must match Apple Developer identifier + EAS/Xcode)                                                 |
-| **SKU** (internal, unique)           | e.g. `humtum-ios-001`                                                                                                |
-| **Primary language**                 | English (U.S.)                                                                                                       |
-| **Marketing version** (user-visible) | `1.0.0` (from `expo.version`)                                                                                        |
-| **Build** (`CFBundleVersion`)        | `5` — must increase every upload (see EAS / Xcode)                                                                   |
-| **Privacy Policy URL**               | `https://aaam.dev/humm/privacy.html`                                                                                 |
-| **Support URL**                      | `https://aaam.dev/humm/support.html`                                                                                 |
-| **Marketing URL** (optional)         | `https://aaam.dev/humm/`                                                                                             |
-| **Copyright**                        | `© 2026 Aman Shrivastava`                                                                                            |
-| **Category (primary)**               | **Lifestyle** (recommended: couple rituals, not a public social network)                                             |
-| **Category (secondary)**             | **Entertainment** or **Social Networking** only if you are comfortable with that framing; **Lifestyle** alone is OK. |
-| **License agreement**                | Apple's standard EULA unless you supply a custom one                                                                 |
+| Connect / Apple field                | Value                                                        |
+| ------------------------------------ | ------------------------------------------------------------ |
+| **App name** (≤30)                   | `Hum: for two`                                               |
+| **Subtitle** (≤30)                   | `for couples`                                                |
+| **Bundle ID**                        | `dev.aaam.hum`                                               |
+| **SKU** (internal, unique)           | `AAAMHUM001`                                                 |
+| **Primary language**                 | English (U.S.)                                               |
+| **Marketing version** (user-visible) | `1.0.0` (from `expo.version`)                                |
+| **Build** (`CFBundleVersion`)        | `2`                                                          |
+| **Privacy Policy URL**               | `https://aaam.dev/hum/privacy.html`                          |
+| **Support URL**                      | `https://aaam.dev/hum/support.html`                          |
+| **Marketing URL** (optional)         | `https://aaam.dev/hum/`                                      |
+| **Copyright**                        | `© 2026 aaam.dev`                                            |
+| **Category (primary)**               | **Lifestyle**                                                |
+| **Category (secondary)**             | —                                                            |
+| **License agreement**                | Apple's standard EULA                                        |
 
 
-**Website hosting:** Store pages live at `https://aaam.dev/humm/` via **Cloudflare Pages** (repo: `github.com/4m4n5/aaam.dev`, auto-deploys on push to `main`). The `docs/store/` directory in this repo is the source; the `aaam.dev` repo copies from here. See `aaam.dev/README.md` for full infrastructure details.
-
-**Pricing:** Paid one-time (e.g. **~$3.99 USD**) — set **Price schedule** in Connect; complete **Paid Applications Agreement**, tax, and banking first.
+**Pricing:** Paid one-time (~$3.99 USD) — set Price schedule in Connect; complete Paid Applications Agreement, tax, and banking first.
 
 ---
 
-## 1. Where this doc maps in App Store Connect
-
-
-| Connect area                              | What to fill                                                                                                                         |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| **App Information**                       | Localizable name, subtitle, category, content rights, age rating workflow                                                            |
-| **Pricing and Availability**              | Price tier, countries                                                                                                                |
-| **App Privacy**                           | Data types, tracking, purposes (Section 10)                                                                                          |
-| **Prepare for Submission** (per platform) | Screenshots, description, keywords, promotional text, What's New, support/marketing URLs, build, routing app coverage file if needed |
-| **App Review Information**                | Sign-in required, demo accounts, notes (Section 12), contact phone (optional)                                                        |
-| **Version release**                       | Manual vs automatic after approval                                                                                                   |
-
-
----
-
-## 2. Promotional text (≤170 characters, editable without full review)
-
-**Primary (170 chars):**
+## 1. Promotional text (≤170 characters, editable without full review)
 
 ```
-Mood check-ins, shared habits, picks made together, awards seasons, and reasons to love each other—private by design, just you and your person.
-```
-
-**Shorter (116 chars):**
-
-```
-Invite your person. Check moods, build habits, pick together, trade reasons—private by design.
+Mood check-ins, shared habits, decisions made together, awards seasons, and reasons to love each other—private by design, just you and your person.
 ```
 
 ---
 
-## 3. Description (full store text, ≤4000 characters)
-
-Paste as **Description**; trim trailing paragraph if you want a shorter listing.
+## 2. Description (≤4000 characters)
 
 ```
-Hum - rituals is a calm, private space for you and your partner—not a social network.
+Hum is a calm, private space for you and your partner—not a social network.
 
 WHAT YOU DO TOGETHER
 • Home — a time-aware greeting, your partner's live presence, and quick access to everything. The ambient glow warms as your streaks grow.
 • Mood — check in with how you're feeling, multiple times a day if you like. See your partner's mood in real time, track a seven-day strip, and celebrate "in sync" moments when you both feel the same way.
 • Habits — create daily or weekly habits, shared or personal. Track completion side-by-side, watch a six-week heatmap fill in, and build joint streaks. When you both finish all shared habits for the day, enjoy a celebration.
 • Decide — build a shared pool of ideas across categories. Vote together round by round, or tap "pick for us" to let the app choose one when you can't both be there. Saves to history.
-• Awards — nominate little stories across categories for each season. When you're ready, move through align, resolve any overlaps, cheer the winners, and keep past seasons in the vault.
+• Awards — nominate little stories across categories for each season. When you're ready, align on the winners together and keep past seasons in the vault.
 • Reasons — write a reason you love them; when the moment's right, reveal three reasons they've written about you.
 • You — XP, level, badges, weekly challenges, and a soft snapshot of how you're showing up together.
 
@@ -88,163 +59,90 @@ WHO IT'S FOR
 Two people who already chose each other. You'll link accounts with a short invite code.
 
 WHAT IT ISN'T
-No public feed, no discovery, no ads—just the two of you and your rituals.
+No public feed, no discovery, no ads—just the two of you.
 
-Requires a free Firebase-backed account. An internet connection is needed for sync.
+Requires a free account. An internet connection is needed for sync.
 ```
 
 ---
 
-## 4. Keywords (100 characters, comma-separated, no spaces after commas)
-
-**Suggested (100 chars):**
+## 3. Keywords (100 characters, comma-separated)
 
 ```
-couple,partner,relationship,love,mood,tracker,habits,decide,picks,awards,reasons,together,sync
-```
-
-**Alternate (99 chars):**
-
-```
-couple,relationship,partner,marriage,dating,mood,habits,goals,decide,awards,reasons,love,together
-```
-
-Do not stuff competitor names or abuse Apple trademarks.
-
----
-
-## 5. Alternate subtitles (all ≤30 characters)
-
-- `Private rituals for two` *(recommended)*  
-- `Moods, habits & small wins`  
-- `For you and your person`
-
----
-
-## 6. What's New (version 1.0.0 — build 5)
-
-```
-Build 5: design polish across the entire app — consistent empty states, time-aware home greeting with partner presence, dynamic ambient warmth that grows with your streaks, refreshed heatmap with clear "you done" and "both done" states, accessibility improvements (44pt hit targets, screen-reader labels, dynamic type), and unified microcopy voice.
+couple,partner,relationship,love,mood,tracker,habits,decide,awards,reasons,together,sync,private
 ```
 
 ---
 
-## 7. Product facts for honest metadata (from shipped build)
+## 4. What's New (version 1.0.0)
 
-Use these so **description**, **screenshots**, and **App Privacy** stay aligned with the binary ([`APPS_AND_FEATURES.md`](./APPS_AND_FEATURES.md), [`app.json`](../app.json)):
-
-
-| Topic                    | Fact                                                                                                                                                                                                                                    |
-| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Accounts**             | Email/password via **Firebase Auth**; partner link via **invite code**.                                                                                                                                                                 |
-| **Sync**                 | **Firestore** real-time listeners (`onSnapshot`); internet required.                                                                                                                                                                   |
-| **Orientation / device** | **Portrait**; iOS `supportsTablet: false` — phone-only iOS experience; no iPad-optimized UI.                                                                                                                                           |
-| **Appearance**           | `userInterfaceStyle: dark` in `app.json` — capture screenshots in dark mode.                                                                                                                                                           |
-| **Home**                 | Time-aware greeting, partner presence indicator (online/recent/away, 6hr decay), dynamic relationship warmth glow (AmbientGlow reach scales with reason/habit/mood streaks).                                                             |
-| **Mood**                 | Emoji-based check-ins (multiple per day), partner visibility in real time, seven-day strip, intraday history modal, "in sync" celebration overlay when both partners share the same mood.                                               |
-| **Habits**               | Daily/weekly habits, shared (couple) or personal scope, participant-level check-in pills, six-week shared-habits-only heatmap (none / some / you done / both done), joint streak tracking, "in sync" celebration when both complete all shared habits. |
-| **Decide**               | **Pick Together** (one feature, two paths). Auto-seeded shared pool per category. **Vote together** round-by-round (realtime, both vote, tie resolution by app pick after repeated splits) or **pick for us** (one tap, recency-weighted pick from the pool).                          |
-| **Awards**               | Seasons (e.g. H1/H2 calendar context); nominate → **align** → **cheer**; past seasons. Internal Firestore statuses may still say `deliberating` — user-facing copy is "align" (`[CEREMONY_TERMINOLOGY.md](./CEREMONY_TERMINOLOGY.md)`). |
-| **Reasons**              | Write text for partner; reveal up to three random lines about you.                                                                                                                                                                        |
-| **Profile**              | XP, level, badges, weekly challenges, together-style stats strip.                                                                                                                                                                       |
-| **Notifications**        | `expo-notifications`: optional **local** reminders (mood, habits, awards calendar); **remote** push via Firebase Cloud Functions for partner activity pings. Declare push token storage.                                                |
-| **Photos**               | `expo-image-picker` with permission string: *"Hum uses your photos for nominations and reasons."* Declare **Photo Library** when the build requests it; purpose: **App functionality**.                                                |
-| **Ads / tracking**       | No ad SDKs in repo; **App Tracking Transparency** typically **No** unless you add cross-app tracking.                                                                                                                                   |
-| **In-app purchases**     | None in current product model if the app is **paid upfront** only—don't enable IAP metadata you don't use.                                                                                                                              |
-
+```
+First release of Hum: for two. Mood check-ins, shared habits, decisions together, awards seasons, and reasons—all private, just for you and your person.
+```
 
 ---
 
-## 8. Screenshots (real UI only)
+## 5. Screenshots
 
-Apple expects screenshots that **match the app's general UI** (chrome, typography, flows). See **[Screenshot specifications](https://developer.apple.com/help/app-store-connect/reference/screenshot-specifications/)** for **required sizes** for your deployment target.
+**Device tier:** 6.9" iPhone only (Apple auto-scales for smaller iPhones). No iPad.
 
-### 8.1 How to capture
+**Story order (capture from new build in dark mode):**
 
-- **Xcode Simulator** (e.g. device class that maps to **6.7" / 6.9"** accepted portrait sizes such as **1290 × 2796** — verify Apple's current table), **⌘S** to Desktop, then crop/export if needed.  
-- Repo marketing captures live under `docs/store/images/` (`screen-01.png` …) as a **reference order** for your store set—**re-export** at Connect-required pixel dimensions before upload.  
-- **Dark mode**, **readable status bar**, **no real personal emails** on screen (demo accounts).
+1. **Home** — greeting + partner presence + ambient glow
+2. **Mood** — check-in picker + partner sync strip
+3. **Habits** — shared habit board + streaks + heatmap
+4. **Decide** — shared pool + vote together / pick for us
+5. **Awards** — season hub + nominations
+6. **Reasons** — write / reveal three
+7. **You** — XP + badges + challenges
 
-### 8.2 Suggested story order (3–10 strong shots)
-
-1. **Home** — shortcuts + profile row.
-2. **Mood** — check-in picker with emotion quadrants.
-3. **Mood** — partner sync, seven-day strip, "in sync" highlight.
-4. **Habits** — board with shared/personal cards, progress bar, streak.
-5. **Habits** — six-week adherence heatmap with legend.
-6. **Pick Together** — lobby (shared pool, two CTAs).
-7. **Pick Together** — live vote in progress.
-8. **Awards hub** — season + phase strip + categories.
-9. **Reasons** — write or "reveal three".
-10. **You / profile** — XP + badges.
-
-**Tips:** Display Zoom **Default**; dismiss notifications; same **build** you submit for review.
+Screenshots live in `screenshots/6.9/` (01-home.png through 07-you.png).
 
 ---
 
-## 9. App Preview (optional)
-
-- **15–30 s**, same device class as screenshots.  
-- Flow: home → mood check-in → habits board → pick together lobby → vote / pick for us → awards hub → reason line.  
-- No unlicensed music.
-
----
-
-## 10. App Privacy questionnaire (nutrition labels)
-
-Answer **for the build you upload**. Typical mapping for **Firebase Auth + Firestore + Cloud Functions + optional push token + image picker + local/remote notifications**:
+## 6. App Privacy questionnaire
 
 
-| Data type                                                                           | Collected?                           | Linked to user? | Used for                   | Third-party sharing                                                        |
-| ----------------------------------------------------------------------------------- | ------------------------------------ | --------------- | -------------------------- | -------------------------------------------------------------------------- |
-| **Email address**                                                                   | Yes                                  | Yes             | Account, app functionality | Google (Firebase)                                                          |
-| **Name / profile**                                                                  | If you collect display names         | Yes             | App functionality          | Firebase                                                                   |
-| **User content** (mood entries, habit data, decisions, awards text, reasons, etc.)   | Yes                                  | Yes             | App functionality          | Firebase                                                                   |
-| **Identifiers** (Firebase UID; device push token if stored)                         | Yes                                  | Yes             | Account, notifications     | Firebase / APNs                                                            |
-| **Photos**                                                                          | Only if user picks images            | Yes             | App functionality          | Stored/processed per your implementation (often Firebase / on-device only) |
-| **Usage / diagnostics**                                                             | Only if you add analytics/crash SDKs | —               | —                          | —                                                                          |
+| Data type                         | Collected? | Linked to user? | Used for           | Third-party sharing |
+| --------------------------------- | ---------- | --------------- | ------------------ | ------------------- |
+| **Email address**                 | Yes        | Yes             | Account            | Google (Firebase)   |
+| **User content** (mood, habits, decisions, awards, reasons) | Yes | Yes | App functionality | Firebase            |
+| **Identifiers** (Firebase UID, push token) | Yes | Yes          | Account, notifications | Firebase / APNs  |
+| **Photos**                        | Only if user picks images | Yes | App functionality | On-device / Firebase |
 
 
-**Tracking:** **No** unless you enable cross-app tracking.  
-**Photos:** Match **NSPhotoLibraryUsageDescription** / purpose string to actual flows.
-
-After any SDK or backend change, **re-run** the privacy questionnaire and update the hosted privacy policy.
+**Tracking:** No.
 
 ---
 
-## 11. Age rating (content description)
+## 7. Age rating
 
-- **Violence / horror / gambling / substances:** generally **None** for shipped UI.  
-- **User-generated content:** Reasons, nominations, and mood labels are **freeform text** — Apple may expect disclosure of **infrequent** or **frequent** mature themes depending on definitions; be **conservative**.  
-- Many couple apps land **12+** or higher when UGC is unrestricted; **read Apple's current definitions** question-by-question.
+- Violence / horror / gambling / substances: **None**
+- User-generated content: **Infrequent/Mild** (freeform text between two linked partners only)
+- Recommended rating: **4+** or **12+** depending on Apple's UGC interpretation
 
 ---
 
-## 12. App Review Information — notes (paste into Connect)
-
-Create the pair in Firebase with **`npm run demo:create`** (see `scripts/create-demo-accounts.mjs`) after pointing **`GOOGLE_APPLICATION_CREDENTIALS`** at a downloaded **Service account** JSON key, or pass **`--credentials /path/to/key.json`** on the same command. These two are **already linked** as a couple with sample decisions, reasons, awards nominations, mood entries, and habits.
+## 8. App Review Information
 
 ```
 COUPLE-ONLY PRODUCT
-Hum - rituals is invite-only for two linked accounts. There is no public feed or discovery.
+Hum is invite-only for two linked accounts. There is no public feed or discovery.
 
 DEMO FOR REVIEW (pre-linked couple — same password on both)
 Primary account:  demo@hum.app  /  humtumapp@demo
 Partner account: partner.demo@hum.app  /  humtumapp@demo
 
-Use the partner sign-in on a second simulator or device for Decide → Pick Together (vote together) and to see real-time mood/habit sync. Everything else (including the solo "pick for us" path inside Pick Together) works signed in as the primary account only.
+Use the partner sign-in on a second simulator or device for Decide → vote together and to see real-time mood/habit sync. Everything else (including "pick for us") works signed in as the primary account only.
 
 FEATURES TO TRY
-Home → the greeting changes by time of day; if the partner account was recently active, a green presence dot appears beside their name; the ambient glow warms as streaks build. Mood → tap the mood tab, pick an emoji, save. Switch to partner account and log a mood to see real-time sync and "in sync" celebration. Habits → check off shared habits on both accounts to trigger joint celebration; the heatmap shows shared-habit completion only. Decide → Pick Together: pick a category, the pool auto-seeds with the couple's saved options, add a few more if you like, then either tap "lock in & vote" (needs the partner client) or "pick for us" (solo, picks one from the pool). Awards → categories / add nomination text. Reasons → write one line, then reveal three.
+Home → greeting changes by time of day; partner presence dot; ambient glow warms with streaks. Mood → tap mood tab, pick an emoji, save; switch to partner to see real-time sync and "in sync" celebration. Habits → check off shared habits on both accounts to trigger joint celebration; heatmap shows shared-habit completion. Decide → pick a category, the pool auto-seeds, then either "lock in & vote" (needs partner) or "pick for us" (solo). Awards → categories / nominations. Reasons → write one line, then reveal three.
 
 ACCOUNT DELETION (Guideline 5.1.1(v))
-Sign in with the demo account, then: bottom tab "you" → scroll to the very bottom → tap the red "delete account" button → enter the demo password "humtumapp@demo" → tap "delete my account" → confirm in the alert. The app re-authenticates, deletes the user's Firestore data (including any shared couple data: mood entries, habits, decisions, awards, reasons), removes the Firebase Auth user, and signs out.
+Sign in → bottom tab "you" → scroll to bottom → red "delete account" → enter password → confirm. Deletes all user data from Firestore, removes Firebase Auth user, signs out.
 
 PUSH NOTIFICATIONS
-Optional. Allow helps if you test daily mood/habit reminders or partner activity pings. Local reminders can also be scheduled from the awards calendar.
-
-PHOTOS
-Permission appears when attaching images in supported flows (image picker).
+Optional. Helps test daily reminders and partner activity pings.
 
 NETWORK & ACCOUNT
 Requires network for Firebase sync. Email/password sign-in.
@@ -253,129 +151,52 @@ CONTACT
 support@aaam.dev
 ```
 
-**Contact email (Connect field):** `support@aaam.dev`  
-**Phone:** optional.
+---
+
+## 9. Encryption / export compliance
+
+Standard HTTPS (Firebase). Exempt from filing. `ITSAppUsesNonExemptEncryption: false` set in `app.json` infoPlist.
 
 ---
 
-## 13. Encryption / export compliance
-
-Expo/React Native apps using **HTTPS** (e.g. Firebase) typically answer Apple's **standard encryption** questions as **using encryption exempt from filing** — answer **truthfully** in Connect per [Apple's export compliance docs](https://developer.apple.com/documentation/security/complying-with-encryption-export-regulations). If you add non-exempt cryptography, re-evaluate.
-
----
-
-## 14. Hosted privacy policy (already live under `docs/store/`)
-
-Your live policy is served at the **Privacy Policy URL** above (source: [`docs/store/privacy.html`](./store/privacy.html)). Keep it in sync with Connect's **App Privacy** answers.
-
-For **redundancy / lawyer drafts**, a Markdown template was previously kept in this file; prefer editing the **HTML** source of truth: `[docs/store/privacy.html](./store/privacy.html)`. If you maintain a separate Markdown policy, ensure **same** collection/use/retention/Firebase/Google/contact details.
-
----
-
-## 15. Content rights & third-party content
-
-- **Apple content rights:** You own or have rights to **app binary and assets**; for **UGC**, users submit content—disclose moderation approach if asked.  
-- **No** Apple Music / third-party music in default flows unless licensed.
-
----
-
-## 16. Game Center, Sign in with Apple, other
-
-- **Game Center:** No (unless you add it).  
-- **Sign in with Apple:** Only required when you offer certain third-party logins; **email/password only** is a common pattern—confirm current Apple rules when you add more providers.
-
----
-
-## 17. Checklist before Submit
-
-- **Screenshots** for every **required** iPhone size Connect shows for this binary.  
-- **Support** + **Privacy** URLs return **https 200** (no login wall).  
-- **App Privacy** matches Firebase + push + photos + UGC + mood/habit data.  
-- **Account deletion** (Guideline 5.1.1(v)): in-app flow works (profile → delete account → password → confirm), support page documents steps, privacy page explains what is removed.  
-- **Paid Applications** agreement, **banking**, **tax** (if paid).  
-- **Demo accounts** work on **production** Firebase + Firestore rules.  
-- **Marketing version** and **build number** match uploaded IPA and `[app.json](../app.json)` / EAS.  
-- **Age rating** questionnaire matches freeform text features.  
-- **What's New** and **Description** match shipped features (mood, habits, decide / pick together, awards, reasons).  
-- **Export compliance** answered.
-
----
-
-## 17b. Reply to Apple (build 4 resubmit)
-
-Use this in the **App Review** thread when uploading build 4. Paste in App Store Connect → app → Resolution Center.
-
-```
-Hi App Review,
-
-Thank you for the feedback on submission 956d0317-0da6-42cc-be29-9ffa5a6407a2.
-
-We took the rejection seriously and rebuilt the Decide tab from the ground up to remove every gambling-style mechanic and any combat / wager language from both the binary and the marketing copy. Specifically, in build 4:
-
-1. The standalone "Quick Spin" feature has been removed entirely. There is no spinning wheel, roulette, coin, or chance-based animation anywhere in the app.
-2. "Battle Mode" no longer exists. Decide is now a single feature called "Pick Together" with two paths:
-   • "Vote together" — both partners build a shared pool of ideas (e.g. restaurants, activities) and vote round by round on pairs until one option remains.
-   • "Pick for us" — when only one partner is around, a single tap picks one option from the shared pool for them.
-3. All marketing references to "battle", "bracket", "spin", "wheel", "coin", "veto", and similar wording have been removed from the App Store description, promotional text, keywords, screenshots, marketing site, and in-app copy. The new copy says "pick together", "vote together", "pick for us".
-4. The reveal animation is now a calm static fade-and-spring card. There is no cycling label, no haptic ticking, no roulette spin, no coin flip.
-5. There is no element of chance presented to users as gambling: the "pick for us" path is a recency-weighted suggestion from a list the couple themselves curated. No simulated wagering, prizes, or odds are presented anywhere in the app.
-
-The app remains an invite-only utility for two linked partners to share moods, habits, decisions, awards, and reasons. There is no public feed, no discovery, no real-money or virtual currency, and no advertising.
-
-Thank you for your time. Please let us know if any further changes are needed.
-
-— Aman Shrivastava (support@aaam.dev)
-```
-
----
-
-## 18. After 1.0.0
-
-- Bump `expo.version` in `app.json` for user-visible version; increment `ios.buildNumber` (and Android `versionCode`) per store rules.  
-- Update **What's New**, screenshots only when UI meaningfully changes.  
-- Revisit **App Privacy** whenever you add analytics, crash reporting, ads, or new data types.
-
----
-
-## 19. Infrastructure & accounts
+## 10. Infrastructure & accounts
 
 | Service | Account / value |
 |---|---|
-| **Domain** | `aaam.dev` (Cloudflare Registrar, registered 2026-05-08) |
-| **Email** | `support@aaam.dev` → forwards to `aamd3v@gmail.com` (Cloudflare Email Routing) |
-| **Website** | Cloudflare Pages, project `aaam-dev`, repo `github.com/4m4n5/aaam.dev`, auto-deploys on push to `main` |
+| **Domain** | `aaam.dev` (Cloudflare Registrar) |
+| **Email** | `support@aaam.dev` → forwards to `aamd3v@gmail.com` |
+| **Website** | Cloudflare Pages, project `aaam-dev`, repo `github.com/4m4n5/aaam.dev` |
 | **App repo** | `github.com/4m4n5/humm` |
-| **Website repo** | `github.com/4m4n5/aaam.dev` |
-| **Apple Developer** | Individual account, Team ID `D92AD98B9B`, Seller: Aman Shrivastava |
-| **App Store Connect** | App ID `6763845513`, Bundle ID `com.humtum.app` |
-| **EAS** | Project ID `30c5357d-ddd0-490b-a158-fd22c872392e`, Expo slug `humm` |
-| **Firebase** | Project env vars via `EXPO_PUBLIC_*` in EAS "production" environment |
+| **Apple Developer** | Individual account, Team ID `D92AD98B9B` |
+| **App Store Connect** | App ID `6768805132`, Bundle ID `dev.aaam.hum`, Name: "Hum: for two" |
+| **EAS** | Project ID `5f57f843-c55c-4e2e-a8a1-101b9b9db2fa`, slug `hum`, owner `4m4n5` |
+| **Firebase** | Project `humm-f31c7`, env vars via `EXPO_PUBLIC_*` in EAS environments |
 
-### Live URLs (paste into App Store Connect / Play Console)
+### Live URLs
 
 | Purpose | URL |
 |---|---|
-| **Support** | `https://aaam.dev/humm/support.html` |
-| **Privacy** | `https://aaam.dev/humm/privacy.html` |
-| **Marketing** | `https://aaam.dev/humm/` |
+| **Support** | `https://aaam.dev/hum/support.html` |
+| **Privacy** | `https://aaam.dev/hum/privacy.html` |
+| **Marketing** | `https://aaam.dev/hum/` |
 | **Studio landing** | `https://aaam.dev` |
 
-Legacy URLs (`4m4n5.github.io/humm/store/...`) may still resolve but are deprecated.
+---
+
+## 11. Checklist before Submit
+
+- [ ] Screenshots for 6.9" iPhone uploaded to Connect
+- [ ] Support + Privacy URLs return https 200 (no login wall)
+- [ ] App Privacy matches Firebase + push + photos + UGC data
+- [ ] Account deletion flow works (profile → delete → password → confirm)
+- [ ] Paid Applications agreement, banking, tax completed
+- [ ] Demo accounts work on production Firebase
+- [ ] Marketing version and build number match uploaded IPA
+- [ ] Age rating questionnaire completed
+- [ ] What's New and Description match shipped features
+- [ ] Export compliance answered
+- [ ] No gambling/battle/spin/wheel/bracket language anywhere in metadata
 
 ---
 
-## 20. Related repo docs
-
-| Doc | Use |
-|---|---|
-| [`STORE_LAUNCH.md`](./STORE_LAUNCH.md) | Play + Apple costs, EAS builds, broader checklist |
-| [`store/README.md`](./store/README.md) | Store page source files + local preview |
-| [`APPS_AND_FEATURES.md`](./APPS_AND_FEATURES.md) | Shipped features for accurate copy |
-| [`AWARDS_SEASON_RULES.md`](./AWARDS_SEASON_RULES.md) | Awards season behavior detail |
-| [`CEREMONY_TERMINOLOGY.md`](./CEREMONY_TERMINOLOGY.md) | User-facing "align" vs internal status names |
-| [`scripts/create-demo-accounts.mjs`](../scripts/create-demo-accounts.mjs) | Seed App Store review demo users (`npm run demo:create`) |
-| [`aaam.dev/README.md`](https://github.com/4m4n5/aaam.dev/blob/main/README.md) | Full infrastructure docs (domain, email, hosting, accounts) |
-
----
-
-*Hum - rituals · `com.humtum.app` · Expo slug `humm` · Listing pack updated May 8, 2026.*
+*Hum: for two · `dev.aaam.hum` · Expo slug `hum` · Listing updated May 12, 2026.*
