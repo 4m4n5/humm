@@ -29,7 +29,7 @@ Single reference for **App Store Connect** metadata, URLs, privacy, review, and 
 | **License agreement**                | Apple's standard EULA                                        |
 
 
-**Pricing:** Paid one-time (~$3.99 USD) — set Price schedule in Connect; complete Paid Applications Agreement, tax, and banking first.
+**Pricing:** Free.
 
 ---
 
